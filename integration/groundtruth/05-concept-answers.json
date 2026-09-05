@@ -1,0 +1,45 @@
+{
+  "stage": "concept_answers",
+  "workflow": null,
+  "actor": "human_input",
+  "purpose": "The client answers the aesthetic questionnaire. Asked in the SAME sitting as the PRD interview questions, so it is not a third interruption. The lane refuses to generate any concept before these exist; tone and manner come from here, not from the design systems.",
+  "inputContract": {
+    "required": [
+      "questions"
+    ],
+    "notes": "questionnaire.questions[] from stage 08, asked with AskUserQuestion (colour first)."
+  },
+  "inputExample": {
+    "questions": [
+      {
+        "id": "q-color",
+        "kind": "color",
+        "question": "청첩장 화면을 어떤 색깔로 하면 좋을까요?",
+        "options": [
+          {
+            "id": "opt-sage",
+            "label": "차분한 초록"
+          }
+        ]
+      }
+    ]
+  },
+  "outputContract": {
+    "required": [
+      "preferences"
+    ],
+    "notes": "A map keyed by question id. integrate.mjs rejects keys the lane never asked and refuses to proceed while any question is unanswered."
+  },
+  "outputExample": {
+    "preferences": {
+      "q-color": "opt-sage",
+      "q-mood": "opt-airy"
+    }
+  },
+  "handoff": {
+    "to": "concepts",
+    "via": "Passed verbatim as args.clientPreferences; also hashed into the concepts stage fingerprint, so changing an answer invalidates the generated concepts.",
+    "checkedBy": "integration/lib/runstate.mjs stageFingerprint + recordClientPreferences"
+  },
+  "touchpoint": "prd_review"
+}

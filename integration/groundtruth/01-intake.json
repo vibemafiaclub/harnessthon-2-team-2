@@ -1,0 +1,141 @@
+{
+  "stage": "intake",
+  "workflow": "intake-assess",
+  "actor": "ai_confirmed",
+  "purpose": "Recognize the PRD and every supplied material, then produce a normalized brief coupled to real observations.",
+  "inputContract": {
+    "required": [
+      "request",
+      "materials",
+      "nowIso"
+    ],
+    "notes": "materials[] are the HOST's deterministic acquisition records (id, source, sha256, parseStatus). The workflow may not invent content for records whose parseStatus is missing/unreadable, and needs an agent_observation for binary_unparsed / remote_unfetched."
+  },
+  "inputExample": {
+    "request": {
+      "prd": {
+        "path": "/abs/examples/wedding-scheduler/PRD.md",
+        "sha256": "sha256:2f1c…",
+        "parseStatus": "parsed_text"
+      },
+      "materials": [
+        {
+          "path": "/abs/brand.md",
+          "role": "brand-tokens",
+          "description": "client brand sheet"
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": "mat-01",
+        "source": {
+          "kind": "file",
+          "path": "/abs/brand.md"
+        },
+        "declaredRole": "brand-tokens",
+        "description": "client brand sheet",
+        "parseStatus": "parsed_text",
+        "contentSniff": "text",
+        "bytes": 412,
+        "sha256": "sha256:aa11…"
+      }
+    ],
+    "nowIso": "2026-09-05T12:00:00.000Z"
+  },
+  "outputContract": {
+    "required": [
+      "materials",
+      "normalizedBrief",
+      "userRequirements",
+      "conflicts",
+      "intakeQuestions"
+    ],
+    "perMaterial": [
+      "materialId",
+      "type",
+      "confidence",
+      "verified",
+      "observations"
+    ],
+    "notes": "Validated deterministically by integration/lib/assess.mjs before it is recorded; a fabricated observation or an unknown materialId is rejected."
+  },
+  "outputExample": {
+    "assessedAt": "2026-09-05T12:00:00.000Z",
+    "materials": [
+      {
+        "materialId": "mat-01",
+        "type": "brand_tokens",
+        "confidence": "high",
+        "verified": true,
+        "observations": [
+          {
+            "note": "primary #2F4A3C, accent #C9A96A, heading font Nanum Myeongjo",
+            "evidence": {
+              "kind": "excerpt",
+              "detail": "primary: #2F4A3C"
+            }
+          }
+        ],
+        "flags": [],
+        "adoptionIntent": null
+      }
+    ],
+    "inaccessible": [],
+    "normalizedBrief": {
+      "title": "Mobile wedding invitation builder",
+      "domain": "wedding invitation",
+      "problem": "Couples without design skills need a polished mobile invitation page.",
+      "audience": "Engaged couples in their 20s-30s, mobile-first.",
+      "coreTasks": [
+        "Create an invitation from a template",
+        "Collect RSVP responses"
+      ],
+      "features": [
+        {
+          "featureId": "feat.templates",
+          "name": "Template gallery",
+          "description": "Pre-designed templates the user can customize."
+        }
+      ],
+      "constraints": [
+        "Mobile-first web page output"
+      ],
+      "brandConstraints": {
+        "colors": [
+          {
+            "role": "primary",
+            "value": "#2F4A3C"
+          },
+          {
+            "role": "accent",
+            "value": "#C9A96A"
+          }
+        ],
+        "fonts": [
+          {
+            "role": "heading",
+            "family": "Nanum Myeongjo"
+          }
+        ],
+        "notes": "Client-specified values override design-system defaults.",
+        "sourceMaterialIds": [
+          "mat-01"
+        ]
+      }
+    },
+    "userRequirements": [
+      {
+        "requirement": "Use the client's deep green as the primary colour",
+        "source": "mat-01"
+      }
+    ],
+    "conflicts": [],
+    "intakeQuestions": []
+  },
+  "handoff": {
+    "to": "prd_interview",
+    "via": "The brief drives the interview; brandConstraints are carried forward and integrate.mjs refuses a later approved PRD that drops any client colour/font value.",
+    "checkedBy": "integration/lib/assess.mjs validateAssessment + laneprd.mjs missingBrandValues"
+  }
+}

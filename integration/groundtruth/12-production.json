@@ -1,0 +1,31 @@
+{
+  "stage": "production",
+  "workflow": "production-outputs",
+  "actor": "ai_confirmed",
+  "status": "NOT IMPLEMENTED — no workflow script exists in this repo yet",
+  "purpose": "After concept approval: full frontend pages, component documentation/catalog, IA, user flow, and a browser prototype where feasible.",
+  "inputContract": {
+    "required": [
+      "prdPath",
+      "runDir",
+      "conceptId"
+    ],
+    "notes": "This contract is the adapter's declared expectation. Until a real script is registered (`integrate register production-outputs --script <path>`) the stage routes as decision 'blocked' with unmetChecks ['adapter:unregistered'] — it is never reported as done."
+  },
+  "inputExample": {
+    "prdPath": "/abs/integration/runs/run-demo/approved-prd.json",
+    "runDir": "/abs/integration/runs/run-demo/production",
+    "conceptId": "shadcn"
+  },
+  "outputContract": {
+    "required": [
+      "summary"
+    ],
+    "notes": "Contract will be pinned when the real workflow lands; the ground-truth test asserts only that this stage stays blocked while unregistered."
+  },
+  "outputExample": null,
+  "handoff": {
+    "to": null,
+    "via": "End of the currently implemented pipeline."
+  }
+}
