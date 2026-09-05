@@ -258,7 +258,66 @@ if (stage === 'build') {
   if (captureFailed.length) log(`캡처 실패 화면: ${captureFailed.map((r) => r.id).join(', ')}`)
 
   // Connect, Report는 Task 6에서 이어서 작성
-  throw new Error('Connect/Report 미구현 (Task 6에서 추가)')
+  const CONNECT_SCHEMA = {
+    type: 'object',
+    properties: {
+      connected: { type: 'number' },
+      failed: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: { from: { type: 'string' }, to: { type: 'string' }, reason: { type: 'string' } },
+          required: ['from', 'to', 'reason'],
+        },
+      },
+    },
+    required: ['connected', 'failed'],
+  }
+
+  phase('Connect')
+  const captureOkMap = Object.fromEntries(captureOk.map((r) => [r.id, r.figmaNodeId]))
+  const connect = await agent(
+    withPrompt('03-connect.md', {
+      figmaFileKey,
+      '캡처 결과': captureOkMap,
+      edges: flow.edges,
+      entry: flow.entry,
+    }),
+    { schema: CONNECT_SCHEMA, ...SUB, label: 'connect', phase: 'Connect' },
+  )
+  const connected = connect ? connect.connected : 0
+  const connectFailed = connect ? connect.failed : flow.edges.map((e) => ({ from: e.from, to: e.to, reason: 'Connect 에이전트 실패' }))
+  log(`연결 완료: ${connected}개, 실패 ${connectFailed.length}개`)
+
+  const unreachable = rawFlow.screens.filter((s) => !s.reachable).map((s) => s.id)
+  const figmaUrl = preflight.figmaFileUrl || `https://figma.com/design/${figmaFileKey}`
+
+  phase('Report')
+  const REPORT_SCHEMA = { type: 'object', properties: { ok: { type: 'boolean' } }, required: ['ok'] }
+  const report = await agent(
+    withPrompt('04-report.md', {
+      '캡처 결과': captureResults,
+      '연결 결과': { connected, failed: connectFailed },
+      '도달 불가 화면': unreachable,
+      figmaUrl,
+      '저장 경로': files.result,
+    }),
+    { schema: REPORT_SCHEMA, ...SUB_LOW, label: 'report', phase: 'Report' },
+  )
+
+  return {
+    stage: 'build',
+    ok: true,
+    captured: captureOk.length,
+    captureFailed: captureFailed.map((r) => ({ id: r.id, error: r.error })),
+    connected,
+    connectFailed,
+    unreachable,
+    figmaFileKey,
+    figmaUrl,
+    files: [files.result],
+    reportWritten: !!(report && report.ok),
+  }
 }
 
 throw new Error(`알 수 없는 stage: ${stage}`)
