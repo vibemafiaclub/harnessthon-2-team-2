@@ -1,3 +1,4 @@
+import { assertComparison } from "./comparison.mjs";
 import {
   fail,
   isSha256,
@@ -35,7 +36,10 @@ export function normalizeEvidenceCard(input) {
   const proof = normalizeProof(input.proof, status, cardId);
   const limitations = normalizeLimitations(input.limitations);
   const assessment = normalizeAssessment(input.assessment);
-  const body = { cardId, subjectType, subjectId, status, claim, source, proof, limitations, assessment };
+  const linkage = {};
+  if (input.featureId !== undefined) linkage.featureId = requiredId(input.featureId, "card.featureId");
+  if (input.observationType !== undefined) linkage.observationType = requiredEnum(input.observationType, new Set(["product_behavior", "product_documentation", "marketing_description", "unknown"]), "card.observationType");
+  const body = { cardId, subjectType, subjectId, ...linkage, status, claim, source, proof, limitations, assessment };
   return Object.freeze({ ...body, cardHash: sha256(body) });
 }
 
@@ -141,8 +145,9 @@ export function normalizeFeatureCell(value) {
   return { status, cardIds };
 }
 
-export function sealResearchPackage(input) {
+export function sealResearchPackage(input, { allowLegacy = false } = {}) {
   if (!input || typeof input !== "object") fail("package_type", "Research package input must be an object.");
+  if (!input.prd?.features && !allowLegacy) fail("comparison_legacy", "Approved PRD features required for new packages; explicitly migrate/recollect legacy research.");
   const cards = (Array.isArray(input.cards) ? input.cards : []).map(normalizeEvidenceCard);
   assertUnique(cards.map((card) => card.cardId), "cardId");
   const cardIds = new Set(cards.map((card) => card.cardId));
@@ -155,7 +160,7 @@ export function sealResearchPackage(input) {
   for (const card of cards) {
     if (!subjectIds.has(card.subjectId)) fail("card_subject_unknown", `Card ${card.cardId} references unknown subject ${card.subjectId}.`);
   }
-  const featureMatrix = (Array.isArray(input.featureMatrix) ? input.featureMatrix : []).map((row) => {
+  let featureMatrix = (Array.isArray(input.featureMatrix) ? input.featureMatrix : []).map((row) => {
     const perCompetitor = {};
     for (const [competitorId, cell] of Object.entries(row?.perCompetitor || {})) {
       if (!subjectIds.has(competitorId)) fail("matrix_competitor_unknown", `Feature matrix references unknown competitor ${competitorId}.`);
@@ -172,6 +177,16 @@ export function sealResearchPackage(input) {
       ideas: (Array.isArray(row?.ideas) ? row.ideas : []).map((idea, index) => requiredString(idea, 800, `featureMatrix.ideas[${index}]`)),
     };
   });
+  // Old v1 packages remain readable without pretending to satisfy this contract.
+  const features = input.prd?.features?.map((feature) => ({
+    featureId: requiredId(feature.featureId, "prd.features.featureId"),
+    name: requiredString(feature.name, 500, "prd.features.name"),
+    description: requiredString(feature.description, 2000, "prd.features.description"),
+  }));
+  if (features) {
+    assertComparison({ ...input, competitors, cards, featureMatrix }, features);
+    featureMatrix = features.map(feature => ({ ...featureMatrix.find(row => row.featureId === feature.featureId), prdFeature: feature.name }));
+  }
   const brandConstraints = normalizeBrandConstraints(input.brandConstraints);
   const competitorIds = new Set(competitors.map((item) => item.competitorId));
   const referenceIds = new Set(references.map((item) => item.referenceId));
@@ -184,6 +199,7 @@ export function sealResearchPackage(input) {
       prdId: requiredId(input.prd?.prdId, "prd.prdId"),
       title: requiredString(input.prd?.title, 300, "prd.title"),
       domain: requiredString(input.prd?.domain, 200, "prd.domain"),
+      ...(features ? { features } : {}),
       payloadHash: isSha256(input.prd?.payloadHash) ? input.prd.payloadHash : fail("prd_hash_invalid", "prd.payloadHash must be a canonical sha256 hash of the approved PRD."),
     },
     scope: {
@@ -215,7 +231,7 @@ export function verifyResearchPackage(pkg) {
     if (!pkg || pkg.$schema !== "competitor-research-package/v1") failures.push("invalid_schema");
     const { payloadHash, ...body } = pkg || {};
     if (payloadHash !== sha256(stableStringify(body))) failures.push("payload_hash_mismatch");
-    const resealed = sealResearchPackage(body);
+    const resealed = sealResearchPackage(body, { allowLegacy: true });
     if (resealed.payloadHash !== payloadHash) failures.push("package_not_canonical");
     for (const card of pkg.cards || []) {
       const { cardHash, ...cardBody } = card;

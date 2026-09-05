@@ -1,6 +1,7 @@
+import { sealLegacyPackage as sealResearchPackage } from "./fixtures.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeEvidenceCard, sealResearchPackage, verifyResearchPackage } from "../lib/evidence.mjs";
+import { normalizeEvidenceCard, verifyResearchPackage } from "../lib/evidence.mjs";
 import { sha256 } from "../lib/canonical.mjs";
 import { draftFor, NOW } from "./fixtures.mjs";
 

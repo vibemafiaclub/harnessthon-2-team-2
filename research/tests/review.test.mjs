@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { sealResearchPackage } from "../lib/evidence.mjs";
+import { sealLegacyPackage as sealResearchPackage } from "./fixtures.mjs";
 import { buildReviewManifest, createReviewDecision, verifyReviewDecision, REVIEW_QUESTIONS } from "../lib/review.mjs";
 import { createControlState, recordAutoRepair, recordHumanRound, remaining } from "../lib/limits.mjs";
 import { sha256 } from "../lib/canonical.mjs";

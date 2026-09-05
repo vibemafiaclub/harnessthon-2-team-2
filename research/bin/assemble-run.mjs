@@ -11,6 +11,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { sha256, stableStringify } from "../lib/canonical.mjs";
 import { sealResearchPackage, verifyResearchPackage } from "../lib/evidence.mjs";
+import { assertComparison } from "../lib/comparison.mjs";
 import { verifyQuoteCards } from "../lib/verify.mjs";
 import { buildReviewManifest } from "../lib/review.mjs";
 import { createControlState } from "../lib/limits.mjs";
@@ -29,6 +30,9 @@ const runDir = await ensureRunDir(runsDir, runId);
 const priorState = await readRunState(runDir);
 const control = priorState?.control || createControlState(draft.limits);
 
+// Reject incompatible reuse and oversized rosters before any source fetches.
+try {
+assertComparison(draft, prd.features, { requireEvidence: false });
 log(`run ${runId}: verifying ${draft.cards?.length ?? 0} evidence cards${args["skip-live-verify"] ? " (live verification SKIPPED)" : " against live sources"}`);
 let verification = { results: {}, cards: draft.cards || [] };
 if (!args["skip-live-verify"]) {
@@ -51,7 +55,7 @@ if (!args["skip-live-verify"]) {
 const now = new Date().toISOString();
 const sealed = sealResearchPackage({
   runId,
-  prd: { prdId: prd.prdId, title: prd.title, domain: prd.domain, payloadHash: sha256(stableStringify(prd)) },
+  prd: { prdId: prd.prdId, title: prd.title, domain: prd.domain, payloadHash: sha256(stableStringify(prd)), features: prd.features },
   // Client-specified colors/fonts pass through verbatim from the approved PRD
   // and take precedence downstream over design-system defaults (team rule).
   brandConstraints: prd.brandConstraints ?? null,
@@ -99,6 +103,15 @@ log(`sealed package ${sealed.payloadHash}`);
 log(`manifest ${manifest.manifestHash} (round ${round})`);
 log(`run dir: ${runDir}`);
 log(`elapsed ${(Date.now() - startedAt) / 1000}s — next: node research/ui/review-server.mjs ${runDir}`);
+
+} catch (error) {
+  await writeRunState(runDir, {
+    status: "incomplete", humanGate: "optional", runId, control,
+    startedAt: priorState?.startedAt || new Date().toISOString(),
+    liveVerified: false, reason: error.code || "assembly_failed", detail: error.message,
+  });
+  throw error;
+}
 
 function parseArgs(argv) {
   const out = {};
