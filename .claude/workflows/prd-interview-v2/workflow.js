@@ -1,9 +1,10 @@
 export const meta = {
   name: 'prd-interview-v2',
   description: 'PRD에서 역할별 페르소나를 뽑아 가상 인터뷰를 돌리고, 불편사항을 검증해 v2 PRD로 개정한다 (프롬프트는 prompts/*.md)',
-  whenToUse: 'PRD 초안이 있고 실제 유저 인터뷰가 불가능할 때. 2단계로 돌린다. 1단계 args: {prdPath, outDir, promptsDir, maxTurns?, skipInterviewer?} → 인터뷰 1회 + 검증 + 사람에게 물을 질문 목록. 2단계 args: {stage: "revise", prdPath, outDir, promptsDir, answers: [{id, answer}]} → PRD-v2.md (모든 경로는 절대경로)',
+  whenToUse: 'PRD 초안이 있고 실제 유저 인터뷰가 불가능할 때. 2단계로 돌린다. 1단계 args: {prdPath, outDir, promptsDir, maxTurns?, skipInterviewer?} → 여정 걷기(빠진 플로우) + 인터뷰 1회 + 검증 + 사람에게 물을 질문 목록. 2단계 args: {stage: "revise", prdPath, outDir, promptsDir, answers: [{id, answer}]} → PRD-v2.md (모든 경로는 절대경로)',
   phases: [
     { title: 'Prepare', detail: '페르소나 추출 + 제품 설명서 작성', model: 'sonnet' },
+    { title: 'Journey', detail: '페르소나별 첫 진입→마무리 여정을 걸어 빠진 화면·플로우 찾기 (인터뷰 없음)', model: 'sonnet' },
     { title: 'Stories', detail: '페르소나별 유저스토리·인터뷰 질문', model: 'sonnet' },
     { title: 'Interview', detail: '인터뷰어·응답자 2-에이전트 질답 (1회)', model: 'sonnet' },
     { title: 'Extract', detail: '전사 기록 + 불편사항 추출', model: 'sonnet' },
@@ -147,6 +148,40 @@ const VERDICT_SCHEMA = {
   required: ['refuted', 'reason'],
 }
 
+const GAP_ITEM = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    whereNeeded: { type: 'string', description: '여정의 어느 단계에서 필요한지' },
+    summary: { type: 'string', description: '무엇이 빠졌고 없으면 왜 막히는지' },
+    mode: { type: 'string', enum: ['baseline', 'interview'], description: 'baseline: 표준이 있어 인터뷰 없이 제안으로 충분 / interview: 사용자 반응이 설계를 좌우해 인터뷰로 다뤄야 함 (예: 초대받은 사람의 첫 진입)' },
+    proposal: { type: 'string', description: 'baseline일 때 PRD에 넣을 표준 제안. interview면 빈 문자열' },
+    question: { type: 'string', description: 'PRD 소유자가 골라야 할 갈림길이 있으면 한 문장 질문, 없으면 빈 문자열' },
+    options: { type: 'array', items: { type: 'string' }, description: 'question이 있을 때 선택지 2~4개' },
+  },
+  required: ['name', 'whereNeeded', 'summary', 'mode', 'proposal', 'question', 'options'],
+}
+
+const JOURNEY_SCHEMA = {
+  type: 'object',
+  properties: {
+    steps: { type: 'array', items: { type: 'string' }, description: '여정 단계 한 줄씩 (첫 진입부터 마무리까지)' },
+    gaps: { type: 'array', items: GAP_ITEM },
+  },
+  required: ['steps', 'gaps'],
+}
+
+const FLOWS_SCHEMA = {
+  type: 'object',
+  properties: {
+    flows: {
+      type: 'array',
+      items: { ...GAP_ITEM, properties: { id: { type: 'string', description: 'F0-1, F0-2… 순번' }, ...GAP_ITEM.properties }, required: ['id', ...GAP_ITEM.required] },
+    },
+  },
+  required: ['flows'],
+}
+
 const QUESTIONS_SCHEMA = {
   type: 'object',
   properties: {
@@ -156,7 +191,7 @@ const QUESTIONS_SCHEMA = {
         type: 'object',
         properties: {
           id: { type: 'string', description: 'Q1, Q2… 순번' },
-          kind: { type: 'string', enum: ['undecided', 'conflict', 'followup'], description: 'undecided: PRD 미정 사항 / conflict: 페르소나 간 충돌 / followup: 2라운드에서 물었을 후속 질문' },
+          kind: { type: 'string', enum: ['baseline', 'undecided', 'conflict', 'followup'], description: 'baseline: 빠진 기본 플로우 결정 / undecided: PRD 미정 사항 / conflict: 페르소나 간 충돌 / followup: 2라운드에서 물었을 후속 질문' },
           question: { type: 'string', description: 'PRD 소유자에게 던지는 한 문장 질문' },
           why: { type: 'string', description: '이 질문이 나온 근거 (관련 기능 id, 불편사항 id, 페르소나 발언)' },
           options: { type: 'array', items: { type: 'string' }, description: '가능한 선택지 2~4개 (없으면 빈 배열)' },
@@ -202,6 +237,7 @@ function chunkQuestions(questions, n) {
 const files = {
   personas: `${outDir}/personas.md`,
   walkthrough: `${outDir}/product-walkthrough.md`,
+  missingFlows: `${outDir}/missing-flows.md`,
   painPoints: `${outDir}/pain-points.md`,
   openQuestions: `${outDir}/open-questions.md`,
   prdV2: `${outDir}/PRD-v2.md`,
@@ -220,6 +256,7 @@ if (stage === 'revise') {
       'PRD 경로': prdPath,
       '페르소나 파일': files.personas,
       '제품 설명서 파일': files.walkthrough,
+      '빠진 플로우 파일': files.missingFlows,
       '불편사항 파일': files.painPoints,
       '질문 파일': files.openQuestions,
       '답변': answers,
@@ -251,9 +288,48 @@ const [personaResult, walk] = await parallel([
 
 if (!personaResult || !walk) throw new Error('준비 단계 실패: 페르소나 또는 제품 설명서가 비어 있음')
 const personas = personaResult.personas
-const features = walk.features
+log(`페르소나 ${personas.length}명: ${personas.map((p) => p.role).join(', ')} / 기능 ${walk.features.length}개`)
+
+// ---------- Phase 2: Journey ----------
+// 페르소나마다 "제품을 처음 만나는 순간 → 마지막까지"를 걸으며 기능 목록에 없는 화면·플로우를 찾는다. 인터뷰 없음.
+phase('Journey')
+log('페르소나별 여정 걷기 (병렬)')
+const journeys = (
+  await parallel(
+    personas.map((p) => () =>
+      agent(
+        withPrompt('12-journey.md', {
+          '페르소나': personaCard(p),
+          '제품 소개서': walk.walkthrough,
+          '기능 목록': walk.features,
+          '저장 경로': `${outDir}/journeys/${p.slug}.md`,
+        }),
+        { schema: JOURNEY_SCHEMA, ...SUB, label: `${p.slug} journey`, phase: 'Journey' },
+      ).then((j) => (j ? { persona: p, ...j } : null)),
+    ),
+  )
+).filter(Boolean)
+const rawGaps = journeys.flatMap((j) => j.gaps.map((g) => ({ ...g, persona: j.persona.role })))
+log(`여정 ${journeys.length}건, 빠진 항목 ${rawGaps.length}개 (병합 전)`)
+
+// 페르소나 간 중복을 합쳐 F0-n 목록으로. baseline은 인터뷰 없이 제안이 PRD-v2로, interview는 기능 목록에 합쳐 인터뷰를 탄다.
+const merged = rawGaps.length
+  ? await agent(
+      withPrompt('13-merge-gaps.md', { '기능 목록': walk.features, '빠진 항목': rawGaps, '저장 경로': files.missingFlows }),
+      { schema: FLOWS_SCHEMA, ...SUB, label: 'missing-flows.md', phase: 'Journey' },
+    )
+  : null
+const flows = merged ? merged.flows : []
+const baseline = flows.filter((f) => f.mode === 'baseline')
+const entry = flows.filter((f) => f.mode === 'interview')
+const baselineQuestions = baseline.filter((f) => f.question).map((f) => ({ flowId: f.id, name: f.name, question: f.question, options: f.options }))
+
+const features = [...walk.features, ...entry.map((f) => ({ id: f.id, name: f.name, summary: f.summary }))]
 const featureIds = features.map((f) => f.id)
-log(`페르소나 ${personas.length}명: ${personas.map((p) => p.role).join(', ')} / 기능 ${features.length}개`)
+const walkthroughText = entry.length
+  ? `${walk.walkthrough}\n\n**제품에 들어오는 방법 (PRD가 정하지 않음)**\n${entry.map((f) => `- ${f.name}: ${f.summary}`).join('\n')}`
+  : walk.walkthrough
+log(`빠진 플로우 ${flows.length}개: baseline ${baseline.length}개(인터뷰 생략, 소유자 질문 ${baselineQuestions.length}개), interview ${entry.length}개(기능 목록에 합쳐 인터뷰)`)
 
 // ---------- per-persona: stories → interview → extract ----------
 // skipInterviewer=true면 인터뷰어 호출 없이 stories가 만든 질문을 그대로 응답자에게 던진다 (턴당 호출 1개 절약).
@@ -266,7 +342,7 @@ async function runInterviewSkipInterviewer(p, questions) {
     const a = await agent(
       withPrompt('05-respondent.md', {
         '당신': personaCard(p),
-        '당신이 소개받은 제품': walk.walkthrough,
+        '당신이 소개받은 제품': walkthroughText,
         '지금까지의 대화': transcriptText(transcript),
         '인터뷰어의 질문': chunk.map((x, i) => `${i + 1}. ${x.question}`).join('\n'),
       }),
@@ -296,7 +372,7 @@ async function runInterview(p, questions) {
     const a = await agent(
       withPrompt('05-respondent.md', {
         '당신': personaCard(p),
-        '당신이 소개받은 제품': walk.walkthrough,
+        '당신이 소개받은 제품': walkthroughText,
         '지금까지의 대화': transcriptText(transcript),
         '인터뷰어의 질문': q.questions.map((x, i) => `${i + 1}. ${x}`).join('\n'),
       }),
@@ -351,7 +427,7 @@ async function verifyPersonaResult(result) {
       agent(
         withPrompt('08-verify.md', {
           '페르소나': personaCard(result.persona),
-          '제품 소개서': walk.walkthrough,
+          '제품 소개서': walkthroughText,
           '불편사항': pp,
         }),
         { schema: VERDICT_SCHEMA, ...SUB, label: `verify ${pp.id}`, phase: 'Verify' },
@@ -392,7 +468,8 @@ const [painDoc, oq] = await parallel([
   () =>
     agent(
       withPrompt('11-open-questions.md', {
-        '제품 소개서': walk.walkthrough,
+        '제품 소개서': walkthroughText,
+        '기본 플로우 질문': baselineQuestions.length ? baselineQuestions : null,
         '기능 목록': features,
         '다뤄지지 않은 기능': uncoveredFinal.length ? featureNames(uncoveredFinal) : '없음',
         '페르소나': personas,
@@ -403,8 +480,16 @@ const [painDoc, oq] = await parallel([
       { schema: QUESTIONS_SCHEMA, ...SUB, label: 'open-questions.md', phase: 'Questions' },
     ),
 ])
-const questions = oq ? oq.questions : []
-log(`사람에게 물을 질문 ${questions.length}개`)
+// 마지막은 항상 자유 응답: 위 질문에 없지만 빠진 것, 하고 싶은 말.
+const FREE_QUESTION = {
+  id: 'Q-free',
+  kind: 'open',
+  question: '위 질문에 없지만 PRD에 반영하고 싶은 것, 빠졌다고 느끼는 것, 방향에 대해 하고 싶은 말이 있으면 자유롭게 적어주세요. (없으면 "없음")',
+  why: '인터뷰와 여정 걷기가 놓친 것을 PRD 소유자가 직접 보탤 수 있도록 항상 마지막에 둔다.',
+  options: [],
+}
+const questions = [...(oq ? oq.questions : []), FREE_QUESTION]
+log(`사람에게 물을 질문 ${questions.length}개 (자유 응답 1개 포함)`)
 
 return {
   stage: 'interview',
@@ -412,8 +497,9 @@ return {
   features: features.length,
   painPoints: { passed: passed.length, rejected: rejected.length },
   uncoveredFeatures: uncoveredFinal,
+  missingFlows: { baseline: baseline.map((f) => f.name), interview: entry.map((f) => f.name) },
   questions,
-  files: [files.personas, files.walkthrough, `${outDir}/stories/`, `${outDir}/interviews/`, files.painPoints, files.openQuestions],
+  files: [files.personas, files.walkthrough, `${outDir}/journeys/`, files.missingFlows, `${outDir}/stories/`, `${outDir}/interviews/`, files.painPoints, files.openQuestions],
   painDocWritten: !!(painDoc && painDoc.ok),
-  nextStep: `위 questions를 워크플로우를 돌리는 사람에게 물어 답을 받은 뒤, 같은 scriptPath로 args: { stage: 'revise', prdPath, outDir, promptsDir, answers: [{ id, answer }] } 를 넘겨 다시 실행하면 PRD-v2.md가 만들어진다.`,
+  nextStep: `위 questions를 워크플로우를 돌리는 사람에게 순서대로 묻는다. 마지막 Q-free는 선택지 없이 자유롭게 답하게 한다 ("없음"도 답이다). 답을 받은 뒤, 같은 scriptPath로 args: { stage: 'revise', prdPath, outDir, promptsDir, answers: [{ id, answer }] } 를 넘겨 다시 실행하면 PRD-v2.md가 만들어진다.`,
 }
