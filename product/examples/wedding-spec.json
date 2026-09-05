@@ -1,0 +1,667 @@
+{
+  "version": 1,
+  "id": "prd-wedding-invitation-v1",
+  "title": "소중한 날",
+  "language": "ko",
+  "system": "shadcn",
+  "tokens": {
+    "primary": "#18181b",
+    "onPrimary": "#fafafa",
+    "bg": "#fafafa",
+    "surface": "#ffffff",
+    "text": "#09090b",
+    "muted": "#71717a",
+    "border": "#e4e4e7",
+    "fontFamily": "'Inter', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",
+    "radius": "8px"
+  },
+  "viewports": [
+    {
+      "id": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "entryScreen": "w-template",
+  "components": [
+    "Button",
+    "Card",
+    "Field",
+    "Notice",
+    "Screen"
+  ],
+  "screens": [
+    {
+      "id": "w-template",
+      "route": "/w-template",
+      "sourceScreenId": "w-template",
+      "title": "우리의 이야기를 시작해요",
+      "description": "1 / 5 · 마음에 드는 청첩장을 골라 주세요.",
+      "prdScreen": "Template gallery",
+      "sections": [
+        {
+          "id": "templates",
+          "title": "오래 간직하고 싶은 초대",
+          "items": [
+            {
+              "id": "classic",
+              "title": "클래식 레터",
+              "description": "단정한 서체와 여백으로 전하는 진심"
+            },
+            {
+              "id": "gallery",
+              "title": "포토 갤러리",
+              "description": "같이 걸어온 순간을 담은 초대"
+            },
+            {
+              "id": "minimal",
+              "title": "심플 모먼트",
+              "description": "필요한 정보를 또렷하게 전하는 초대"
+            }
+          ],
+          "fields": [
+            {
+              "id": "template",
+              "label": "청첩장 템플릿",
+              "type": "select",
+              "required": true,
+              "value": "클래식 레터",
+              "options": [
+                "클래식 레터",
+                "포토 갤러리",
+                "심플 모먼트"
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "choose-template",
+          "label": "이 템플릿으로 시작",
+          "to": "w-info",
+          "kind": "submit"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "empty",
+          "title": "검색 결과 없음",
+          "message": "다른 템플릿을 선택해 주세요.",
+          "tone": "info"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류 / 저장 실패",
+          "message": "입력 내용을 확인한 후 다시 시도해 주세요. 작성한 내용은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "w-info",
+      "route": "/w-info",
+      "sourceScreenId": "w-info",
+      "title": "두 분의 소식을 알려 주세요",
+      "description": "2 / 5 · 하객에게 안내할 기본 정보예요.",
+      "prdScreen": "Invitation editor",
+      "sections": [
+        {
+          "id": "couple",
+          "title": "결혼하는 두 사람",
+          "fields": [
+            {
+              "id": "groom",
+              "label": "신랑 이름",
+              "type": "text",
+              "required": true,
+              "value": "민준"
+            },
+            {
+              "id": "bride",
+              "label": "신부 이름",
+              "type": "text",
+              "required": true,
+              "value": "서연"
+            }
+          ]
+        },
+        {
+          "id": "event",
+          "title": "예식 일시와 장소",
+          "fields": [
+            {
+              "id": "date",
+              "label": "예식 날짜",
+              "type": "date",
+              "required": true,
+              "value": "2026-10-24"
+            },
+            {
+              "id": "venue",
+              "label": "예식장",
+              "type": "text",
+              "required": true,
+              "value": "그랜드 웨딩홀 3층"
+            },
+            {
+              "id": "address",
+              "label": "주소",
+              "type": "text",
+              "required": true,
+              "value": "서울시 강남구 테헤란로 123"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "save-info",
+          "label": "사진과 인사말로",
+          "to": "w-media",
+          "kind": "submit"
+        },
+        {
+          "id": "back-template",
+          "label": "이전 단계",
+          "to": "w-template",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류 / 저장 실패",
+          "message": "입력 내용을 확인한 후 다시 시도해 주세요. 작성한 내용은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "w-media",
+      "route": "/w-media",
+      "sourceScreenId": "w-media",
+      "title": "우리다운 인사를 전해요",
+      "description": "3 / 5 · 사진과 인사말을 꾸며 주세요.",
+      "prdScreen": "Invitation editor",
+      "sections": [
+        {
+          "id": "photo",
+          "title": "대표 사진",
+          "image": true,
+          "fields": [
+            {
+              "id": "photo",
+              "label": "사진 추가",
+              "type": "file",
+              "required": false,
+              "value": ""
+            }
+          ]
+        },
+        {
+          "id": "message",
+          "title": "초대의 글",
+          "fields": [
+            {
+              "id": "greeting",
+              "label": "인사말",
+              "type": "textarea",
+              "required": true,
+              "value": "저희 두 사람이 사랑과 믿음으로 한 가정을 이루게 되었습니다. 귀한 걸음으로 축복해 주세요."
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "preview",
+          "label": "하객 화면 미리보기",
+          "to": "w-preview",
+          "kind": "submit"
+        },
+        {
+          "id": "back-info",
+          "label": "이전 단계",
+          "to": "w-info",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류 / 저장 실패",
+          "message": "입력 내용을 확인한 후 다시 시도해 주세요. 작성한 내용은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "w-preview",
+      "route": "/w-preview",
+      "sourceScreenId": "w-preview",
+      "title": "초대장을 확인해 주세요",
+      "description": "4 / 5 · 하객에게 보일 내용을 마지막으로 확인해 주세요.",
+      "sections": [
+        {
+          "id": "access",
+          "body": "소중한 분들을 초대합니다. 로그인 없이 보실 수 있어요."
+        },
+        {
+          "id": "hero",
+          "title": "우리의 결혼식 · {{template}}",
+          "image": true
+        },
+        {
+          "id": "names",
+          "title": "{{groom}} ♥ {{bride}}, 결혼합니다"
+        },
+        {
+          "id": "greeting",
+          "body": "{{greeting}}"
+        },
+        {
+          "id": "ceremony",
+          "title": "예식 안내",
+          "body": "{{date}} · 오후 1시\n{{venue}}"
+        },
+        {
+          "id": "calendar",
+          "title": "기억해 주세요",
+          "body": "소중한 약속을 캘린더에 남겨 주세요."
+        },
+        {
+          "id": "directions",
+          "title": "오시는 길",
+          "body": "{{address}}"
+        },
+        {
+          "id": "map",
+          "title": "예식장 위치",
+          "body": "지도는 데모 안내입니다. 실제 위치는 예식장 주소로 확인해 주세요."
+        },
+        {
+          "id": "address-copy",
+          "body": "{{address}}"
+        },
+        {
+          "id": "transport",
+          "title": "교통 안내",
+          "body": "지하철 2호선 역삼역 3번 출구에서 도보 5분. 버스 146, 341번 역삼역 하차."
+        },
+        {
+          "id": "parking",
+          "title": "주차 안내",
+          "body": "건물 지하 1~3층 · 2시간 무료. 안내데스크에서 차량 번호를 등록해 주세요."
+        },
+        {
+          "id": "transfer",
+          "title": "마음 전하실 곳",
+          "body": "축하의 마음만으로도 감사합니다. 은행 송금은 이 데모에서 지원하지 않습니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "publish",
+          "label": "청첩장 발행하기",
+          "to": "w-publish",
+          "kind": "submit",
+          "targetState": "success"
+        },
+        {
+          "id": "edit",
+          "label": "내용 수정하기",
+          "to": "w-info",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류 / 저장 실패",
+          "message": "입력 내용을 확인한 후 다시 시도해 주세요. 작성한 내용은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "w-publish",
+      "route": "/w-publish",
+      "sourceScreenId": "w-publish",
+      "title": "초대장이 준비되었어요",
+      "description": "5 / 5 · 링크를 복사해 소중한 분께 전해 주세요.",
+      "sections": [
+        {
+          "id": "published",
+          "title": "{{groom}} ♥ {{bride}}의 결혼식",
+          "body": "링크는 현재 로컬 미리보기 주소입니다. 외부 공개 발행은 하지 않습니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "copy-link",
+          "label": "초대장 링크 복사",
+          "to": "w-guest",
+          "kind": "copy"
+        },
+        {
+          "id": "open-guest",
+          "label": "하객 화면 열기",
+          "to": "w-guest",
+          "kind": "navigate"
+        },
+        {
+          "id": "edit-published",
+          "label": "내용 수정",
+          "to": "w-info",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "success",
+          "title": "완료",
+          "message": "정상적으로 저장되었습니다. 이 데모의 데이터는 현재 브라우저에만 보관됩니다.",
+          "tone": "success"
+        }
+      ]
+    },
+    {
+      "id": "w-guest",
+      "route": "/w-guest",
+      "sourceScreenId": "w-guest",
+      "title": "{{groom}} ♥ {{bride}}의 결혼식",
+      "description": "{{date}} · 오후 1시",
+      "prdScreen": "Guest invitation page",
+      "sections": [
+        {
+          "id": "access",
+          "body": "소중한 분들을 초대합니다. 로그인 없이 보실 수 있어요."
+        },
+        {
+          "id": "hero",
+          "title": "우리의 결혼식 · {{template}}",
+          "image": true
+        },
+        {
+          "id": "names",
+          "title": "{{groom}} ♥ {{bride}}, 결혼합니다"
+        },
+        {
+          "id": "greeting",
+          "body": "{{greeting}}"
+        },
+        {
+          "id": "ceremony",
+          "title": "예식 안내",
+          "body": "{{date}} · 오후 1시\n{{venue}}"
+        },
+        {
+          "id": "calendar",
+          "title": "기억해 주세요",
+          "body": "소중한 약속을 캘린더에 남겨 주세요."
+        },
+        {
+          "id": "directions",
+          "title": "오시는 길",
+          "body": "{{address}}"
+        },
+        {
+          "id": "map",
+          "title": "예식장 위치",
+          "body": "지도는 데모 안내입니다. 실제 위치는 예식장 주소로 확인해 주세요."
+        },
+        {
+          "id": "address-copy",
+          "body": "{{address}}"
+        },
+        {
+          "id": "transport",
+          "title": "교통 안내",
+          "body": "지하철 2호선 역삼역 3번 출구에서 도보 5분. 버스 146, 341번 역삼역 하차."
+        },
+        {
+          "id": "parking",
+          "title": "주차 안내",
+          "body": "건물 지하 1~3층 · 2시간 무료. 안내데스크에서 차량 번호를 등록해 주세요."
+        },
+        {
+          "id": "transfer",
+          "title": "마음 전하실 곳",
+          "body": "축하의 마음만으로도 감사합니다. 은행 송금은 이 데모에서 지원하지 않습니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "rsvp",
+          "label": "참석 여부 회신",
+          "to": "w-rsvp",
+          "kind": "navigate"
+        },
+        {
+          "id": "calendar",
+          "label": "캘린더 안내",
+          "to": "w-guest",
+          "kind": "unavailable",
+          "sectionId": "calendar",
+          "capability": "calendar",
+          "variant": "secondary"
+        },
+        {
+          "id": "copy-address",
+          "label": "주소 복사",
+          "to": "w-guest",
+          "kind": "copy",
+          "sectionId": "address-copy",
+          "variant": "secondary"
+        },
+        {
+          "id": "bank",
+          "label": "송금 안내",
+          "to": "w-guest",
+          "kind": "unavailable",
+          "sectionId": "transfer",
+          "capability": "bank",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        }
+      ]
+    },
+    {
+      "id": "w-rsvp",
+      "route": "/w-rsvp",
+      "sourceScreenId": "w-rsvp",
+      "title": "함께해 주실 수 있나요?",
+      "description": "원활한 예식 준비를 위해 참석 여부를 알려 주세요.",
+      "prdScreen": "RSVP form",
+      "sections": [
+        {
+          "id": "reply",
+          "title": "참석 정보",
+          "fields": [
+            {
+              "id": "guestName",
+              "label": "성함",
+              "type": "text",
+              "required": true,
+              "value": ""
+            },
+            {
+              "id": "attendance",
+              "label": "참석 여부",
+              "type": "select",
+              "required": true,
+              "value": "참석",
+              "options": [
+                "참석",
+                "불참"
+              ]
+            },
+            {
+              "id": "headcount",
+              "label": "총 참석 인원",
+              "type": "number",
+              "required": true,
+              "value": "1",
+              "min": 1,
+              "visibleWhen": {
+                "field": "attendance",
+                "equals": "참석"
+              }
+            },
+            {
+              "id": "meal",
+              "label": "식사 여부",
+              "type": "select",
+              "required": true,
+              "value": "식사 예정",
+              "options": [
+                "식사 예정",
+                "식사 안 함"
+              ],
+              "visibleWhen": {
+                "field": "attendance",
+                "equals": "참석"
+              }
+            }
+          ]
+        },
+        {
+          "id": "privacy",
+          "body": "입력 정보는 예식 준비를 위한 데모이며, 이 브라우저에만 저장됩니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "submit-rsvp",
+          "label": "회신 보내기",
+          "to": "w-rsvp",
+          "kind": "submit",
+          "targetState": "success"
+        },
+        {
+          "id": "return-invite",
+          "label": "초대장으로 돌아가기",
+          "to": "w-guest",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류 / 저장 실패",
+          "message": "입력 내용을 확인한 후 다시 시도해 주세요. 작성한 내용은 유지됩니다.",
+          "tone": "error"
+        },
+        {
+          "id": "success",
+          "title": "회신 완료",
+          "message": "회신을 전달했어요. 함께해 주셔서 감사합니다.",
+          "tone": "success"
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "flow-build",
+      "name": "청첩장 만들고 공유하기",
+      "screenIds": [
+        "w-template",
+        "w-info",
+        "w-media",
+        "w-preview",
+        "w-publish",
+        "w-guest"
+      ],
+      "actionIds": [
+        "choose-template",
+        "save-info",
+        "preview",
+        "publish",
+        "open-guest"
+      ]
+    },
+    {
+      "id": "flow-guest",
+      "name": "하객이 참석 의사 전달하기",
+      "screenIds": [
+        "w-guest",
+        "w-rsvp",
+        "w-rsvp",
+        "w-guest"
+      ],
+      "actionIds": [
+        "rsvp",
+        "submit-rsvp",
+        "return-invite"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "storage",
+      "status": "local",
+      "description": "폼과 회신을 현재 브라우저에 저장합니다."
+    },
+    {
+      "id": "publish",
+      "status": "mock",
+      "description": "발행은 로컬 프로토타입 상태 변경입니다. 외부 공개되지 않습니다."
+    },
+    {
+      "id": "calendar",
+      "status": "unavailable",
+      "description": "캘린더 연동은 연결되지 않았습니다. 예식 일시를 직접 등록해 주세요."
+    },
+    {
+      "id": "bank",
+      "status": "unavailable",
+      "description": "실제 송금과 은행 앱 연결은 지원하지 않습니다."
+    }
+  ],
+  "rationale": [
+    "The wizard structure and shadcn concept are pinned to committed r3 examples. Approval is a user-authorized scenario assumption, not a historical receipt.",
+    "The selected representative section order is retained. Additional builder screens reuse the same tokens and controls.",
+    "System font fallbacks are intentional; no remote font is promised. Maps, publishing and external integrations are declared frontend-only capabilities."
+  ]
+}

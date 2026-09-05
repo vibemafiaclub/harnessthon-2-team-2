@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "root": ".",
+  "system": "shadcn",
+  "prd": {
+    "path": "prd.json",
+    "sha256": "6c3b6d45813242d285e169b9c86c6679712ab7d149cb4fd1a4e0d77dbf3f6dcd"
+  },
+  "spec": {
+    "path": "normalized-spec.json",
+    "sha256": "134eca9f2c29314e009586ccb0d86c04bddf89723dd2c1f6971cbbe31ec933b6"
+  },
+  "wireframe": {
+    "manifest": {
+      "path": "manifests/wireframe.json",
+      "sha256": "0542f0424337c9e6b469df6013be27630ae9d97155567c7d99a8a3098cea28d4"
+    },
+    "artifact": {
+      "path": "manifests/wireframe.html",
+      "sha256": "6bee86705320f1112351332e76a7944812067459f7d19e08dbb863b94c643358"
+    },
+    "artifactId": "fixture-wireframe",
+    "selectedId": "reservation"
+  },
+  "concept": {
+    "manifest": {
+      "path": "manifests/concept.json",
+      "sha256": "f45e8b1cf5770f6224308576e786d2da7602586bd21329994e6edc9af781659e"
+    },
+    "artifact": {
+      "path": "manifests/concept.html",
+      "sha256": "a73b6a1681b30d979e3d2367e2ac1810e2279d9efd64089ddd15913c1eaa8d76"
+    },
+    "artifactId": "fixture-concept",
+    "selectedId": "pet-care"
+  },
+  "scope": {
+    "screens": [
+      {
+        "id": "reservation-home",
+        "states": [
+          "default",
+          "error"
+        ]
+      },
+      {
+        "id": "carer-list",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "reservation-form",
+        "states": [
+          "default",
+          "error"
+        ]
+      },
+      {
+        "id": "reservation-complete",
+        "states": [
+          "default",
+          "success"
+        ]
+      },
+      {
+        "id": "reservation-detail",
+        "states": [
+          "default"
+        ]
+      }
+    ],
+    "viewports": [
+      {
+        "id": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "id": "desktop",
+        "width": 1280,
+        "height": 900
+      }
+    ]
+  },
+  "brandConstraints": {
+    "primary": "#0f766e",
+    "bg": "#f8fafc",
+    "surface": "#ffffff",
+    "text": "#0f172a",
+    "fontFamily": "'Pretendard', -apple-system, sans-serif"
+  },
+  "compatibility": {
+    "prdHash": "6c3b6d45813242d285e169b9c86c6679712ab7d149cb4fd1a4e0d77dbf3f6dcd",
+    "wireframeHash": "6bee86705320f1112351332e76a7944812067459f7d19e08dbb863b94c643358",
+    "conceptHash": "a73b6a1681b30d979e3d2367e2ac1810e2279d9efd64089ddd15913c1eaa8d76",
+    "representativeScreenId": "reservation-home",
+    "sectionOrder": [
+      "hero",
+      "search"
+    ],
+    "basis": "Synthetic fixture: source structure and visual tokens are explicitly pinned for deterministic portability tests."
+  },
+  "approval": {
+    "kind": "user-authorized-scenario",
+    "authorization": "Test fixture authorization: upstream scenario is explicitly assumed for pipeline validation.",
+    "assumption": "Synthetic fixture labels preserve the distinction between an assumption and a historical human receipt."
+  }
+}
