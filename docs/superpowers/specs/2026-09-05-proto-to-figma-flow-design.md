@@ -66,6 +66,7 @@ stage: 'build'
   README.md              # 실행법 (§7)
   workflow.js            # 두 단계 모두
   prompts/
+    00-preflight.md
     01-extract.md
     02-capture.md
     03-connect.md
@@ -132,9 +133,35 @@ stage: 'build'
 
 ## 6. stage: build
 
+**목표: 다른 컴퓨터·다른 디자이너가 처음 이 워크플로우를 돌려도, 환경이 안 맞으면 캡처를 우르르 실패시키는 대신 시작 전에 멈추고 무엇을 고쳐야 하는지 알려준다.**
+
 ### 스크립트: decisions 반영
 
 에이전트 없이 스크립트가 처리한다. `flow` 데이터는 Extract 반환값을 다시 쓸 수 없으므로(다른 실행), Build 시작 시 Read 전용 에이전트 대신 **`args.flow`로 flow.json 내용을 통째로 넘긴다** (메인 세션이 파일을 읽어 넣음). `drop`은 screens·edges에서 제거, `merge`는 `into` 노드로 합치고 엣지 재지정. `reachable: false`는 제외.
+
+### Preflight 에이전트 (00-preflight.md), 1개, low — Capture 전에 반드시 먼저 실행
+
+캡처를 시작하기 전에 이 환경에서 실제로 돌아갈지 확인한다. 화면 10개를 캡처하다 8번째에서야 dev 서버가 안 떠 있다는 걸 알게 되는 상황을 막는다.
+
+입력: `devUrl`, `figmaFileKey`, 화면 목록 중 1개(대표 화면 하나만 시험용으로).
+
+점검 항목과 실패 시 처리:
+
+| 점검 | 방법 | 실패 시 |
+|---|---|---|
+| dev 서버가 떠 있는가 | `devUrl`에 HTTP 요청(curl 또는 WebFetch) | `checks.devServer = false`, 안내: "`devUrl`에서 응답이 없습니다. 프로토타입 dev 서버(`npm run dev` 등)를 먼저 실행하세요." |
+| Figma MCP가 연결됐는가 | `ToolSearch`로 `mcp__plugin_figma_figma__whoami` 로드 후 호출 | `checks.figmaConnected = false`, 안내: "Figma MCP가 연결되지 않았습니다. Claude Code에서 Figma 플러그인 로그인 상태를 확인하세요." |
+| `figmaFileKey`가 유효한 파일을 가리키는가 | `get_metadata({ fileKey: figmaFileKey })` 호출 | `checks.fileKeyValid = false`, 안내: "figmaFileKey가 잘못됐거나 접근 권한이 없습니다. `/figma-create-new-file`로 새 파일을 만들거나 URL에서 fileKey를 다시 확인하세요." |
+| 대표 화면 캡처가 실제로 되는가 | 화면 1개로 `generate_figma_design` → 폴링까지 실제 실행 | `checks.sampleCapture = false`, 실패 원문을 `checks.sampleCaptureError`에 담는다 |
+
+넷 다 통과하면 `ok: true`와 함께 대표 화면의 `figmaNodeId`를 반환한다 (Capture 단계에서 그 화면은 재사용해 중복 캡처하지 않는다). 하나라도 실패하면 `ok: false`와 `checks`, 사람이 읽을 `message`(위 표의 안내문을 실패한 항목만 모아서)를 반환한다.
+
+스크립트는 Preflight가 `ok: false`면 **Capture·Connect를 실행하지 않고 즉시 반환**한다:
+
+```js
+{ stage: 'build', ok: false, phase: 'preflight', checks, message,
+  nextStep: '안내된 항목을 고친 뒤 같은 args로 다시 실행하세요.' }
+```
 
 ### Capture 에이전트 (02-capture.md), 화면당 1개
 
@@ -144,6 +171,8 @@ stage: 'build'
 2. 돌려받은 캡처 스크립트를 `devUrl + path + query`에 대해 도구 안내대로 실행한다 (로컬 dev 서버는 도구가 직접 열고, 안 되면 Playwright MCP로 연다). 정확한 실행 방식은 구현 시 첫 화면으로 한 번 확인한다.
 3. `captureId`로 5초 간격 폴링, 최대 10회.
 4. 반환: `{ id, figmaNodeId, ok, error }`. 실패 시 재시도 1회 후 `ok: false`.
+
+화면 하나가 실패해도 스크립트는 멈추지 않는다. `agent()`가 예외를 던지거나 `ok: false`를 반환해도 그 화면만 `captureFailed`에 담고 나머지 화면은 계속 진행한다 (§8 "No silent caps" 원칙에 따라 `result.md`에 실패 목록을 반드시 남긴다).
 
 스크립트는 `pipeline`이 아니라 **동시 수 제한이 있는 루프**로 돌린다 (Workflow의 동시 cap은 16이라 rate limit 보호가 안 됨): 화면을 `concurrency` 크기로 잘라 `parallel`로 묶음씩 실행.
 
@@ -172,6 +201,14 @@ stage: 'build'
 
 ## 7. 실행법 (README 초안)
 
+### 2단계 실행 전 로컬 준비물 (다른 컴퓨터에서 처음 돌릴 때)
+
+1. 프로토타입 의존성 설치·dev 서버 실행 (예: `npm install && npm run dev`), 뜬 포트를 `devUrl`로 쓴다.
+2. Figma에 빈 파일 하나 준비 (`/figma-create-new-file` 또는 기존 파일 URL에서 fileKey 추출).
+3. Claude Code에서 Figma 플러그인 로그인 상태 확인 (연결 안 돼 있으면 Preflight가 잡아낸다).
+
+준비물이 안 맞아도 워크플로우가 죽지 않는다 — Preflight가 안내 메시지로 멈춘다.
+
 ```js
 // 1단계
 Workflow({ scriptPath: "<repo>/.claude/workflows/proto-to-figma/workflow.js",
@@ -182,6 +219,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/proto-to-figma/workflow.js",
 Workflow({ scriptPath: "<same>",
   args: { stage: 'build', outDir, promptsDir, devUrl, figmaFileKey,
           flow: <flow.json 내용>, decisions: [{ id: 'S7', action: 'drop' }], concurrency: 3 } })
+// ok: false가 오면 message를 그대로 사용자에게 보여주고, 고친 뒤 같은 args로 재실행한다
 ```
 
 ## 8. 깎은 것과 나중에 붙일 것
