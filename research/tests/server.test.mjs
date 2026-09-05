@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { sealResearchPackage } from "../lib/evidence.mjs";
+import { sealLegacyPackage as sealResearchPackage } from "./fixtures.mjs";
 import { buildReviewManifest, REVIEW_QUESTIONS } from "../lib/review.mjs";
 import { createControlState } from "../lib/limits.mjs";
 import { ensureRunDir, listDecisions, writeJsonRevision, writeRunState, readRunState } from "../lib/store.mjs";

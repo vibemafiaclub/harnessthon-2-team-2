@@ -97,6 +97,11 @@ function render() {
   const { manifest, package: pkg, verification, state, decisions } = data;
   const app = document.getElementById("app");
   app.replaceChildren();
+  if (!pkg) {
+    app.append(el("h1", {}, "리서치 미완료"), el("div", { class: "banner err" }, state?.detail || "충분한 근거를 확보하지 못했습니다. 리서치를 보완한 뒤 다시 조립하세요."));
+    document.getElementById("decide").hidden = true;
+    return;
+  }
   const elapsedMin = (pkg.timing.elapsedMs / 60000).toFixed(1);
   app.append(
     el("h1", {}, `증거 리뷰 — ${pkg.prd.title}`),
@@ -110,6 +115,36 @@ function render() {
   else if (status === "escalated") app.append(el("div", { class: "banner err" }, "휴먼 라운드 한도를 초과해 에스컬레이션되었습니다. 담당자와 직접 조율하세요."));
   else if (status === "verified_autonomous") app.append(el("div", { class: "banner done" }, "자율 검증 통과 — 내부 증거 검수(라이브 재검증)를 통과해 다운스트림에서 소비 가능한 상태입니다. 이 화면은 선택적 점검용이며, 반려·피드백을 남기면 수리 라운드가 시작됩니다."));
   else app.append(el("div", { class: "banner" }, "아래 증거를 확인하고 카드별 조치와 5개 질문에 답한 뒤 결정하세요. 승인은 지금 화면의 정확한 콘텐츠에 바인딩됩니다."));
+
+  if (!pkg.prd.features) app.append(el("div", { class: "banner err" }, "기존 형식의 리서치입니다. 3개 경쟁사·전체 PRD 기능 기준은 검증되지 않았습니다. 재사용하려면 승인 PRD를 기준으로 다시 조립해야 합니다."));
+  if (status === "incomplete") app.append(el("div", { class: "banner err" }, `리서치 미완료: ${state.detail || state.reason || "근거 보완 필요"}`));
+
+  // Feature matrix
+  app.append(el("h2", {}, "기능 비교 매트릭스"));
+  const head = el("tr", {}, el("th", {}, "PRD 기능"), ...pkg.competitors.map((c) => el("th", {}, c.name)), el("th", {}, "아이디어"));
+  const rows = pkg.featureMatrix.map((row) => el("tr", {},
+    el("td", {}, row.prdFeature,
+      el("div", { class: "meta" }, row.featureId),
+      el("div", {}, pkg.prd.features?.find(f => f.featureId === row.featureId)?.description || "")),
+    ...pkg.competitors.map((c) => {
+      const cell = row.perCompetitor[c.competitorId];
+      if (!cell) return el("td", { class: "st st-unknown" }, "미확인");
+      return el("td", {}, el("span", { class: `st st-${cell.status}` }, STATUS_KO[cell.status]),
+        el("div", {}, cell.status === "unknown" ? "구현 방식 미확인" : cell.cardIds.map(id => pkg.cards.find(card => card.cardId === id)?.claim || "").join("; ")),
+        cell.cardIds.length ? el("details", {}, el("summary", {}, `근거 ${cell.cardIds.length}건`),
+          ...cell.cardIds.map(id => {
+            const card = pkg.cards.find(card => card.cardId === id);
+            const kind = { product_behavior: "직접 관찰", product_documentation: "제품 문서", marketing_description: "마케팅 설명", unknown: "미확인" }[card?.observationType] || "기존 근거";
+            return el("div", {}, el("a", { href: `#card-${id}` }, `#${id}`),
+              el("span", { class: "badge" }, kind),
+              card?.source ? el("a", { href: card.source.url, target: "_blank" }, "출처") : "",
+              card?.proof?.quote ? el("div", { class: "quote" }, card.proof.quote) : "");
+          })) : "");
+    }),
+    el("td", {}, (row.ideas || []).join("; "))
+  ));
+  app.append(el("table", {}, head, ...rows));
+  app.append(el("div", { class: "meta" }, "미확인(unknown)은 '기능 없음'이 아니라 '근거를 찾지 못함'입니다. 부재 확인은 명시적 근거가 있을 때만 표시됩니다."));
 
   // Scope
   app.append(el("h2", {}, "리서치 범위"));
@@ -131,21 +166,6 @@ function render() {
     ));
   }
 
-  // Feature matrix
-  app.append(el("h2", {}, "기능 비교 매트릭스"));
-  const head = el("tr", {}, el("th", {}, "PRD 기능"), ...pkg.competitors.map((c) => el("th", {}, c.name)), el("th", {}, "아이디어"));
-  const rows = pkg.featureMatrix.map((row) => el("tr", {},
-    el("td", {}, row.prdFeature),
-    ...pkg.competitors.map((c) => {
-      const cell = row.perCompetitor[c.competitorId];
-      if (!cell) return el("td", { class: "st st-unknown" }, "미확인");
-      return el("td", {}, el("span", { class: `st st-${cell.status}` }, STATUS_KO[cell.status]),
-        cell.cardIds.length ? el("div", { class: "meta" }, cell.cardIds.map((id) => `#${id}`).join(", ")) : "");
-    }),
-    el("td", {}, (row.ideas || []).join("; "))
-  ));
-  app.append(el("table", {}, head, ...rows));
-  app.append(el("div", { class: "meta" }, "미확인(unknown)은 '기능 없음'이 아니라 '근거를 찾지 못함'입니다. 부재 확인은 명시적 근거가 있을 때만 표시됩니다."));
 
   // Unknown / contradiction summary
   const unknowns = pkg.cards.filter((card) => card.status === "unknown");

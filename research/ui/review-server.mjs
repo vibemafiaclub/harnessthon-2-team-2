@@ -29,6 +29,8 @@ const server = createServer(async (request, response) => {
       return send(response, 200, html, "text/html; charset=utf-8");
     }
     if (request.method === "GET" && url.pathname === "/api/run") {
+      const currentState = await readRunState(runDir);
+      if (currentState?.status === "incomplete") return sendJson(response, 200, { state: currentState, package: null, manifest: null, verification: {}, decisions: [] });
       const [manifest, pkg, verification, state, decisions] = await Promise.all([
         readJson(runDir, "manifest"),
         readJson(runDir, "package"),
