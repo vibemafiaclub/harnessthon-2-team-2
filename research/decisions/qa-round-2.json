@@ -1,0 +1,26 @@
+{
+  "$schema": "workflow-qa-decisions/v1",
+  "askedAt": "2026-09-05T07:05:00Z",
+  "answeredBy": "user (Simon), in-session AskUserQuestion batch 2",
+  "context": "Team feedback (Mirae/Mina/Jiwon, 2026-09-05 15:27-15:49; see /Users/simon/code/harnessthon-2-team-2/local-archive/feedback-2026-09-05-1549.md): stage 2 runs autonomously and selects the top three competitors; stage 3 distills three reference types from those top three, so reference selection depends on competitor ranking. Source/evidence verification stays.",
+  "decisions": [
+    {
+      "id": "qa5.reference-types",
+      "question": "What do the 'three reference types' distilled from the top-three competitors mean?",
+      "answer": "style_layout_interaction_categories",
+      "effect": "Stage 3 produces exactly three reference categories — visual style, screen layout/structure, interaction patterns — each with a direction summary, supporting references, and evidence-card citations drawn from the top-three competitors. Downstream: wireframe lane consumes layout+interaction, visual lane consumes style."
+    },
+    {
+      "id": "qa6.stage3-human-gate",
+      "question": "Does the original stage-3 human reference confirmation remain?",
+      "answer": "removed_fully_autonomous",
+      "effect": "Stages 2-3 run without a blocking human approval gate. Internal source/evidence verification (live quote re-fetch, downgrade-on-failure) remains mandatory. The review UI and feedback JSON channel remain available as optional inspection, but the run reaches 'verified_autonomous' and is downstream-consumable once internal verification passes; a human decision receipt is no longer required for handoff."
+    },
+    {
+      "id": "qa7.top3-ranking",
+      "question": "What is the top-three competitor ranking basis?",
+      "answer": "ai_holistic_judgment_with_recorded_rationale",
+      "effect": "The convergence stage ranks competitors holistically (evidence coverage, feature similarity, reference value) and must record a per-rank rationale sentence in the package (competitorRanking[].rationale). Rankings are acknowledged as not strictly reproducible; the rationale is the audit trail."
+    }
+  ]
+}

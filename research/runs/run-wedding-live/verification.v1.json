@@ -1,0 +1,168 @@
+{
+  "card.comp.barunson-mcard.templates-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:39.620Z"
+  },
+  "card.comp.barunson-mcard.gallery-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:39.722Z"
+  },
+  "card.comp.barunson-mcard.map-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:39.759Z"
+  },
+  "card.comp.barunson-mcard.gift-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:39.795Z"
+  },
+  "card.comp.barunson-mcard.rsvp-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:39.796Z"
+  },
+  "card.kakao-share-docs.share-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:40.106Z"
+  },
+  "card.kakao-share-docs.template-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:40.331Z"
+  },
+  "card.kakao-maps-js.map-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:40.450Z"
+  },
+  "card.kakao-maps-js.map-2": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:40.450Z"
+  },
+  "card.blissandbone-rsvp.rsvp-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:41.895Z"
+  },
+  "card.blissandbone-rsvp.rsvp-2": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:41.896Z"
+  },
+  "card.collectui.visual-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:42.422Z"
+  },
+  "card.comp-theirmood.templates-1": {
+    "checked": true,
+    "verified": false,
+    "reason": "quote_not_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.142Z"
+  },
+  "card.comp-theirmood.rsvp-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.145Z"
+  },
+  "card.comp-theirmood.gallery-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.147Z"
+  },
+  "card.comp-theirmood.map-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.149Z"
+  },
+  "card.comp-theirmood.gift-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.151Z"
+  },
+  "card.comp-yeonseo.templates-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.244Z"
+  },
+  "card.comp-yeonseo.rsvp-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.273Z"
+  },
+  "card.comp-yeonseo.gallery-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.301Z"
+  },
+  "card.comp-yeonseo.map-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.301Z"
+  },
+  "card.comp-yeonseo.gift-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T06:41:43.302Z"
+  },
+  "card.comp-theirmood.homepage-shot": {
+    "checked": false,
+    "reason": "screenshot_proof_not_text_checkable"
+  },
+  "card.comp-yeonseo.homepage-shot": {
+    "checked": false,
+    "reason": "screenshot_proof_not_text_checkable"
+  },
+  "card.comp.barunson-mcard.homepage-shot": {
+    "checked": false,
+    "reason": "screenshot_proof_not_text_checkable"
+  }
+}

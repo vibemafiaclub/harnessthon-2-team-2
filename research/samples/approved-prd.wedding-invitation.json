@@ -1,0 +1,36 @@
+{
+  "$schema": "approved-prd/v1",
+  "prdId": "prd.wedding-invitation.v1",
+  "title": "Mobile wedding invitation builder",
+  "domain": "wedding invitation",
+  "problem": "Couples without design skills need to create and share a polished mobile wedding invitation page (date, venue, RSVP, gallery) quickly and affordably.",
+  "audience": "Engaged couples in their 20s-30s planning a wedding, primarily on mobile, in Korea and similar markets.",
+  "coreTasks": [
+    "Create an invitation from a template and personalize text, photos, and theme",
+    "Share the invitation link via messaging apps",
+    "Collect RSVP responses and congratulatory messages",
+    "Show venue location, directions, and account transfer info for gifts"
+  ],
+  "features": [
+    { "featureId": "feat.templates", "name": "Template gallery", "description": "Pre-designed invitation templates the user can pick and customize.", "priority": "p0" },
+    { "featureId": "feat.rsvp", "name": "RSVP collection", "description": "Guests submit attendance, headcount, and meal preference.", "priority": "p0" },
+    { "featureId": "feat.gallery", "name": "Photo gallery", "description": "Couple photo gallery with lightbox viewing.", "priority": "p1" },
+    { "featureId": "feat.map", "name": "Venue map and directions", "description": "Embedded map, transit guidance, and parking info.", "priority": "p0" },
+    { "featureId": "feat.gift", "name": "Gift account info", "description": "Bank account reveal for congratulatory money, per side of the family.", "priority": "p1" }
+  ],
+  "constraints": [
+    "Mobile-first web page output",
+    "No paid screen-library sources may be used during research"
+  ],
+  "brandConstraints": {
+    "colors": [
+      { "role": "primary", "value": "#2F4A3C", "note": "Client-specified deep green" },
+      { "role": "accent", "value": "#C9A96A" }
+    ],
+    "fonts": [
+      { "role": "heading", "family": "Nanum Myeongjo", "note": "Client-specified serif for names/headings" }
+    ],
+    "notes": "Client-specified values override design-system default colors/fonts downstream; unspecified properties use the selected system's defaults."
+  },
+  "approval": { "approvedBy": "prd-refinement-stage (fixture)", "approvedAt": "2026-09-04T09:00:00Z" }
+}

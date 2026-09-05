@@ -1,0 +1,1448 @@
+{
+  "$schema": "competitor-research-package/v1",
+  "runId": "run-wedding-live",
+  "prd": {
+    "prdId": "prd.wedding-invitation.v1",
+    "title": "Mobile wedding invitation builder",
+    "domain": "wedding invitation",
+    "payloadHash": "sha256:b8efe393593bd7766aa53f15373c0f7e7599b5dbdc10252ff11e4124f78ac1dc"
+  },
+  "scope": {
+    "problem": "Couples without design skills need to create and share a polished mobile wedding invitation page (date, venue, RSVP, gallery) quickly and affordably.",
+    "audience": "Engaged couples in their 20s-30s planning a wedding, primarily on mobile, in Korea and similar markets.",
+    "jobs": [
+      "Create an invitation from a template and personalize text, photos, and theme",
+      "Share the invitation link via messaging apps",
+      "Collect RSVP responses and congratulatory messages",
+      "Show venue location, directions, and account transfer info for gifts"
+    ],
+    "featureScope": [
+      "feat.templates: Template gallery - pre-designed invitation templates the user can pick and customize (p0)",
+      "feat.rsvp: RSVP collection - guests submit attendance, headcount, and meal preference (p0)",
+      "feat.gallery: Photo gallery - couple photo gallery with lightbox viewing (p1)",
+      "feat.map: Venue map and directions - embedded map, transit guidance, and parking info (p0)",
+      "feat.gift: Gift account info - bank account reveal for congratulatory money, per side of the family (p1)"
+    ]
+  },
+  "brandConstraints": {
+    "source": "approved-prd",
+    "precedence": "client_values_override_design_system_defaults",
+    "unspecifiedProperties": "selected_system_defaults",
+    "colors": [
+      {
+        "role": "primary",
+        "value": "#2F4A3C",
+        "note": "Client-specified deep green"
+      },
+      {
+        "role": "accent",
+        "value": "#C9A96A",
+        "note": null
+      }
+    ],
+    "fonts": [
+      {
+        "role": "heading",
+        "family": "Nanum Myeongjo",
+        "note": "Client-specified serif for names/headings"
+      }
+    ],
+    "notes": "Client-specified values override design-system default colors/fonts downstream; unspecified properties use the selected system's defaults."
+  },
+  "competitors": [
+    {
+      "competitorId": "comp.barunson-mcard",
+      "name": "Barunson Mcard (바른손카드 모바일청첩장)",
+      "url": "https://mcard.barunsoncard.com/",
+      "rationale": {
+        "sharedProblem": "Lets couples without design skills produce a polished mobile wedding invitation page quickly; marketed as free/unlimited mobile invitation creation, directly addressing the affordability angle of the PRD problem.",
+        "sharedAudience": "Korean engaged couples in their 20s-30s preparing weddings on mobile; Barunson is Korea's best-known wedding invitation brand and its Mcard product targets exactly this segment.",
+        "sharedJobs": [
+          "Create an invitation from a template and personalize text, photos, and theme",
+          "Share the invitation link via messaging apps (link copy and QR code from My Page)",
+          "Show venue location, directions, and account transfer info for gifts (약도/map image, 축의금 계좌번호 reveal)"
+        ],
+        "featureOverlap": [
+          "feat.templates - large mobile invitation template gallery (Product/MobileInvitationList, Product/Detail pages)",
+          "feat.gallery - couple photo gallery within the invitation page",
+          "feat.map - venue map/directions section (약도 image, QR usage)",
+          "feat.gift - congratulatory money account-number section",
+          "feat.rsvp - attendance-check function on invitation pages"
+        ]
+      },
+      "accessLimitations": [
+        "Building or previewing a personalized invitation requires Barunson account signup/login; My Page features are not publicly crawlable",
+        "Some feature explanations live in FAQ pages split across desktop (www.barunsoncard.com) and mobile (m.barunsoncard.com) domains, and parts are rendered as images rather than quotable text",
+        "Template detail pages show sample invitations; live customer invitations are private links"
+      ]
+    },
+    {
+      "competitorId": "comp.theirmood",
+      "name": "데어무드 (Theirmood)",
+      "url": "https://theirmood.com/",
+      "rationale": {
+        "sharedProblem": "Couples without design skills need a polished, shareable mobile wedding invitation page quickly and affordably; Theirmood sells exactly this as a flat-priced Korean SaaS (~19,800 KRW) with free draft creation and unlimited editing until the wedding date.",
+        "sharedAudience": "Engaged Korean couples in their 20s-30s planning weddings on mobile, sharing invitations via KakaoTalk — the same primary audience and market as the PRD.",
+        "sharedJobs": [
+          "Create a designed mobile invitation page from templates without design skills",
+          "Show wedding date, venue map, and directions automatically from the venue address",
+          "Collect RSVPs with attendance tracking, KakaoTalk notifications, and Excel export",
+          "Display a photo gallery (up to 100 photos, multiple layouts)",
+          "Share the invitation link with guests via mobile messaging"
+        ],
+        "featureOverlap": [
+          "56 design templates with animation effects",
+          "RSVP system with automated attendance tracking",
+          "Photo gallery with grid/swipe/thumbnail layouts",
+          "Auto-generated venue map, directions, and transport info",
+          "Guestbook and guest photo upload (QR-based 'snap') features",
+          "Flat affordable one-time pricing, free draft before purchase"
+        ]
+      },
+      "accessLimitations": [
+        "Editing dashboard and management features require sign-up/purchase; homepage marketing content was verified, not the logged-in editor",
+        "Some review counts on the homepage render obscured (e.g. '00+') without JS"
+      ]
+    },
+    {
+      "competitorId": "comp.yeonseo",
+      "name": "연서 (Yeonseo)",
+      "url": "https://www.yeonseo.kr/",
+      "rationale": {
+        "sharedProblem": "Couples want a polished mobile invitation without hiring a designer; Yeonseo advertises creating and sharing a complete mobile invitation in about 5 minutes for a single low one-time price (₩9,800 for one year).",
+        "sharedAudience": "Korean engaged couples in their 20s-30s, mobile-first, sharing invitations through KakaoTalk — matching the PRD's audience and market.",
+        "sharedJobs": [
+          "Build a template-based mobile invitation page quickly with no design skills",
+          "Present date, venue, and directions (Kakao/Naver/Tmap map integration)",
+          "Collect RSVPs and congratulatory guestbook messages from guests",
+          "Show a wedding photo gallery (up to 30 photos, slideshow or grid)",
+          "Share via KakaoTalk card, short URL, and QR code"
+        ],
+        "featureOverlap": [
+          "Design templates (classical, modern, minimal, vintage)",
+          "RSVP and guestbook",
+          "Photo gallery with slideshow/grid display",
+          "Venue map and transit guidance integrations",
+          "Bank account info display with one-click copy",
+          "KakaoTalk/URL/QR sharing"
+        ]
+      },
+      "accessLimitations": [
+        "Invitation editor and RSVP management require account sign-up; only public marketing pages were verified",
+        "Site content is Korean-only"
+      ]
+    }
+  ],
+  "competitorRanking": [
+    {
+      "competitorId": "comp.yeonseo",
+      "rank": 1,
+      "rationale": "Yeonseo has the strongest evidence coverage: every card is observed, and the public /sample live invitation directly shows the guest-facing RSVP form, gallery, directions, and per-side account rows with copy buttons — actual rendered UI rather than marketing claims. Its curated four-style template families and letter-styled visual direction (serif type, ivory/deep-green palette) make it the most concrete design reference, even though the observed RSVP form omits the PRD's headcount/meal fields and parking info was absent."
+    },
+    {
+      "competitorId": "comp.theirmood",
+      "rank": 2,
+      "rationale": "Theirmood matches the PRD feature-for-feature most completely: its RSVP covers all three PRD fields (attendance, companion headcount, meal) plus a dashboard and Kakao notifications, its map deep-links to Kakao/Naver/Tmap with parking info, and its gift section adds one-click copy and KakaoTalk transfer. The weakness is evidence quality — nearly all cards rest on homepage marketing feature lists (medium reliability) rather than an operated invitation, and the template-count card is currently unknown after a failed re-fetch."
+    },
+    {
+      "competitorId": "comp.barunson-mcard",
+      "rank": 3,
+      "rationale": "Barunson Mcard covers all PRD areas and has a genuinely differentiated gift flow (card-paid 축의금 converted to points with per-side settlement, documented in first-party FAQ), plus a large ~100-template gallery with public previews. But its RSVP and directions evidence is only indirect (Area_Name identifiers in template JSON, with map support possibly a static uploaded 약도), and live invitations are private, so it offers the least observable guest-facing UI to distill design references from."
+    }
+  ],
+  "references": [
+    {
+      "referenceId": "ref.kakao-share-docs",
+      "title": "Kakao Developers — Kakao Talk Share & Message Template docs",
+      "url": "https://developers.kakao.com/docs/en/kakaotalk-share/common",
+      "kind": "official_docs",
+      "whyRelevant": "Official spec for the 'share invitation link via KakaoTalk' task: defines the share flow and the message-template structure (image + text + up to 2 buttons) the invitation share card must fit."
+    },
+    {
+      "referenceId": "ref.kakao-maps-js",
+      "title": "Kakao Maps JavaScript Web API (apis.map.kakao.com)",
+      "url": "https://apis.map.kakao.com/web/",
+      "kind": "official_docs",
+      "whyRelevant": "Official docs for the embedded venue-location map: free quota, markers for the venue pin, and HTML custom overlays usable for a styled venue label/directions bubble."
+    },
+    {
+      "referenceId": "ref.blissandbone-rsvp",
+      "title": "Bliss & Bone — Wedding Website RSVP: Setup, Etiquette & Tracking Guide",
+      "url": "https://blissandbone.com/resources/rsvp-wedding-websites",
+      "kind": "article",
+      "whyRelevant": "Domain-specific RSVP UX conventions: which questions to ask (attendance, guest count, meal), form length targets, deadlines, and host-side response tracking — maps directly to the RSVP collection task."
+    },
+    {
+      "referenceId": "ref.nngroup-web-form-design",
+      "title": "Nielsen Norman Group — Website Forms Usability",
+      "url": "https://www.nngroup.com/articles/web-form-design/",
+      "kind": "article",
+      "whyRelevant": "General form-usability heuristics (single column, minimal fields, label placement) that apply to the mobile RSVP form and the invitation text-personalization editor."
+    },
+    {
+      "referenceId": "ref.collectui",
+      "title": "Collect UI — Daily User Interface Inspiration",
+      "url": "https://collectui.com/",
+      "kind": "pattern_gallery",
+      "whyRelevant": "Free-to-browse UI shot gallery (categories browsable without login) usable for visual references for card/gallery layouts, event pages, and form styling; a free substitute for the off-limits paid libraries."
+    },
+    {
+      "referenceId": "ref.nngroup-mobile-carousels",
+      "title": "Nielsen Norman Group — Carousels on Mobile Devices",
+      "url": "https://www.nngroup.com/articles/mobile-carousels/",
+      "kind": "article",
+      "whyRelevant": "Research-based guidance for the swipe photo-gallery pattern that all three top competitors advertise (Yeonseo slide layout, Theirmood swipe/thumbnail-swipe, Barunson 30-photo gallery): swipe support, weak dot signifiers, and reachability of items in few steps."
+    },
+    {
+      "referenceId": "ref.mdn-web-share-api",
+      "title": "MDN — Web Share API",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API",
+      "kind": "official_docs",
+      "whyRelevant": "Official spec for the OS-level share fallback behind KakaoTalk sharing: confirms sharing must be user-initiated (transient activation / button tap), matching the Kakao Share model of an explicit in-page share button and covering non-Kakao messengers."
+    }
+  ],
+  "referenceDistillation": [
+    {
+      "category": "interaction",
+      "direction": "Optimize the three guest tasks for one-tap completion. RSVP: a form finishable in under two minutes covering attendance, companion headcount, and meal preference (Theirmood's field set fills the gap in Yeonseo's observed minimal form), with a visible deadline and host-side response tracking. Gifts and directions: per-account one-click copy plus KakaoTalk transfer linking, and deep links out to Kakao/Naver/Tmap navigation apps with transit and parking details. Sharing and gallery: explicit user-tapped share buttons (Kakao Share feed template with one hero image and at most two short buttons, Web Share API as the OS-level fallback) and a swipe-first photo gallery that does not rely on dot indicators alone.",
+      "referenceIds": [
+        "ref.blissandbone-rsvp",
+        "ref.kakao-share-docs",
+        "ref.mdn-web-share-api",
+        "ref.nngroup-mobile-carousels"
+      ],
+      "cardIds": [
+        "card.comp-theirmood.rsvp-1",
+        "card.comp-yeonseo.rsvp-1",
+        "card.comp-theirmood.gift-1",
+        "card.comp-theirmood.map-1",
+        "card.comp-yeonseo.gift-1",
+        "card.kakao-share-docs.share-1",
+        "card.kakao-share-docs.template-1",
+        "card.blissandbone-rsvp.rsvp-1",
+        "card.blissandbone-rsvp.rsvp-2",
+        "card.mdn-web-share-api.share-1",
+        "card.nngroup-mobile-carousels.gallery-1"
+      ],
+      "rationale": "Task patterns come mainly from rank-2 Theirmood, which the ranking calls the most complete PRD match: its RSVP card covers all three PRD fields plus dashboard and Kakao notifications, its directions card names Kakao/Naver/Tmap deep links with parking info, and its gift card documents one-click copy plus 카톡 송금 — while rank-1 Yeonseo's observed sample proves the per-relative copy-button row pattern in rendered UI but omits headcount/meal, so the two are combined. Platform docs (Kakao Share's manual-selection model, Web Share's user-gesture requirement) and the Bliss & Bone two-minute/deadline guidance anchor the completion-budget and share-button decisions independently of competitor marketing."
+    },
+    {
+      "category": "layout",
+      "direction": "Structure the invitation as a single scrolling mobile page with a fixed section order — hero photo, greeting, photo gallery, 오시는 길 (venue and directions), 마음 전하실 곳 (per-side accounts), RSVP — where each section is an independently toggleable module the couple can switch on or off. Group congratulatory-money accounts under 신랑측/신부측 headers with one row per relative (bank, holder, number, copy button), following Yeonseo's observed sample. Keep the RSVP form single-column with minimal fields per NN/g form guidance, and let template selection happen through full live-sample previews rather than static thumbnails.",
+      "referenceIds": [
+        "ref.nngroup-web-form-design"
+      ],
+      "cardIds": [
+        "card.comp.barunson-mcard.gallery-1",
+        "card.comp.barunson-mcard.map-1",
+        "card.comp.barunson-mcard.rsvp-1",
+        "card.comp-yeonseo.gift-1",
+        "card.comp-yeonseo.rsvp-1",
+        "card.comp-theirmood.gallery-1"
+      ],
+      "rationale": "The section inventory is corroborated across all three ranked competitors: Barunson's public preview JSON names 갤러리, 오시는길, RSVP, and 축의금송금 areas and its FAQ documents ON/OFF section toggles; Yeonseo's live /sample invitation actually renders the gallery, directions, per-side account rows, and RSVP form in that scrolling order — the only guest-facing page observed end-to-end, per the rank-1 rationale. Theirmood's 100-photo multi-layout gallery card justifies treating the gallery as a configurable module rather than a fixed strip."
+    },
+    {
+      "category": "style",
+      "direction": "Adopt Yeonseo's letter-styled classic direction as the primary visual reference: serif Korean typography, an ivory ground with a deep-green accent, and a small set of curated, named style families (클래식/모던/미니멀/빈티지) rather than Barunson's commerce-style grid of ~100 skins. Lead every theme with the couple's photo as the hero, echoing Barunson's photo-card mockup presentation, and carry the theme's typography and colors into embedded widgets — e.g. an HTML custom overlay on the venue map — so no section breaks the invitation's mood. Use Collect UI shots only as a taste board for soft-palette card layouts, not as interaction evidence.",
+      "referenceIds": [
+        "ref.collectui",
+        "ref.kakao-maps-js"
+      ],
+      "cardIds": [
+        "card.comp-yeonseo.homepage-shot",
+        "card.comp-yeonseo.templates-1",
+        "card.comp.barunson-mcard.homepage-shot",
+        "card.kakao-maps-js.map-2",
+        "card.collectui.visual-1"
+      ],
+      "rationale": "The rank-1 competitor's strongest observed asset is its visual identity: the live homepage capture shows serif type, ivory/deep-green palette, and a letter metaphor, and its template model is four curated families previewable as complete live samples (recognition over recall). Barunson (rank 3) evidences the opposite pole — a large image-heavy skin marketplace — which the ranking rationale treats as less distillable; the curated direction is therefore the better-grounded style reference. The Kakao Maps custom-overlay card supplies the mechanism for extending that theme into the map section."
+    }
+  ],
+  "featureMatrix": [
+    {
+      "featureId": "feat.templates",
+      "prdFeature": "Template gallery",
+      "perCompetitor": {
+        "comp.barunson-mcard": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp.barunson-mcard.templates-1"
+          ]
+        },
+        "comp.theirmood": {
+          "status": "unknown",
+          "cardIds": []
+        },
+        "comp.yeonseo": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-yeonseo.templates-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Offer a live per-template sample preview (Barunson embeds a /preview/{id} iframe on each template detail page) so users can judge designs before signing up — recognition rather than recall.",
+        "Prefill editor fields from the chosen template and defer optional sections, per NN/g guidance to remove fields that can be derived, deferred, or omitted.",
+        "Differentiate on curation quality over raw count: Barunson markets '100여종의 스킨' via image-heavy pages; a smaller, well-tagged gallery with fast lightweight previews could feel better on mobile."
+      ]
+    },
+    {
+      "featureId": "feat.rsvp",
+      "prdFeature": "RSVP collection",
+      "perCompetitor": {
+        "comp.barunson-mcard": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp.barunson-mcard.rsvp-1"
+          ]
+        },
+        "comp.theirmood": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-theirmood.rsvp-1"
+          ]
+        },
+        "comp.yeonseo": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-yeonseo.rsvp-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Keep the guest form under a two-minute budget: attendance yes/no, headcount, meal preference only, single-column with labels above fields (Bliss & Bone + NN/g).",
+        "Barunson's RSVP scope (headcount/meal collection) is unverified publicly — shipping the PRD's full headcount+meal form with a host response dashboard is a credible differentiation candidate.",
+        "Surface the RSVP deadline prominently on the form and give hosts a response-count dashboard (three-to-four-weeks-before convention)."
+      ]
+    },
+    {
+      "featureId": "feat.gallery",
+      "prdFeature": "Photo gallery",
+      "perCompetitor": {
+        "comp.barunson-mcard": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp.barunson-mcard.gallery-1"
+          ]
+        },
+        "comp.theirmood": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-theirmood.gallery-1"
+          ]
+        },
+        "comp.yeonseo": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-yeonseo.gallery-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Match Barunson's baseline: ~30-photo capacity with the gallery as an ON/OFF toggleable section of the invitation.",
+        "Lightbox full-screen viewing (the PRD's interaction) was not confirmed at Barunson — a polished swipeable lightbox is a low-cost differentiation candidate.",
+        "Use Collect UI as a taste board for hero-photo-led, soft-palette gallery layouts (aesthetic direction only, not interaction evidence)."
+      ]
+    },
+    {
+      "featureId": "feat.map",
+      "prdFeature": "Venue map and directions",
+      "perCompetitor": {
+        "comp.barunson-mcard": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp.barunson-mcard.map-1"
+          ]
+        },
+        "comp.theirmood": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-theirmood.map-1"
+          ]
+        },
+        "comp.yeonseo": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-yeonseo.map-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Embed an interactive Kakao Map with a venue marker plus copy-address and open-in-Kakao-Navi actions; Barunson's template hints at a static 약도-image fallback in some contexts, so a true interactive map can exceed the observed baseline.",
+        "Use a Kakao Maps HTML custom overlay for the venue name/hall bubble so the map keeps the invitation's typography and colors.",
+        "Include explicit transit-guidance and parking-info text fields — neither was confirmed in Barunson's public template structure."
+      ]
+    },
+    {
+      "featureId": "feat.gift",
+      "prdFeature": "Gift account info",
+      "perCompetitor": {
+        "comp.barunson-mcard": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp.barunson-mcard.gift-1"
+          ]
+        },
+        "comp.theirmood": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-theirmood.gift-1"
+          ]
+        },
+        "comp.yeonseo": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-yeonseo.gift-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Ship the PRD baseline as collapsible per-side (신랑측/신부측) account reveals with one-tap account-number copy — the simple flow Barunson wraps inside a heavier points system.",
+        "Barunson goes beyond static display with card-payment 축의금 that settles per side; treat in-page payment as a later roadmap item, not MVP.",
+        "Adopt Barunson's error-prevention lesson: route and label everything strictly by family side to avoid misdirected transfers."
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "cardId": "card.comp.barunson-mcard.templates-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "Barunson Mcard offers a template (skin) gallery of roughly 100+ pre-designed mobile invitation designs that users pick and customize; the homepage links to dozens of individual template detail pages (/Product/Detail/{id}).",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/",
+        "publisher": "Barunson Mcard (바른손카드)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:15:30Z",
+        "context": "Feature-highlight section of the homepage, alongside hashtags '#다양한 스킨' and links to ~60 /Product/Detail/{id} template pages"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "고퀄리티 100여종의 스킨!"
+      },
+      "limitations": [
+        "This is a first-party marketing tagline, not an observed count; the '100여종' (about 100 kinds) figure was not independently verified, though the homepage HTML links to 60+ distinct template detail pages, which corroborates a sizable gallery.",
+        "Template customization flow itself sits behind login and was not observed."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Recognition rather than recall",
+            "task": "Choosing a template",
+            "note": "Homepage surfaces many template thumbnails directly with links to per-template detail pages that embed a live sample preview iframe (/preview/{id}), so users can judge designs before signing up."
+          }
+        ],
+        "visualPreference": "Template detail pages lean on long scrollable sample screenshots hosted on mcard-resources.barunsoncard.com; polished but image-heavy presentation."
+      },
+      "cardHash": "sha256:2227fcfc0ce0a407bd987b139263215515e1b74514e7ef4173d5aae4ce146fca"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.gallery-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "Invitations include a couple photo gallery section: up to 30 gallery photos can be uploaded, and the gallery section can be toggled on/off; the sample invitation template structure contains dedicated '갤러리' and '갤러리 타이틀 이미지' areas.",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/Customer/Faq/2",
+        "publisher": "Barunson Mcard (바른손카드)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:18:30Z",
+        "context": "FAQ answer to '제작 시 사진은 몇 장 필요한가요', which also states '갤러리는 사용/사용안함 선택하실 수 있습니다.'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "갤러리용사진은 최대 30장까지 업로드 가능합니다."
+      },
+      "limitations": [
+        "FAQ is a first-party help description, not a live guest-side observation.",
+        "Whether the gallery uses lightbox-style full-screen viewing (the PRD's specific interaction) could not be confirmed from public text; live customer invitations are private links."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User control and freedom",
+            "task": "Configuring invitation sections",
+            "note": "Gallery (like other sections) is an ON/OFF toggleable module — homepage promotes 'ON/OFF 기능' to enable only needed menus."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:16ab02062913680399c6ca4cbb6559684da8da858b8adcaff035638b1c12b263"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.map-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "Invitation pages contain a dedicated venue-directions section: the public sample invitation template (/preview/1121) defines '오시는길' (directions) and '오시는길 타이틀 이미지' content areas in its structure.",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/preview/1121",
+        "publisher": "Barunson Mcard (바른손카드)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:17:30Z",
+        "context": "Template area-definition JSON embedded in the public sample-invitation preview page (iframe src on template detail page /Product/Detail/1121); the page also contains '<!-- 오시는 길 -->' section markers"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "\"Area_Name\":\"오시는길\""
+      },
+      "limitations": [
+        "Evidence is a structural section identifier in template JSON, not rendered guest-facing content; the areas are populated client-side by JavaScript.",
+        "Could not confirm from public pages whether the section embeds an interactive map versus a static 약도 (sketch map) image, nor whether transit guidance and parking info fields exist; the template detail page script includes the hint '지도가 지원되지 않으니, 약도 파일을 직접 업로드 해주세요.' suggesting at least some contexts fall back to an uploaded map image."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:9630d308d57c0cdc3f01de63e5ed8391a33565d15f222785528a203b63f66b7b"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.gift-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "Barunson Mcard supports congratulatory-money handling per side of the family and goes beyond static account display: guests can pay 축의금 by card to up to six recipients (groom, bride, and each side's parents), funds accrue as points, and withdrawals settle to the groom-side vs bride-side bank accounts entered when building the invitation; the sample template also has a '축의금송금' (gift transfer) section.",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/Customer/Faq",
+        "publisher": "Barunson Mcard (바른손카드)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:18:30Z",
+        "context": "FAQ answer to '축의금 포인트는 어떻게 출금하나요?'; adjacent FAQs state '하객분께서 축의금을 카드로 결제하시면 축의금은 포인트로 전환되어, 신랑, 신부님에게 각각 적립됩니다.' and that no withdrawal fee applies"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "신랑측(신랑, 신랑혼주)은 모두 신랑 계좌로, 신부측(신부, 신부혼주)은 모두 신부 계좌로 출금이 되오니 이점 참고 부탁드립니다."
+      },
+      "limitations": [
+        "FAQ text documents the card-payment/points flow; the plain bank-account-number reveal UI on the guest-facing invitation (the PRD's exact feature) is implied by the '축의금송금' template area and account-entry step but was not directly observed, since live invitations are private.",
+        "First-party help content, not an observed guest interaction."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Error prevention",
+            "task": "Couple retrieving gift money",
+            "note": "Withdrawals auto-route strictly by side (all groom-side payments to the groom's account, bride-side to the bride's), and unclaimed funds auto-remit within 14 days after the wedding — reducing misdirected-transfer risk."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:f2b62344a1344cf5ffa7b9baf6eeb2b6329098ba20485a5262a1e6eb325da2bd"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.rsvp-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "The invitation template structure includes a dedicated RSVP section: the public sample-invitation preview page defines an area named 'RSVP' (alongside 방명록/guestbook and contact areas), indicating guest attendance-response functionality exists on invitation pages.",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/preview/1121",
+        "publisher": "Barunson Mcard (바른손카드)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:17:30Z",
+        "context": "Template area-definition JSON in the public sample-invitation preview (area id 22, next to '<!--RSVP-->' section marker in the page body)"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "\"Area_Name\":\"RSVP\""
+      },
+      "limitations": [
+        "Evidence is a section identifier in template JSON, not an observed guest-facing form; the RSVP UI is rendered client-side and live invitations are private.",
+        "Could not confirm whether the RSVP form collects headcount or meal preference (the PRD's full scope) — no public FAQ entry describes the RSVP flow; only attendance-response existence is supported."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:d76f4ecdc1be019af503e842e92ab2425ec892a0960d9487b6fb1344eee8dcbf"
+    },
+    {
+      "cardId": "card.kakao-share-docs.share-1",
+      "subjectType": "reference",
+      "subjectId": "ref.kakao-share-docs",
+      "status": "observed",
+      "claim": "KakaoTalk Share is a user-initiated flow where the user picks content in the service and sends it to a chatroom, so the invitation's share entry point should be an explicit in-page share action rather than an automatic send.",
+      "source": {
+        "url": "https://developers.kakao.com/docs/en/kakaotalk-share/common",
+        "publisher": "Kakao Developers",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:17:30Z",
+        "context": "Concepts page for Kakao Talk Share, opening definition paragraph"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Kakao Talk Share is a feature that allows users to manually select content from a service and share it to a Kakao Talk chatroom."
+      },
+      "limitations": [
+        "Docs URL redirects from /docs/latest/en/... to /docs/en/...; quote taken from the redirected page.",
+        "Concepts page defers template composition details to the message-template pages."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User-initiated sharing",
+            "task": "Share the invitation link via messaging apps",
+            "note": "Provide a visible 'Share via KakaoTalk' button on the invitation page; the platform model is manual selection by the user, not automatic delivery."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:af512688c42850089e05434ee11a80b55b14f379f7faa29abc34ae65a63321c4"
+    },
+    {
+      "cardId": "card.kakao-share-docs.template-1",
+      "subjectType": "reference",
+      "subjectId": "ref.kakao-share-docs",
+      "status": "observed",
+      "claim": "Shared KakaoTalk messages are built from templates combining images, text, and buttons, so the invitation share card should be designed as one hero photo + short title/date text + a view-invitation button.",
+      "source": {
+        "url": "https://developers.kakao.com/docs/en/message-template/common",
+        "publisher": "Kakao Developers",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:18:00Z",
+        "context": "Message template 'Common' docs page, template definition section"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "You can create a message by combining various elements such as images, text, and buttons."
+      },
+      "limitations": [
+        "Same page also states button constraints (max 2 buttons; button names of 8 characters or less recommended) which were reported by the fetch but not quoted verbatim in this card."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Design to platform template constraints",
+            "task": "Share the invitation link via messaging apps",
+            "note": "Feed template = content area (image, message, social info) + buttons; page recommends at most 2 buttons with short (<=8 char) labels, e.g. '청첩장 보기'."
+          }
+        ],
+        "visualPreference": "Share preview should lead with the couple's photo as the template image; keep text to names + date to fit the compact feed-card format."
+      },
+      "cardHash": "sha256:e23605999183fb15a9a046d5ecdff118cc754e400a230676fcbd8ec5262bd669"
+    },
+    {
+      "cardId": "card.kakao-maps-js.map-1",
+      "subjectType": "reference",
+      "subjectId": "ref.kakao-maps-js",
+      "status": "observed",
+      "claim": "The Kakao Maps JS API supports placing markers on an embedded map to mark a specific place, covering the venue-pin requirement of the location section.",
+      "source": {
+        "url": "https://apis.map.kakao.com/web/",
+        "publisher": "Kakao (apis.map.kakao.com)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:16:30Z",
+        "context": "Web API landing page, feature list describing markers"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "지도 위에 마커를 올려서 특정 장소를 표시할 수 있습니다."
+      },
+      "limitations": [
+        "Landing-page marketing copy; API details (SDK loading, app key, directions deep links) live in sub-pages not fetched here."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Show, don't describe, the venue",
+            "task": "Show venue location, directions, and account transfer info",
+            "note": "Embed an interactive map with a single venue marker in the location section instead of a static address block; pair with copy-address and open-in-Kakao-Navi actions."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:3328c72c31f3262e1ae5a1b10a56cd6aa90c413961a87ef220004b50796b46a2"
+    },
+    {
+      "cardId": "card.kakao-maps-js.map-2",
+      "subjectType": "reference",
+      "subjectId": "ref.kakao-maps-js",
+      "status": "observed",
+      "claim": "Custom overlays let any HTML content be rendered on the map, enabling a themed venue label/info bubble that matches the invitation's visual theme.",
+      "source": {
+        "url": "https://apis.map.kakao.com/web/",
+        "publisher": "Kakao (apis.map.kakao.com)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:16:30Z",
+        "context": "Web API landing page, feature list describing custom overlays"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "지도 위에 HTML로 구현 가능한 모든 컨텐츠를 올릴 수 있습니다."
+      },
+      "limitations": [
+        "The page also states the API is free with a daily quota (300,000 calls/day per the landing page), relevant for a free product but not quoted in this card."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Theme continuity into embedded widgets",
+            "task": "Show venue location, directions, and account transfer info",
+            "note": "Use an HTML custom overlay for the venue name/hall/floor bubble so the map section keeps the invitation's typography and colors instead of default map UI."
+          }
+        ],
+        "visualPreference": "Style the map overlay bubble with the invitation theme (serif names, soft accent color) so the map does not break the page's mood."
+      },
+      "cardHash": "sha256:8d5012c88efc9df1a9c2ca8b3f78db8ac1b73775cfe49548a9d3aacf8cf72561"
+    },
+    {
+      "cardId": "card.blissandbone-rsvp.rsvp-1",
+      "subjectType": "reference",
+      "subjectId": "ref.blissandbone-rsvp",
+      "status": "observed",
+      "claim": "Wedding RSVP forms should be completable in under two minutes, with core questions limited to attendance yes/no, household guest count, and meal choice.",
+      "source": {
+        "url": "https://blissandbone.com/resources/rsvp-wedding-websites",
+        "publisher": "Bliss & Bone",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:16:30Z",
+        "context": "RSVP guide article, section on designing the RSVP form"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Keep the form short enough that guests can complete it in under two minutes."
+      },
+      "limitations": [
+        "US-centric wedding-website conventions; Korean mobile invitations often add congratulatory-message and meal-attendance ('식사 여부') fields not covered here.",
+        "Vendor blog (wedding website company), so guidance doubles as product marketing."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Two-minute completion budget",
+            "task": "Collect RSVP responses and congratulatory messages",
+            "note": "Limit the RSVP form to attendance yes/no, guest count, and one optional field (meal or message); article: 'The shorter the form, the higher your completion rate.'"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:d26f369b2f50ee35872d16baaa03fd8f3bff1046bd1837320acd641c1ebbb593"
+    },
+    {
+      "cardId": "card.blissandbone-rsvp.rsvp-2",
+      "subjectType": "reference",
+      "subjectId": "ref.blissandbone-rsvp",
+      "status": "observed",
+      "claim": "Convention sets the RSVP deadline three to four weeks before the wedding, so the product should surface a deadline field and countdown/reminder affordances, plus a host dashboard to track responses.",
+      "source": {
+        "url": "https://blissandbone.com/resources/rsvp-wedding-websites",
+        "publisher": "Bliss & Bone",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:16:30Z",
+        "context": "RSVP guide article, etiquette/deadline section"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "The standard RSVP deadline is three to four weeks before the wedding."
+      },
+      "limitations": [
+        "Deadline etiquette is US-oriented; Korean timelines may differ."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Deadline visibility and host tracking",
+            "task": "Collect RSVP responses and congratulatory messages",
+            "note": "Show the RSVP deadline prominently on the guest form and give hosts a response-count dashboard (article: hosts 'log into your wedding website dashboard to monitor the count')."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:08c5d369e00d7ee27bc767693a96fff9b1388d435f4d000e7b2542a8573df7c5"
+    },
+    {
+      "cardId": "card.collectui.visual-1",
+      "subjectType": "reference",
+      "subjectId": "ref.collectui",
+      "status": "observed",
+      "claim": "Collect UI is a freely browsable, curated daily UI-inspiration gallery, usable without login as a visual reference source for card, event-page, and form layouts.",
+      "source": {
+        "url": "https://collectui.com/",
+        "publisher": "Collect UI",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:18:30Z",
+        "context": "Homepage tagline/subscription blurb under the 'Daily User Interface Inspiration' heading"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Subscribe to receive hand-picked websites and interfaces curated by top creatives and delivered weekly."
+      },
+      "limitations": [
+        "No wedding-invitation-specific category was confirmed on the homepage; the category list was not visible in the fetched content, so designers must search categories (e.g. event, invitation, form) manually.",
+        "Shots are Dribbble-sourced concept work, not shipped-product evidence."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "indirect",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": "Use as a taste board for soft-palette card layouts, hero-photo-led event pages, and minimal form styling; treat shots as aesthetic direction, not interaction evidence."
+      },
+      "cardHash": "sha256:105b8f8fc4ebcaefae7c78c30333d486c2f2a6e3be93d1d1fd790079af5e0a0f"
+    },
+    {
+      "cardId": "card.comp-theirmood.templates-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "unknown",
+      "claim": "Theirmood offers a template gallery of 56 main invitation designs, which it markets as more than three times the industry average, so any uploaded photo has a matching design.",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "Numbered highlights list near the top of the homepage, under the heading '사진 한 장도, 가장 예쁘게'"
+      },
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Marketing copy on the vendor's own homepage; the 56-template count and the 'industry average' comparison were not independently verified.",
+        "The template picker itself was not operated; the logged-in editor requires sign-up.",
+        "Quote was not found in the re-fetched source; downgraded pending re-collection.",
+        "Original claimed status: observed; original quote retained in revision history."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Flexibility and efficiency of use",
+            "task": "Pick a template that suits the couple's photos",
+            "note": "Positioning templates around 'whatever photo you upload has a matching design' frames selection by photo fit rather than raw browsing, per the marketing copy."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:4678887acaa3369618f7301bbda57c4d7304a9c2de96e9672e1aa192b76be7ba"
+    },
+    {
+      "cardId": "card.comp-theirmood.rsvp-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "observed",
+      "claim": "Theirmood's RSVP module collects attendance plus configurable survey options including companion headcount, meal preference, and shuttle use, with an aggregation dashboard, Excel download, and KakaoTalk notifications for new responses.",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "Bullet under the '참석여부 · RSVP' item in the '전체 기능' feature list; sibling bullets read '참석여부 응답 집계 대시보드 제공', '응답결과 엑셀 다운로드', '신규 응답 카톡 알림 받기'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "동행인원, 식사여부, 셔틀이용 등 설문 옵션 제공"
+      },
+      "limitations": [
+        "Feature-list marketing claims; the guest-facing RSVP form and the organizer dashboard were not interacted with (dashboard is behind login).",
+        "Covers all three PRD RSVP fields (attendance, headcount, meal preference) but only as listed options, not observed form fields."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Track incoming RSVPs as the couple",
+            "note": "Real-time KakaoTalk notifications and an aggregation dashboard are advertised, suggesting couples see response status without polling."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:50c3a6067b24f9dc1b9b137c5c824601620cf6a990b8aa4b8b51e00f4a5c37b9"
+    },
+    {
+      "cardId": "card.comp-theirmood.gallery-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "observed",
+      "claim": "Theirmood provides a photo gallery supporting up to 100 photos with multiple layouts (swipe, thumbnail swipe, grid variants), reordering, thumbnail editing, and a zoom-prevention option.",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "Subtitle of the '갤러리' item in the '전체 기능' feature list; sibling bullets read '최대 100장 업로드 가능', '순서변경 및 썸네일 편집 기능제공', '확대 방지 기능지원'; a separate '웨딩 갤러리' section carries the badge '최대 100장'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "여러 장의 사진을 보기 좋게 구성할 수 있어요."
+      },
+      "limitations": [
+        "PRD-style lightbox viewing specifically is not named; the page lists layout modes and a zoom-prevention toggle, so the exact photo-viewing interaction is unconfirmed.",
+        "Layouts were read from marketing copy, not exercised in a live invitation sample."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User control and freedom",
+            "task": "Curate the couple's photos",
+            "note": "Reordering and thumbnail editing are advertised, giving couples layout control without re-uploading."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:73d4485d39bc557eea4fd05612e25a268ef8ec941bceda1ae6e2821a53dd11f1"
+    },
+    {
+      "cardId": "card.comp-theirmood.map-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "observed",
+      "claim": "Theirmood auto-recognizes the venue address/building name, links out to Kakao/Naver/T map navigation apps, and shows per-transport directions covering subway, bus, and parking info with up to four items.",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "Bullet under the '오시는 길' item in the '전체 기능' feature list; the adjacent '예식장소' item's bullets read '주소·건물명 자동 인식' and '내비게이션 지원(카카오,네이버,티앱)'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "지하철, 버스, 주차정보 등 항목 최대 4개 표시가능"
+      },
+      "limitations": [
+        "An embedded interactive map widget on the invitation page is implied ('주소·건물명 자동 인식') but was not visually observed in a rendered invitation.",
+        "Marketing feature list, not an operated sample invitation."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Match between system and the real world",
+            "task": "Guest navigates to the venue",
+            "note": "Deep links to the Korean navigation apps guests actually use (Kakao, Naver, T map) rather than a generic map only."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:f1d791c1ab7494efa0e425dd32dcacf0ada562d27b0bec0516f3c066e4825a85"
+    },
+    {
+      "cardId": "card.comp-theirmood.gift-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "observed",
+      "claim": "Theirmood shows congratulatory-money bank accounts split by groom and bride side, up to 3 groups and 6 accounts, with one-click copy and KakaoTalk transfer integration.",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "First bullet under the '계좌번호' item in the '전체 기능' feature list, whose subtitle reads '양가 계좌를 깔끔하고 정중하게 전할 수 있어요.'; sibling bullets read '최대 3개 그룹, 6개 계좌 표시 가능', '클릭 한 번으로 복사', '카톡 송금 연동 가능'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "신랑·신부 측 그룹 분리표시"
+      },
+      "limitations": [
+        "The page does not state whether account numbers are hidden behind a reveal/expand interaction (the PRD's 'reveal' pattern); only display, copy, and Kakao transfer are described.",
+        "Marketing feature list; not interacted with in a live invitation."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Error prevention",
+            "task": "Guest sends congratulatory money",
+            "note": "One-click account copy and direct KakaoTalk transfer linking reduce mistyped account numbers."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:9cb742a04b108f1fd8e2ffd07d246dfdc4ac310f4f2714deb3175d3472d5c1f0"
+    },
+    {
+      "cardId": "card.comp-yeonseo.templates-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo offers a gallery of pre-designed invitation templates in four style families (classic, modern, minimal, vintage); a public /sample page lists four named templates (연서 오리지널, 클래식 보태니컬, 아이보리 프레임, 포토 스플릿) each with a viewable live sample, and the help page states template can be changed at any time while keeping entered content.",
+      "source": {
+        "url": "https://www.yeonseo.kr/",
+        "publisher": "연서 (Yeonseo)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:30:30Z",
+        "context": "Features section of the homepage, template feature blurb"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "클래식, 모던, 미니멀, 빈티지. 두 사람의 무드에 맞춰 고르세요."
+      },
+      "limitations": [
+        "Template switching behavior (content preserved, only colors/fonts change) is stated on the help page but was not exercised, since the editor requires login",
+        "Marketing copy; number of templates per style family not verified beyond the four public samples"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Recognition rather than recall",
+            "task": "Choosing a template",
+            "note": "Public /sample page lets couples preview complete live invitations per template before signing up"
+          }
+        ],
+        "visualPreference": "Four curated style families with named palettes (e.g. 아이보리 + 다크 그린) rather than a large template marketplace"
+      },
+      "cardHash": "sha256:6404720a30c90da67cf83eb7424ee05d31dbe87494d91f9ededea4659a360d14"
+    },
+    {
+      "cardId": "card.comp-yeonseo.rsvp-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo invitations include a guest-facing RSVP form: the live sample shows fields for name, attendance choice (참석/불참), optional congratulatory message, optional contact, and a submit button labeled 참석 의사 전달하기. No headcount or meal-preference field was visible on the sample, unlike the PRD's feat.rsvp which includes headcount and meal preference.",
+      "source": {
+        "url": "https://www.yeonseo.kr/sample/yeonseo-original",
+        "publisher": "연서 (Yeonseo)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:32:00Z",
+        "context": "Heading of the RSVP section on the 연서 오리지널 live sample invitation"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "참석 여부를 알려주세요"
+      },
+      "limitations": [
+        "Form was observed rendered but not submitted; end-to-end collection not verified",
+        "Absence of headcount/meal fields is based on one sample template; other templates or editor settings could add fields (editor requires login)",
+        "Host-side RSVP management dashboard is behind login and was not seen"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Aesthetic and minimalist design",
+            "task": "Guest submits RSVP",
+            "note": "Very short form (name + attend/decline, message and contact optional) lowers guest effort but captures less data than the PRD's headcount/meal fields"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:d965b8b8214d8b55b2ba3cbf31ddf325d4fc9c0c8e1f5afc68ec9cc838e31a6e"
+    },
+    {
+      "cardId": "card.comp-yeonseo.gallery-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo supports a couple photo gallery of up to 30 photos with a choice of slide, grid, or mosaic layouts; the live sample invitation renders a Gallery section with eight photos. No lightbox/tap-to-enlarge behavior was confirmed.",
+      "source": {
+        "url": "https://www.yeonseo.kr/help",
+        "publisher": "연서 (Yeonseo)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:31:00Z",
+        "context": "Help/FAQ answer about gallery photo limits"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "갤러리에 최대 30장까지 업로드할 수 있습니다."
+      },
+      "limitations": [
+        "Lightbox viewing (per PRD feat.gallery) could not be confirmed from static page text; no text on the sample describes tapping or enlarging photos",
+        "Layout options (slide/grid/mosaic) are described in help text; the editor itself requires login so switching layouts was not observed"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:593e71d460c0a8f9271d9f18a14617fe11726488ffeab0cb7e674e9f59fbe641"
+    },
+    {
+      "cardId": "card.comp-yeonseo.map-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo advertises Kakao, Naver, and Tmap map integration with transit guidance; the live sample's 오시는 길 section shows the venue name and address, subway and bus walking directions, and a Naver Map link. No parking information appears on the sample (the word 주차 is absent), so the PRD's parking-info element is unconfirmed.",
+      "source": {
+        "url": "https://www.yeonseo.kr/",
+        "publisher": "연서 (Yeonseo)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:30:30Z",
+        "context": "Features section of the homepage, map/directions feature blurb"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "카카오·네이버·티맵 지도와 대중교통 안내까지 한 번에."
+      },
+      "limitations": [
+        "The observed sample only linked to Naver Map; Kakao and Tmap buttons were not seen rendered, so the three-app claim rests on marketing copy",
+        "Parking info absence is observed on one sample only, not an explicit statement that parking fields are unsupported",
+        "Whether the map is embedded/interactive versus an outbound link was not verified from page text"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "indirect",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Match between system and the real world",
+            "task": "Guest finds the venue",
+            "note": "Directions are written as concrete transit steps (subway exit + walking minutes) matching how Korean guests navigate"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:972e43180543ff35fc8753fb74630c9059917d29014431136bb9aae99c2e4bba"
+    },
+    {
+      "cardId": "card.comp-yeonseo.gift-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo displays congratulatory-money bank accounts per side of the family with one-click clipboard copy: the live sample's 마음 전하실 곳 section groups accounts under 신랑측 and 신부측, lists multiple relatives per side (본인, 부) with bank name, holder, and account number, each with a 복사 (copy) button.",
+      "source": {
+        "url": "https://www.yeonseo.kr/",
+        "publisher": "연서 (Yeonseo)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:30:30Z",
+        "context": "Features section of the homepage, account-info feature blurb; corroborated by the 신랑측/신부측/복사 layout observed on https://www.yeonseo.kr/sample/yeonseo-original"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "신랑 신부 양가 계좌를 안전하게 안내, 클립보드 복사 지원."
+      },
+      "limitations": [
+        "Copy button was seen in markup/text but the clipboard action was not clicked or tested",
+        "Sample account numbers are placeholders (000-0000-0000-00); any account-reveal/collapse interaction (per PRD wording) was not confirmed from static text",
+        "Configuration of accounts (how many per side, KakaoPay links) is behind the login-only editor"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User control and freedom",
+            "task": "Guest sends congratulatory money",
+            "note": "Per-relative account rows each with their own 복사 button avoid retyping account numbers in a banking app"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:20fe01eecc510c64d278dc7498fa7cdacfeb95344a89f9dd7fbf790e2b416846"
+    },
+    {
+      "cardId": "card.comp-theirmood.homepage-shot",
+      "subjectType": "competitor",
+      "subjectId": "comp.theirmood",
+      "status": "observed",
+      "claim": "Theirmood's public homepage renders a template-led mobile invitation product page (captured live in a real browser).",
+      "source": {
+        "url": "https://theirmood.com/",
+        "publisher": "Theirmood",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:38:00Z",
+        "context": "Homepage as rendered in the Aside browser at capture time"
+      },
+      "proof": {
+        "type": "screenshot",
+        "screenshot": {
+          "file": "shots/theirmood-home.jpg",
+          "captureMethod": "browser_capture",
+          "capturedAt": "2026-09-05T06:38:00Z",
+          "sha256": "sha256:aa79a2ee0846c19b857cc84028afdc8768d3d985758d3232b9fb62f4a0c6ca96"
+        }
+      },
+      "limitations": [
+        "A screenshot documents the publicly rendered page at one moment; it is not evidence of in-app interactions behind login."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:abac332d39d0c2cfd9508bfa810d410837f714cc49d0754270b2ccd62803144f"
+    },
+    {
+      "cardId": "card.comp-yeonseo.homepage-shot",
+      "subjectType": "competitor",
+      "subjectId": "comp.yeonseo",
+      "status": "observed",
+      "claim": "Yeonseo's public homepage shows a letter-styled mobile invitation with a phone-mockup sample ('5분 만에 완성하고, 카카오톡으로 전달하세요', 4.92 rating with 1,243 reviews visible), captured live in a real browser.",
+      "source": {
+        "url": "https://www.yeonseo.kr/",
+        "publisher": "Yeonseo",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:40:29Z",
+        "context": "Homepage as rendered in the Aside browser at capture time"
+      },
+      "proof": {
+        "type": "screenshot",
+        "screenshot": {
+          "file": "shots/yeonseo-home.jpg",
+          "captureMethod": "browser_capture",
+          "capturedAt": "2026-09-05T06:40:29Z",
+          "sha256": "sha256:d97dede122dc2889030970b67bbd1f137e46320d01183973a279aa41fb46dfd5"
+        }
+      },
+      "limitations": [
+        "A screenshot documents the publicly rendered page at one moment; it is not evidence of in-app interactions behind login."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": "Serif Korean typography, ivory/deep-green palette, letter metaphor; strong minimal direction worth referencing for a 'classic' theme."
+      },
+      "cardHash": "sha256:21fe34675f69104e330ee3292148042dc98e0d17d7b5205b6da6211bf9b21fdf"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.homepage-shot",
+      "subjectType": "competitor",
+      "subjectId": "comp.barunson-mcard",
+      "status": "observed",
+      "claim": "Barunson Mcard's public homepage renders a free-creation event hero with sample invitation/thank-you card mockups and a template gallery below, captured live in a real browser.",
+      "source": {
+        "url": "https://mcard.barunsoncard.com/",
+        "publisher": "Barunson Mcard",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:40:37Z",
+        "context": "Homepage as rendered in the Aside browser at capture time"
+      },
+      "proof": {
+        "type": "screenshot",
+        "screenshot": {
+          "file": "shots/barunson-mcard-home-aside.jpg",
+          "captureMethod": "browser_capture",
+          "capturedAt": "2026-09-05T06:40:37Z",
+          "sha256": "sha256:f942d4524528ba69bbbb48abe6e5bc0f29527a8379cc46dbb21b25b52f0eab89"
+        }
+      },
+      "limitations": [
+        "A screenshot documents the publicly rendered page at one moment; it is not evidence of in-app interactions behind login."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": "Photo-card mockup hero with pastel background; template thumbnails presented in a commerce-style grid."
+      },
+      "cardHash": "sha256:a0df47eca3aeef9e09d2c2c5a6b0c10cbdb7ce7884bbce72266c8b19b0b1f31d"
+    },
+    {
+      "cardId": "card.nngroup-mobile-carousels.gallery-1",
+      "subjectType": "reference",
+      "subjectId": "ref.nngroup-mobile-carousels",
+      "status": "observed",
+      "claim": "Mobile photo carousels must support swipe as the primary navigation gesture, dots alone are weak signifiers users often miss, and users should reach the last item within a few taps or swipes — directly applicable to the invitation's couple photo gallery (competitors advertise slide/swipe layouts of up to 30-100 photos).",
+      "source": {
+        "url": "https://www.nngroup.com/articles/mobile-carousels/",
+        "publisher": "Nielsen Norman Group",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T06:59:30Z",
+        "context": "Article 'Carousels on Mobile Devices', recommendations on carousel navigation and signifiers"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Make sure your carousel supports swipe."
+      },
+      "limitations": [
+        "General mobile-carousel research, not wedding-invitation specific; the article also cautions against burying important content deep in a carousel, which argues for pairing the swipe gallery with a grid/mosaic view for large photo sets.",
+        "The 3-4 step reachability guidance applies to content-critical carousels; a browsing-oriented wedding gallery can tolerate more items."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility and gesture affordance",
+            "task": "Guest browses the couple's photo gallery",
+            "note": "Support swipe on the gallery and do not rely on dots alone as position indicators; offer a grid layout for large sets so photos beyond the first few remain discoverable."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:d73b9b38a371cfa71a29f36e37290dacd0b7262b74bc9f6aa434980e220f2754"
+    },
+    {
+      "cardId": "card.mdn-web-share-api.share-1",
+      "subjectType": "reference",
+      "subjectId": "ref.mdn-web-share-api",
+      "status": "observed",
+      "claim": "The Web Share API lets the invitation page hand the link to the OS share sheet (any messenger, not just KakaoTalk), and it can only run from a user gesture such as a button tap — reinforcing that the share entry point must be an explicit in-page share button.",
+      "source": {
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API",
+        "publisher": "MDN Web Docs (Mozilla)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:00:00Z",
+        "context": "Web Share API overview page, opening definition of the API's purpose"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "share text, links, files, and other content to user-selected share targets"
+      },
+      "limitations": [
+        "Browser support and share-target availability vary by platform; KakaoTalk-specific rich cards still require the Kakao Share SDK, so Web Share is a fallback, not a replacement.",
+        "The transient-activation requirement was reported by the fetch but is quoted here only in paraphrase."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User-initiated sharing",
+            "task": "Share the invitation link via messaging apps",
+            "note": "Offer one primary 'KakaoTalk으로 공유' button (Kakao Share template) plus a secondary generic share button invoking navigator.share for other messengers; both must be explicit taps, never automatic."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:06d7f213faa61e154da0e9f9a7806f655ccb948fe69f39791b01a0bcc8a0f192"
+    }
+  ],
+  "accessLimitations": [
+    "Building or previewing a personalized invitation requires Barunson account signup/login; My Page features are not publicly crawlable.",
+    "Sample invitation previews (/preview/{id}) are public but populate all sections (RSVP, 갤러리, 오시는길, 축의금송금) client-side via JavaScript from embedded template JSON, so only section names, not rendered guest-facing UI, are observable via static fetch.",
+    "Live customer invitations are private links; guest-side RSVP form fields, gallery lightbox behavior, and map embed type (interactive map vs uploaded 약도 image) could not be verified.",
+    "Some feature explanations reportedly live on the separate desktop/mobile barunsoncard.com domains and are partly rendered as images rather than quotable text; all quotes here were taken from mcard.barunsoncard.com pages with verifiable text.",
+    "web.archive.org is not fetchable from this environment, so archived snapshots of the old site could not be quoted.",
+    "Pre-existing limitations (Premium RSVP behind purchase/login; features described via screenshots) are moot while the site is down but would apply to any archival evidence.",
+    "Mobbin and similar paid screen libraries were off-limits per task rules and were not consulted.",
+    "Page Flows and UX Archive from the free-tier candidate list could not be used (paywall and 403 respectively); Collect UI is the only pattern gallery that verified as freely accessible.",
+    "Dribbble/Behance galleries are client-side rendered and returned no text to the fetcher, so gallery-shot evidence could not be quote-verified.",
+    "Kakao Developers docs quotes come from the /docs/en/... redirect target of the canonical /docs/latest/en/... URLs; a verifier re-fetching /docs/latest/en/... may need to follow the same redirect.",
+    "Korean vendor guides from the scope plan (Wix Korea mobile-invitation guide, SnapPost RSVP page, DDD Project 제작가이드) were not fetched within this pass; RSVP conventions are instead evidenced by an English-language vendor guide, which may miss Korean-specific fields such as 식사 여부 and congratulatory-money (축의금) account sections.",
+    "Mobbin Pro / paid screen-library subscriptions (Mobbin paid tier, UXArchive Pro, Page Flows, ScreensDesign) are deliberately excluded per the PRD constraint banning paid screen-library sources; only free-tier or fully public pages will be used",
+    "Paid stock/template marketplaces (Envato, Creative Market) excluded as evidence sources",
+    "Editing dashboard and management features require sign-up/purchase; homepage marketing content was verified, not the logged-in editor",
+    "Some review counts on the homepage render obscured (e.g. '00+') without JS",
+    "All five feature quotes come from the homepage '전체 기능' feature list (marketing copy); quotes were byte-verified against the raw HTML of https://theirmood.com/",
+    "Invitation editor and RSVP management require account sign-up; only public marketing pages, /help, /sample, and the /sample/yeonseo-original live sample were verified",
+    "Site content is Korean-only",
+    "Interactive behaviors (form submission, clipboard copy, photo lightbox) were not exercised; evidence is limited to fetched page text",
+    "데어무드 (Theirmood): Editing dashboard and management features require sign-up/purchase; homepage marketing content was verified, not the logged-in editor",
+    "데어무드 (Theirmood): Some review counts on the homepage render obscured (e.g. '00+') without JS",
+    "연서 (Yeonseo): Invitation editor and RSVP management require account sign-up; only public marketing pages were verified",
+    "연서 (Yeonseo): Site content is Korean-only"
+  ],
+  "decisionRationales": [
+    "All Barunson evidence is first-party (homepage marketing, FAQ, template JSON); guest-facing flows sit behind login or private invitation links, so interaction details (lightbox behavior, RSVP field scope, map interactivity) need a hands-on account audit before being treated as confirmed.",
+    "Barunson's RSVP is only structurally evidenced ('Area_Name':'RSVP') with headcount/meal collection unverified, so a short, reference-guided RSVP form (two-minute budget, single column, deadline + host dashboard) is the clearest differentiation opportunity in the PRD scope.",
+    "An interactive Kakao Maps embed (marker + themed HTML overlay, free tier with daily quota) is technically low-risk and may exceed Barunson's observed baseline, whose template hints at a static uploaded 약도 fallback in some contexts.",
+    "Consistency audit outcome: all 16 cards already satisfied the status taxonomy (observed cards carry verbatim quotes; unreachable-site cards were correctly marked 'unknown' rather than absence), and no contradictions or duplicate claims were found — no downgrades or merges were applied.",
+    "Per reviewer decision (qa-round-1), the defunct DDD Project (domain listed for sale, all evidence unknown) was replaced with two live competitors: Theirmood and Yeonseo. Its dead-domain investigation details live in the round-1 revision history (package.v1.json).",
+    "Stage restructure applied per team feedback + qa-round-2: references were re-derived from the autonomous top-3 competitor ranking into three categories (style/layout/interaction); stage-3 human confirmation removed, internal live verification retained."
+  ],
+  "timing": {
+    "startedAt": "2026-09-05T06:15:06Z",
+    "endedAt": "2026-09-05T07:00:33Z",
+    "elapsedMs": 2727000
+  },
+  "failures": [
+    {
+      "kind": "source_unavailable",
+      "detail": "https://mcard.barunsoncard.com/Product/MobileInvitationList returned an error page ('오류입니다') with no template list content; template-gallery evidence was taken from the homepage and /Product/Detail/{id} pages instead. The wrong-path guess /CustomerService/FAQ also returned no FAQ content (real FAQ lives at /Customer/Faq).",
+      "subjectId": "comp.barunson-mcard"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The invitation builder, My Page order management, and guest-facing RSVP/gift/map interactions require Barunson account login or a private customer invitation URL; RSVP field details (headcount, meal preference), lightbox behavior, and map embed type could not be observed publicly. The public /preview/{id} sample pages render their sections client-side via JavaScript, leaving only structural JSON observable.",
+      "subjectId": "comp.barunson-mcard"
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "uxarchive.com returned HTTP 403 Forbidden to the fetcher at 2026-09-05T06:16:30Z; could not verify free access or collect any pattern evidence, so it was dropped from the reference list.",
+      "subjectId": "ref.uxarchive"
+    },
+    {
+      "kind": "paywalled_source",
+      "detail": "pageflows.com's flow-recording library sits behind a paid subscription (homepage offers a $2.95 3-day trial, then $39/quarter or $99/year, 'Unlimited access to all user flow recordings'); no usable free portion was confirmed, so it was excluded per the no-paywall rule.",
+      "subjectId": "ref.pageflows"
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "dribbble.com/tags/wedding-invitation rendered as an empty page via the fetcher (JavaScript-only content), so no verbatim quotes could be captured; Dribbble was dropped even though browsing appears free in a normal browser.",
+      "subjectId": null
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "dalpeng.com homepage was reachable but rendered mostly as a marketing shell with image placeholders and no pricing/RSVP/gallery product content, so it was rejected as insufficient evidence of a live matching product.",
+      "subjectId": "comp.dalpeng"
+    },
+    {
+      "kind": "contradiction",
+      "detail": "bojagicard.com is live but is primarily a printed paper invitation shop (50-unit minimum orders) with mobile invitations only as a secondary category, so it does not match the PRD's core problem and was dropped.",
+      "subjectId": "comp.bojagicard"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The invitation editor, RSVP dashboard, and management features sit behind sign-up/login (theirmood.com/login); only homepage marketing copy could be verified, so no card is based on operated product UI.",
+      "subjectId": "comp.theirmood"
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "Some homepage counters (e.g. review counts rendered as '00+') are populated by JavaScript and were obscured in the fetched static HTML, so social-proof numbers could not be captured.",
+      "subjectId": "comp.theirmood"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The invitation editor and host-side RSVP/guestbook management dashboard require account sign-up (/login); only public marketing, help, and sample pages were examined, so editor customization depth, RSVP field configuration (headcount/meal options), and management views could not be verified.",
+      "subjectId": "comp.yeonseo"
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "No public page confirmed lightbox photo viewing, parking-info fields, or rendered Kakao/Tmap map buttons; the sample invitation showed only a Naver Map link and contained no 주차 (parking) text. These remain unverified rather than absent.",
+      "subjectId": "comp.yeonseo"
+    }
+  ],
+  "createdAt": "2026-09-05T07:00:39.947Z",
+  "payloadHash": "sha256:818d75e6a5d380066c349b35ace174fb45aa1d2ad801dadcc96f81713898ef6a"
+}

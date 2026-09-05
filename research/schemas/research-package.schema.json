@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "competitor-research-package/v1",
+  "title": "Approved research package handed to downstream design lanes",
+  "description": "Produced by the competitor+reference workflow after human approval. The 'downstream' section is the integration contract: flowLane feeds flow/wireframe work, visualLane feeds visual/design-system work. Runtime validation is implemented in research/lib/evidence.mjs (sealResearchPackage/verifyResearchPackage); this schema documents the shape.",
+  "type": "object",
+  "required": ["$schema", "runId", "prd", "scope", "competitors", "references", "featureMatrix", "cards", "timing", "createdAt", "payloadHash"],
+  "properties": {
+    "$schema": { "const": "competitor-research-package/v1" },
+    "runId": { "type": "string" },
+    "prd": {
+      "type": "object",
+      "required": ["prdId", "title", "domain", "payloadHash"],
+      "properties": {
+        "prdId": { "type": "string" },
+        "title": { "type": "string" },
+        "domain": { "type": "string" },
+        "payloadHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["problem", "audience", "jobs", "featureScope"],
+      "properties": {
+        "problem": { "type": "string" },
+        "audience": { "type": "string" },
+        "jobs": { "type": "array", "items": { "type": "string" } },
+        "featureScope": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["competitorId", "name", "rationale"],
+        "properties": {
+          "competitorId": { "type": "string" },
+          "name": { "type": "string" },
+          "url": { "type": ["string", "null"] },
+          "rationale": {
+            "type": "object",
+            "required": ["sharedProblem", "sharedAudience"],
+            "properties": {
+              "sharedProblem": { "type": "string" },
+              "sharedAudience": { "type": "string" },
+              "sharedJobs": { "type": "array", "items": { "type": "string" } },
+              "featureOverlap": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "accessLimitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["referenceId", "title", "url", "kind", "whyRelevant"],
+        "properties": {
+          "referenceId": { "type": "string" },
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "kind": { "enum": ["pattern_gallery", "article", "official_docs", "design_system", "case_study", "other"] },
+          "whyRelevant": { "type": "string" }
+        }
+      }
+    },
+    "featureMatrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["featureId", "prdFeature", "perCompetitor"],
+        "properties": {
+          "featureId": { "type": "string" },
+          "prdFeature": { "type": "string" },
+          "perCompetitor": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["status", "cardIds"],
+              "properties": {
+                "status": { "enum": ["observed", "explicit_absence", "unknown", "contradictory"] },
+                "cardIds": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "ideas": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cardId", "subjectType", "subjectId", "status", "claim", "proof", "limitations", "assessment", "cardHash"],
+        "properties": {
+          "cardId": { "type": "string" },
+          "subjectType": { "enum": ["competitor", "reference"] },
+          "subjectId": { "type": "string" },
+          "status": { "enum": ["observed", "explicit_absence", "unknown", "contradictory"] },
+          "claim": { "type": "string" },
+          "source": {
+            "type": ["object", "null"],
+            "properties": {
+              "url": { "type": "string" },
+              "publisher": { "type": ["string", "null"] },
+              "publishedAt": { "type": ["string", "null"] },
+              "fetchedAt": { "type": "string" },
+              "context": { "type": "string" }
+            }
+          },
+          "proof": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "enum": ["quote", "screenshot", "none"] },
+              "quote": { "type": "string" },
+              "screenshot": {
+                "type": "object",
+                "required": ["file", "captureMethod", "capturedAt", "sha256"],
+                "properties": {
+                  "file": { "type": "string" },
+                  "captureMethod": { "enum": ["browser_capture", "device_capture", "downloaded_press_asset"] },
+                  "capturedAt": { "type": "string" },
+                  "sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+                }
+              }
+            }
+          },
+          "limitations": { "type": "array", "items": { "type": "string" } },
+          "assessment": {
+            "type": "object",
+            "required": ["sourceReliability", "claimSupport", "relevance"],
+            "properties": {
+              "sourceReliability": { "enum": ["high", "medium", "low"] },
+              "claimSupport": { "enum": ["direct", "indirect", "none"] },
+              "relevance": { "enum": ["high", "medium", "low"] },
+              "uxHeuristics": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["heuristic", "task", "note"],
+                  "properties": {
+                    "heuristic": { "type": "string" },
+                    "task": { "type": "string" },
+                    "note": { "type": "string" }
+                  }
+                }
+              },
+              "visualPreference": { "type": ["string", "null"] }
+            }
+          },
+          "cardHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "accessLimitations": { "type": "array", "items": { "type": "string" } },
+    "decisionRationales": { "type": "array", "items": { "type": "string" } },
+    "timing": {
+      "type": "object",
+      "required": ["startedAt", "endedAt", "elapsedMs"],
+      "properties": {
+        "startedAt": { "type": "string" },
+        "endedAt": { "type": "string" },
+        "elapsedMs": { "type": "integer" }
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "detail"],
+        "properties": {
+          "kind": { "enum": ["source_unavailable", "app_only_evidence", "paywalled_source", "contradiction", "interrupted", "review_rejected"] },
+          "detail": { "type": "string" },
+          "subjectId": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "payloadHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  },
+  "downstream": {
+    "flowLane": "Consumes scope.jobs, featureMatrix (statuses + ideas), referenceDistillation categories 'layout' and 'interaction', and cards with assessment.uxHeuristics to derive flows/wireframes.",
+    "visualLane": "Consumes referenceDistillation category 'style', references (kind design_system/pattern_gallery/case_study), and cards with assessment.visualPreference. Visual preference is opinion, separate from evidence reliability.",
+    "brandConstraints": "If package.brandConstraints is non-null, its client-specified colors/fonts OVERRIDE design-system default colors/fonts at stage 4-2 (structural component/layout contracts are retained; unspecified properties use the selected system's defaults). Reference recommendations never overwrite these values. See research/decisions/team-rule-brand-constraints.json.",
+    "ranking": "competitorRanking is the stage-2 autonomous top-N with per-rank rationale; referenceDistillation was derived from its top 3.",
+    "handoffGate": "Per qa-round-2/qa6, stages 2-3 are autonomous: the package is consumable once state.json shows status 'verified_autonomous' (live verification passed) and its packageHash matches this payloadHash. A human decision receipt under runs/<runId>/decisions is optional inspection, no longer required."
+  }
+}

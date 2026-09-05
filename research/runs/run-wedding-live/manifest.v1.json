@@ -1,0 +1,161 @@
+{
+  "$schema": "competitor-research-review-manifest/v1",
+  "packageHash": "sha256:8e3cdc82f66850f632dfb7323293eb616b684933bf2a1003c7a19f981e931ccd",
+  "runId": "run-wedding-live",
+  "round": 1,
+  "limits": {
+    "maxAutoRepairs": 3,
+    "maxHumanRounds": 5
+  },
+  "generatedAt": "2026-09-05T06:41:43.302Z",
+  "questions": [
+    {
+      "id": "evidence.source",
+      "prompt": "표시된 출처·URL·수집 시각이 실제 검토한 자료를 식별하나요?"
+    },
+    {
+      "id": "evidence.support",
+      "prompt": "중요한 주장마다 정확한 인용문 또는 실제 캡처 근거가 연결돼 있나요?"
+    },
+    {
+      "id": "evidence.conflict",
+      "prompt": "충돌하거나 신뢰도가 낮은 근거와 미확인(unknown) 항목이 숨김없이 표시됐나요?"
+    },
+    {
+      "id": "evidence.currency",
+      "prompt": "자료의 시점과 대상 도메인이 이번 결정에 적용하기에 적절한가요?"
+    },
+    {
+      "id": "evidence.sufficiency",
+      "prompt": "이 근거 묶음으로 다음 설계 단계(플로우·비주얼)를 시작해도 안전한가요?"
+    }
+  ],
+  "cardPins": [
+    {
+      "cardId": "card.comp.barunson-mcard.templates-1",
+      "cardHash": "sha256:2227fcfc0ce0a407bd987b139263215515e1b74514e7ef4173d5aae4ce146fca",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.gallery-1",
+      "cardHash": "sha256:16ab02062913680399c6ca4cbb6559684da8da858b8adcaff035638b1c12b263",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.map-1",
+      "cardHash": "sha256:9630d308d57c0cdc3f01de63e5ed8391a33565d15f222785528a203b63f66b7b",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.gift-1",
+      "cardHash": "sha256:f2b62344a1344cf5ffa7b9baf6eeb2b6329098ba20485a5262a1e6eb325da2bd",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.rsvp-1",
+      "cardHash": "sha256:d76f4ecdc1be019af503e842e92ab2425ec892a0960d9487b6fb1344eee8dcbf",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.kakao-share-docs.share-1",
+      "cardHash": "sha256:af512688c42850089e05434ee11a80b55b14f379f7faa29abc34ae65a63321c4",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.kakao-share-docs.template-1",
+      "cardHash": "sha256:e23605999183fb15a9a046d5ecdff118cc754e400a230676fcbd8ec5262bd669",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.kakao-maps-js.map-1",
+      "cardHash": "sha256:3328c72c31f3262e1ae5a1b10a56cd6aa90c413961a87ef220004b50796b46a2",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.kakao-maps-js.map-2",
+      "cardHash": "sha256:8d5012c88efc9df1a9c2ca8b3f78db8ac1b73775cfe49548a9d3aacf8cf72561",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.blissandbone-rsvp.rsvp-1",
+      "cardHash": "sha256:d26f369b2f50ee35872d16baaa03fd8f3bff1046bd1837320acd641c1ebbb593",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.blissandbone-rsvp.rsvp-2",
+      "cardHash": "sha256:08c5d369e00d7ee27bc767693a96fff9b1388d435f4d000e7b2542a8573df7c5",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.collectui.visual-1",
+      "cardHash": "sha256:105b8f8fc4ebcaefae7c78c30333d486c2f2a6e3be93d1d1fd790079af5e0a0f",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-theirmood.templates-1",
+      "cardHash": "sha256:4678887acaa3369618f7301bbda57c4d7304a9c2de96e9672e1aa192b76be7ba",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-theirmood.rsvp-1",
+      "cardHash": "sha256:50c3a6067b24f9dc1b9b137c5c824601620cf6a990b8aa4b8b51e00f4a5c37b9",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-theirmood.gallery-1",
+      "cardHash": "sha256:73d4485d39bc557eea4fd05612e25a268ef8ec941bceda1ae6e2821a53dd11f1",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-theirmood.map-1",
+      "cardHash": "sha256:f1d791c1ab7494efa0e425dd32dcacf0ada562d27b0bec0516f3c066e4825a85",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-theirmood.gift-1",
+      "cardHash": "sha256:9cb742a04b108f1fd8e2ffd07d246dfdc4ac310f4f2714deb3175d3472d5c1f0",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.templates-1",
+      "cardHash": "sha256:6404720a30c90da67cf83eb7424ee05d31dbe87494d91f9ededea4659a360d14",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.rsvp-1",
+      "cardHash": "sha256:d965b8b8214d8b55b2ba3cbf31ddf325d4fc9c0c8e1f5afc68ec9cc838e31a6e",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.gallery-1",
+      "cardHash": "sha256:593e71d460c0a8f9271d9f18a14617fe11726488ffeab0cb7e674e9f59fbe641",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.map-1",
+      "cardHash": "sha256:972e43180543ff35fc8753fb74630c9059917d29014431136bb9aae99c2e4bba",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.gift-1",
+      "cardHash": "sha256:20fe01eecc510c64d278dc7498fa7cdacfeb95344a89f9dd7fbf790e2b416846",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-theirmood.homepage-shot",
+      "cardHash": "sha256:abac332d39d0c2cfd9508bfa810d410837f714cc49d0754270b2ccd62803144f",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-yeonseo.homepage-shot",
+      "cardHash": "sha256:21fe34675f69104e330ee3292148042dc98e0d17d7b5205b6da6211bf9b21fdf",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp.barunson-mcard.homepage-shot",
+      "cardHash": "sha256:a0df47eca3aeef9e09d2c2c5a6b0c10cbdb7ce7884bbce72266c8b19b0b1f31d",
+      "status": "observed"
+    }
+  ],
+  "manifestHash": "sha256:6e1abb43a3879389383e17850ea98eee88b77898e58e82e2e9f9b7f6db964caa"
+}

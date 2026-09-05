@@ -1,0 +1,32 @@
+{
+  "$schema": "workflow-qa-decisions/v1",
+  "askedAt": "2026-09-05T06:25:00Z",
+  "answeredBy": "user (Simon), in-session AskUserQuestion batch 1",
+  "decisions": [
+    {
+      "id": "qa1.defunct-competitor",
+      "question": "DDD Project is unreachable (domain for sale); how should it be handled?",
+      "answer": "replace_with_live_competitor",
+      "effect": "Drop comp.dddproject from the package; run a supplemental workflow to add live competitors. A one-line decision rationale records the exclusion."
+    },
+    {
+      "id": "qa2.screenshots",
+      "question": "How far should screenshot evidence collection go?",
+      "answer": "add_browser_auto_capture",
+      "effect": "Real browser captures (Playwright) of key public competitor pages are taken, hashed, stored under the run directory, and attached as screenshot-proof evidence cards (captureMethod browser_capture). Generated images remain forbidden."
+    },
+    {
+      "id": "qa3.competitor-count",
+      "question": "How many competitors per research run?",
+      "answer": "3",
+      "effect": "Workflow scope stage now targets exactly 3 live competitors per run; current run is topped up to 3 via the supplemental workflow."
+    },
+    {
+      "id": "qa4.review-feedback",
+      "question": "Allow partial approval when some cards are rejected?",
+      "answer": "custom: free-text feedback loop instead of partial approval",
+      "answerVerbatimKo": "리서치 결과에 대한 피드백을 남겨서 전달할 수 있어야해. html 통해 만들어서 보여주고, 그 결과에 대한 평가를 사람이 그 페이지 input text에다 피드백을 남길 수 있도록 하고, 피드백 저장버튼을 만들어서 json으로 저장시킨 다음, 너가 그걸 인식해서 피드백을 수용할 수 있는 구조로",
+      "effect": "Review HTML gains per-card and overall free-text feedback inputs plus a '피드백 저장' button that persists feedback JSON under runs/<id>/feedback/; Claude reads that JSON and applies the feedback in the next repair round. Batch approval stays whole-package (single-hash binding)."
+    }
+  ]
+}

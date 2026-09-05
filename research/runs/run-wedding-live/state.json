@@ -1,0 +1,22 @@
+{
+  "status": "verified_autonomous",
+  "humanGate": "optional",
+  "runId": "run-wedding-live",
+  "round": 1,
+  "control": {
+    "limits": {
+      "maxAutoRepairs": 3,
+      "maxHumanRounds": 5
+    },
+    "autoRepairsUsed": 0,
+    "humanRoundsUsed": 0,
+    "escalated": false,
+    "escalationReason": null,
+    "history": []
+  },
+  "packageHash": "sha256:818d75e6a5d380066c349b35ace174fb45aa1d2ad801dadcc96f81713898ef6a",
+  "manifestHash": "sha256:b46626f43621a1daac208ac46ca2e364c851b09ccd8e561c4a0b42892a27e37d",
+  "startedAt": "2026-09-05T06:41:43.302Z",
+  "liveVerified": true,
+  "updatedAt": "2026-09-05T07:00:39.969Z"
+}
