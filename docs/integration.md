@@ -35,13 +35,42 @@ The UI labels these "PRD 리뷰" and "시안 리뷰".
 | # | Touchpoint | What the human does | Gates bundled |
 |---|---|---|---|
 | 1 | **PRD review** | Answers the interview's open questions *and* the client aesthetic questionnaire in one sitting, then approves the resulting PRD-v2 | `prd_answers`, `concept_answers`, `prd_approval` |
-| 2 | **Concept review** | Picks one of the three concepts | `concept_approval` |
+| 2 | **Concept review** | Picks one of the three concepts, or sends them back | `concept_approval` |
 
 The visual-concept lane refuses to generate anything before the client has
 answered its aesthetic questionnaire. That questionnaire only needs the
 product's domain and brand context, so the pipeline produces it right after
 intake (off a provisional lane PRD) and asks it during the PRD review — it does
 not become a third interruption.
+
+## The concept review can repeat
+
+Approving is only one of three things a client does when they see the concepts.
+All three go through one command, and only the first is an approval:
+
+```sh
+integrate review <runDir> concept_review --decision approve --by "<name>" --concept <id>
+integrate review <runDir> concept_review --decision revise  --by "<name>" --scope style|structure --feedback "<text>"
+integrate review <runDir> concept_review --decision recolor --by "<name>" --request "보라색으로 변경해 줘"
+```
+
+| Decision | What it does |
+|---|---|
+| `approve` | Records `concept_approval`, bound to the sha256 of the exact file shown; refuses a file that changed after packaging. |
+| `revise --scope style` | Bumps the concept round, records the feedback, and `next` returns a `visual-concept-lane` invocation carrying `feedback` and the new `round`. The round writes to `concepts-r<N>/`, so the reviewed artifacts stay intact. |
+| `revise --scope structure` | The concept lane holds the structure fixed and cannot answer a structural complaint, so the **wireframe** stage reopens with its own round + feedback (`docs/lane-workflows.md` D4). The concepts stage re-runs afterwards because its input changed. |
+| `recolor` | Routes the concepts stage to the lane's recolor pass (`visual-concept-recolor`): `recolor = { fromRunDir, request }`, a hue-only change to `--primary-h` over the existing files, no regeneration. |
+
+A revise or a recolor is recorded as a **client instruction** (`client_instruction`),
+never as an approval, and it moves any standing concept approval to
+`approvalsHistory` with the reason. Rounds and feedback participate in the stage
+fingerprint, so a new round cannot be satisfied by the previous round's output.
+
+This is not a third touchpoint: it is the same 시안 리뷰 happening again. It is
+also finite — `MAX_CONCEPT_ROUNDS` (5, from `research/lib/limits.mjs`
+`maxHumanRounds`). A request beyond it is refused: nothing is re-run, and the
+route plan blocks the concept review with the exhaustion reason so a human
+re-scopes the work instead of the loop continuing.
 
 ## Running it
 
@@ -60,6 +89,7 @@ node integration/bin/integrate.mjs answer <runDir> --file answers.json
 node integration/bin/integrate.mjs answer <runDir> --preferences '{"q-color":"opt-sage"}'
 node integration/bin/integrate.mjs approve <runDir> prd_approval     --by "<name>" --prd-file <approved-prd.json>
 node integration/bin/integrate.mjs approve <runDir> concept_approval --by "<name>" --concept <id>
+node integration/bin/integrate.mjs review  <runDir> concept_review --decision approve|revise|recolor --by "<name>" …
 node integration/bin/integrate.mjs status  <runDir>     # writes status.html
 ```
 
@@ -126,9 +156,10 @@ tests rather than a live run.
 ## Testing
 
 ```sh
-node --test research/tests/       # 33 pre-existing research tests
-node --test integration/tests/    # 55 integration tests
-node scripts/checks/run-checks.mjs  # lane contract checks
+node --test research/tests/       # 74 pre-existing research tests
+node --test integration/tests/    # 68 integration tests
+node scripts/checks/run-checks.mjs  # 12 lane contract checks
+node --test product/tests/        # 19 post-approval product tests
 ```
 
 Fixture-based routing tests and real-execution evidence are kept separate; see

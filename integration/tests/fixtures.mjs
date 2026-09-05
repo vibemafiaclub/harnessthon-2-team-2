@@ -85,6 +85,7 @@ export function registryFixture(overrides = {}) {
     "wireframe-lane": available("wireframe-lane", ["prdPath", "runDir", "runId", "round", "startedAt"]),
     "visual-concept-elicit": available("visual-concept-elicit", ["prdPath", "runDir", "runId", "round", "startedAt"]),
     "visual-concept-lane": available("visual-concept-lane", ["prdPath", "runDir", "runId", "round", "startedAt", "representativeWireframePath", "clientPreferences"]),
+    "visual-concept-recolor": available("visual-concept-recolor", ["prdPath", "runDir", "runId", "round", "startedAt", "recolor"]),
     "production-outputs": { name: "production-outputs", kind: "external", scriptPath: null, requiredArgs: ["prdPath", "runDir", "conceptId"], status: "unregistered" },
     ...overrides,
   };

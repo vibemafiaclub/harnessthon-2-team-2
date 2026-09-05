@@ -17,7 +17,7 @@
       "representativeVariant",
       "feedback"
     ],
-    "notes": "The lane throws without representativeWireframePath, and silently drops to elicitation mode without clientPreferences — the adapter requires both so neither can happen."
+    "notes": "The lane throws without representativeWireframePath, and silently drops to elicitation mode without clientPreferences — the adapter requires both so neither can happen. On a style revise the same adapter runs again with round+1 and the client's feedback."
   },
   "inputExample": {
     "prdPath": "/abs/integration/runs/run-demo/lane-prd.json",
@@ -164,6 +164,60 @@
       "startedAt": "2026-09-05T16:31:45+09:00",
       "finishedAt": "2026-09-05T16:37:05+09:00",
       "budgetNote": "Generation took ~5m20s, well within the 15-minute lane target; no overrun."
+    }
+  },
+  "reviseExample": {
+    "trigger": "시안 리뷰에서 클라이언트가 \"이건 아니다, 다시\"라고 한 경우",
+    "style": {
+      "routesTo": "concepts",
+      "inputDelta": {
+        "round": 2,
+        "runDir": "/abs/integration/runs/run-demo/concepts-r2",
+        "feedback": "카드가 너무 답답해요. 여백을 더 주고 색을 밝게."
+      }
+    },
+    "structure": {
+      "routesTo": "wireframe",
+      "why": "The concept lane holds the structure fixed, so a structural complaint cannot be answered inside it (docs/lane-workflows.md D4).",
+      "inputDelta": { "round": 2, "feedback": "단계가 너무 많아요. 한 화면에서 끝났으면 좋겠어요." },
+      "thenReruns": "concepts"
+    },
+    "cap": "integration/lib/runstate.mjs MAX_CONCEPT_ROUNDS (research/lib/limits.mjs maxHumanRounds = 5); beyond it the concepts stage routes as blocked with the exhaustion reason."
+  },
+  "recolorPass": {
+    "workflow": "visual-concept-recolor",
+    "purpose": "컬러 변경 원칙: a hue-only main-colour change over the previous round's concepts (\"보라색으로 변경해 줘\"), without regenerating them.",
+    "inputContract": {
+      "required": [
+        "prdPath",
+        "runDir",
+        "runId",
+        "round",
+        "startedAt",
+        "recolor"
+      ],
+      "notes": "The lane's recolor branch returns before the generation guards, so representativeWireframePath and clientPreferences are neither required nor passed. recolor = { fromRunDir, request }; the lane throws without both."
+    },
+    "inputExample": {
+      "prdPath": "/abs/integration/runs/run-demo/lane-prd.json",
+      "runDir": "/abs/integration/runs/run-demo/concepts-r2",
+      "runId": "run-demo-vc-r2-recolor",
+      "round": 2,
+      "startedAt": "2026-09-05T14:00:00.000Z",
+      "recolor": {
+        "fromRunDir": "/abs/integration/runs/run-demo/concepts",
+        "request": "보라색으로 변경해 줘"
+      }
+    },
+    "outputContract": {
+      "required": [
+        "laneId",
+        "runId",
+        "round",
+        "runDir",
+        "mode"
+      ],
+      "notes": "mode is \"recolor\"; the packaging agent copies the source lane-output.json and updates revisionHash values, so the approval still binds to a real, re-hashed file."
     }
   },
   "fromLiveRun": "runs/vc-wedding-r3",

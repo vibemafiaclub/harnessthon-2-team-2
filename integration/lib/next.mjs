@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { join, dirname, relative } from "node:path";
+import { basename, join, dirname, relative } from "node:path";
 import { sha256, stableStringify } from "../../research/lib/canonical.mjs";
 import { STAGE_ORDER, stageDef, stageFingerprint, recordStageOutput, recordApproval, refreshStaleness, saveRun, touchpointOf, readyGatesInTouchpoint } from "./runstate.mjs";
 import { buildInvocation } from "./registry.mjs";
@@ -174,20 +174,45 @@ async function humanDecision({ stageId, state, runDir }) {
   }
   if (stageId === "concept_approval") {
     let concepts = [];
-    const laneOutputPath = join(runDir, "concepts", "lane-output.json");
+    const round = state.stages.concepts.round ?? 1;
+    const laneOutputPath = conceptLaneOutputPath(runDir, state);
+    const laneDir = dirname(laneOutputPath);
     if (existsSync(laneOutputPath)) {
       const laneOutput = JSON.parse(await readFile(laneOutputPath, "utf8"));
-      concepts = (laneOutput.artifacts || []).map((a) => ({ conceptId: a.conceptId ?? a.id, path: join(runDir, "concepts", a.path), revisionHash: a.revisionHash }));
+      concepts = (laneOutput.artifacts || []).map((a) => ({ conceptId: a.conceptId ?? a.id, path: join(laneDir, a.path), revisionHash: a.revisionHash }));
     }
     return {
       type: "user_decision",
       stage: stageId,
       kind: "concept_approval",
-      payload: { concepts },
-      how: `Show the concepts to the client; then: integrate approve ${runDir} concept_approval --by "<name>" --concept <id>`,
+      payload: { concepts, round, rounds: state.conceptReview?.rounds ?? [] },
+      how: `Show the concepts to the client, then record their decision:\n`
+        + `  integrate review ${runDir} concept_review --decision approve --by "<name>" --concept <id>\n`
+        + `  integrate review ${runDir} concept_review --decision revise --by "<name>" --scope style|structure --feedback "<text>"\n`
+        + `  integrate review ${runDir} concept_review --decision recolor --by "<name>" --request "<text>"`,
+      note: "Only approve is an approval. A revise or a recolor is a client instruction: it opens another round of this same touchpoint and drops any standing approval.",
     };
   }
   throw new Error(`no human decision handler for ${stageId}`);
+}
+
+// Round 1 keeps the historical directory name so existing runs stay readable;
+// later rounds get their own directory, because a revise round must not
+// overwrite the artifacts an earlier approval or review was bound to.
+export function roundDir(runDir, stage, round) {
+  return join(runDir, round > 1 ? `${stage}-r${round}` : stage);
+}
+
+export function conceptsDir(runDir, round) {
+  return roundDir(runDir, "concepts", round);
+}
+
+// The approval binds to the lane output actually recorded for this run, which
+// after a revise round is no longer the round-1 directory.
+export function conceptLaneOutputPath(runDir, state) {
+  const recorded = state.stages?.concepts?.output?.path;
+  if (recorded && basename(recorded) === "lane-output.json") return recorded;
+  return join(conceptsDir(runDir, state.stages?.concepts?.round ?? 1), "lane-output.json");
 }
 
 function asWorkflowAction(stageId, invocation, extras) {
@@ -239,15 +264,16 @@ async function workflowAction({ repoRoot, runDir, stageId, state, registry, appr
   }
   if (stageId === "wireframe") {
     const lanePrdPath = await ensureLanePrd({ runDir, state, approvedPrd });
-    const wfDir = join(runDir, "wireframe");
-    await mkdir(wfDir, { recursive: true });
     const round = state.stages.wireframe.round ?? 1;
+    const wfDir = roundDir(runDir, "wireframe", round);
+    await mkdir(wfDir, { recursive: true });
     const invocation = buildInvocation(registry, "wireframe-lane", {
       prdPath: lanePrdPath,
       runDir: wfDir,
       runId: `${runId}-wf-r${round}`,
       round,
       startedAt: nowIso,
+      ...(state.stages.wireframe.feedback ? { feedback: state.stages.wireframe.feedback } : {}),
     });
     return asWorkflowAction(stageId, invocation, { saveResultTo: join(runDir, "wireframe-result.json"), then: `integrate record ${runDir} wireframe --result ${join(runDir, "wireframe-result.json")}`, note: "Autonomous: representative variant is auto-selected from the lane's AI recommendation (ai_confirmed), no designer gate." });
   }
@@ -269,14 +295,30 @@ async function workflowAction({ repoRoot, runDir, stageId, state, registry, appr
     });
   }
   if (stageId === "concepts") {
+    const round = state.stages.concepts.round ?? 1;
+    const vcDir = conceptsDir(runDir, round);
+    const recolor = state.stages.concepts.recolor ?? null;
+    const lanePrdPath = await ensureLanePrd({ runDir, state, approvedPrd });
+    await mkdir(vcDir, { recursive: true });
+    const resultPath = join(runDir, `concepts-result-r${round}.json`);
+    const then = `integrate record ${runDir} concepts --result ${resultPath}`;
+    if (recolor) {
+      // Hue-only main-colour change over the previous round's files; the lane
+      // copies them instead of regenerating, so no wireframe/preferences args.
+      const invocation = buildInvocation(registry, "visual-concept-recolor", {
+        prdPath: lanePrdPath,
+        runDir: vcDir,
+        runId: `${runId}-vc-r${round}-recolor`,
+        round,
+        startedAt: nowIso,
+        recolor: { fromRunDir: recolor.fromRunDir, request: recolor.request },
+      });
+      return asWorkflowAction(stageId, invocation, { saveResultTo: resultPath, then, note: "Recolor pass (컬러 변경 원칙): only --primary-h changes; saturation, lightness, neutrals and imagery stay as they are." });
+    }
     const representative = state.stages.wireframe.representative;
     if (!representative?.path) {
       return { type: "blocked", stage: stageId, reason: "No representative wireframe recorded (wireframe stage must record an AI-confirmed representative first).", unmetChecks: ["representative_missing"] };
     }
-    const lanePrdPath = await ensureLanePrd({ runDir, state, approvedPrd });
-    const vcDir = join(runDir, "concepts");
-    await mkdir(vcDir, { recursive: true });
-    const round = state.stages.concepts.round ?? 1;
     const invocation = buildInvocation(registry, "visual-concept-lane", {
       prdPath: lanePrdPath,
       runDir: vcDir,
@@ -286,8 +328,9 @@ async function workflowAction({ repoRoot, runDir, stageId, state, registry, appr
       representativeWireframePath: representative.path,
       representativeVariant: { id: representative.variantId, selectedBy: representative.actor, reason: representative.reason },
       clientPreferences: state.clientPreferences,
+      ...(state.stages.concepts.feedback ? { feedback: state.stages.concepts.feedback } : {}),
     });
-    return asWorkflowAction(stageId, invocation, { saveResultTo: join(runDir, "concepts-result.json"), then: `integrate record ${runDir} concepts --result ${join(runDir, "concepts-result.json")}` });
+    return asWorkflowAction(stageId, invocation, { saveResultTo: resultPath, then });
   }
   if (stageId === "production") {
     const conceptApproval = state.approvals.concept_approval;

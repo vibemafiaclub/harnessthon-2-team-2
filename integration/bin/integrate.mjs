@@ -12,6 +12,9 @@
 //   node integration/bin/integrate.mjs answer <runDir> --preferences '{"q-color":"opt-sage"}'
 //   node integration/bin/integrate.mjs approve <runDir> prd_approval --by <name> --prd-file <approved-prd.json>
 //   node integration/bin/integrate.mjs approve <runDir> concept_approval --by <name> --concept <id>
+//   node integration/bin/integrate.mjs review <runDir> concept_review --decision approve --by <name> --concept <id>
+//   node integration/bin/integrate.mjs review <runDir> concept_review --decision revise  --by <name> --scope style|structure --feedback "<text>"
+//   node integration/bin/integrate.mjs review <runDir> concept_review --decision recolor --by <name> --request "<text>"
 //   node integration/bin/integrate.mjs register <workflow-name> --script <path> [--note <text>]
 //   node integration/bin/integrate.mjs status <runDir>
 //
@@ -25,10 +28,10 @@ import { fileURLToPath } from "node:url";
 import { sha256, stableStringify } from "../../research/lib/canonical.mjs";
 import { acquireMaterials, materialsFingerprint, acquireOne } from "../lib/materials.mjs";
 import { validateAssessment, detectBrandConflicts } from "../lib/assess.mjs";
-import { createRun, loadRun, saveRun, recordStageOutput, recordApproval, recordAnswers, recordClientPreferences, touchpointOf } from "../lib/runstate.mjs";
+import { createRun, loadRun, saveRun, recordStageOutput, recordApproval, recordAnswers, recordClientPreferences, recordConceptReviewRound, touchpointOf } from "../lib/runstate.mjs";
 import { registerExternal, validateArgsAgainstSource, loadRegistry } from "../lib/registry.mjs";
 import { prepareContext } from "../lib/context.mjs";
-import { advance } from "../lib/next.mjs";
+import { advance, conceptLaneOutputPath, conceptsDir, roundDir } from "../lib/next.mjs";
 import { checkLaneArtifactReuse, checkResearchReuse } from "../lib/reuse.mjs";
 import { validateApprovedPrd, approvedPrdHash, missingBrandValues } from "../lib/laneprd.mjs";
 import { renderStatusHtml } from "../lib/statushtml.mjs";
@@ -47,6 +50,7 @@ try {
     case "record": await cmdRecord(positional[0], positional[1]); break;
     case "answer": await cmdAnswer(positional[0]); break;
     case "approve": await cmdApprove(positional[0], positional[1]); break;
+    case "review": await cmdReview(positional[0], positional[1]); break;
     case "register": await cmdRegister(positional[0]); break;
     case "status": await cmdStatus(positional[0]); break;
     default:
@@ -160,7 +164,7 @@ async function cmdRecord(runDir, stageId) {
     }
   } else if (stageId === "wireframe") {
     const result = JSON.parse(await readFile(resolve(requireFlag("result")), "utf8"));
-    const laneDir = result.runDir ? resolve(result.runDir) : join(runDir, "wireframe");
+    const laneDir = result.runDir ? resolve(result.runDir) : roundDir(runDir, "wireframe", state.stages.wireframe.round ?? 1);
     const laneOutputPath = join(laneDir, "lane-output.json");
     const check = await checkLaneArtifactReuse({ laneOutputPath, expectedLaneId: "wireframe", nowIso });
     if (!check.ok) fail(`wireframe lane output failed validation: ${check.failures.join(", ")}`);
@@ -191,7 +195,7 @@ async function cmdRecord(runDir, stageId) {
   } else if (stageId === "concepts") {
     const result = JSON.parse(await readFile(resolve(requireFlag("result")), "utf8"));
     if (result.mode === "elicitation") fail("this is an elicitation result, not generated concepts — record it as concept_elicit and collect the client's answers first");
-    const laneDir = result.runDir ? resolve(result.runDir) : join(runDir, "concepts");
+    const laneDir = result.runDir ? resolve(result.runDir) : conceptsDir(runDir, state.stages.concepts.round ?? 1);
     const laneOutputPath = join(laneDir, "lane-output.json");
     const check = await checkLaneArtifactReuse({ laneOutputPath, expectedLaneId: "visual-concept", nowIso });
     if (!check.ok) fail(`concept lane output failed validation: ${check.failures.join(", ")}`);
@@ -273,27 +277,80 @@ async function cmdApprove(runDir, gate) {
     await saveRun(runDir, state);
     console.log(`[integrate] PRD approved by ${by}, revision ${approvedPrdHash(prd).slice(0, 12)}…`);
   } else if (gate === "concept_approval") {
-    const conceptId = requireFlag("concept");
-    const laneOutputPath = join(runDir, "concepts", "lane-output.json");
-    let revision = flags.revision ?? null;
-    if (existsSync(laneOutputPath)) {
-      const laneOutput = JSON.parse(await readFile(laneOutputPath, "utf8"));
-      const artifact = (laneOutput.artifacts || []).find((a) => (a.conceptId ?? a.id) === conceptId || a.id === `concept-${conceptId}`);
-      if (!artifact) fail(`concept "${conceptId}" not found in ${laneOutputPath}`);
-      const file = join(runDir, "concepts", artifact.path);
-      const digest = sha256(await readFile(file));
-      if (artifact.revisionHash && digest !== artifact.revisionHash) fail(`concept file changed after packaging (tampered): ${artifact.path}`);
-      revision = digest;
-    } else if (!revision) {
-      fail("no concepts lane output; pass --revision <sha256> of the adopted artifact explicitly");
-    }
-    recordApproval(state, "concept_approval", { by, at: nowIso, revision, note: conceptId, evidence: `concept ${conceptId} approved at revision ${revision?.slice(0, 12)}…` });
-    state.stages.concepts.approvedConceptId = conceptId;
-    await saveRun(runDir, state);
-    console.log(`[integrate] concept "${conceptId}" approved by ${by} (revision-bound)`);
+    await approveConcept({ runDir, state, by, nowIso });
   } else {
     fail(`unknown gate: ${gate} (research/wireframe have no human gate by design)`);
   }
+}
+
+// The 시안 리뷰 in full: the client either approves one concept, asks for
+// another round (style feedback re-runs the concept lane, structural feedback
+// reopens the wireframe stage), or asks for a main-colour change. Only the
+// first is an approval; the other two are recorded as client instructions.
+async function cmdReview(runDir, touchpoint) {
+  if (!runDir) fail("review requires <runDir> <touchpoint>");
+  if (touchpoint !== "concept_review") fail(`review currently covers concept_review only, got: ${touchpoint ?? "-"}`);
+  runDir = resolve(runDir);
+  const state = await loadRun(runDir);
+  const nowIso = new Date().toISOString();
+  const by = requireFlag("by");
+  const decision = requireFlag("decision");
+
+  if (decision === "approve") {
+    await approveConcept({ runDir, state, by, nowIso });
+    return;
+  }
+  if (!["revise", "recolor"].includes(decision)) fail(`--decision must be approve, revise or recolor (got ${decision})`);
+  if (state.stages.concepts.status !== "done" && !state.stages.concepts.output) {
+    fail("there are no concepts to react to yet; run the concept lane first");
+  }
+  const outcome = recordConceptReviewRound(state, {
+    decision,
+    scope: decision === "revise" ? (flags.scope === true ? null : flags.scope ?? "style") : null,
+    feedback: decision === "revise" ? requireFlag("feedback") : null,
+    request: decision === "recolor" ? requireFlag("request") : null,
+    by,
+    at: nowIso,
+  });
+  await saveRun(runDir, state);
+  if (outcome.blocked) {
+    console.log(`[integrate] BLOCKED: ${outcome.reason}`);
+    console.log("  The request is recorded; nothing was re-run. A human must widen the budget or take the run out of the loop.");
+    return;
+  }
+  if (decision === "recolor") {
+    console.log(`[integrate] recolor requested by ${by} → concept round ${outcome.round} (hue-only; existing concepts are not regenerated)`);
+  } else {
+    const scope = state.conceptReview.rounds.at(-1).scope;
+    console.log(`[integrate] revise (${scope}) requested by ${by} → concept round ${outcome.round}`);
+    if (scope === "structure") console.log("  Structural feedback routes back to the wireframe stage; the concepts re-run on the new structure.");
+  }
+  if (state.approvalsHistory.at(-1)?.gate === "concept_approval") {
+    console.log(`  Previous concept approval invalidated: ${state.approvalsHistory.at(-1).reason}`);
+  }
+  console.log(`  Next: integrate next ${runDir}`);
+}
+
+async function approveConcept({ runDir, state, by, nowIso }) {
+  const conceptId = requireFlag("concept");
+  const laneOutputPath = conceptLaneOutputPath(runDir, state);
+  let revision = flags.revision ?? null;
+  if (existsSync(laneOutputPath)) {
+    const laneOutput = JSON.parse(await readFile(laneOutputPath, "utf8"));
+    const artifact = (laneOutput.artifacts || []).find((a) => (a.conceptId ?? a.id) === conceptId || a.id === `concept-${conceptId}`);
+    if (!artifact) fail(`concept "${conceptId}" not found in ${laneOutputPath}`);
+    const file = join(dirname(laneOutputPath), artifact.path);
+    const digest = sha256(await readFile(file));
+    if (artifact.revisionHash && digest !== artifact.revisionHash) fail(`concept file changed after packaging (tampered): ${artifact.path}`);
+    revision = digest;
+  } else if (!revision) {
+    fail("no concepts lane output; pass --revision <sha256> of the adopted artifact explicitly");
+  }
+  const round = state.stages.concepts.round ?? 1;
+  recordApproval(state, "concept_approval", { by, at: nowIso, revision, note: conceptId, evidence: `concept ${conceptId} approved at revision ${revision?.slice(0, 12)}… (round ${round})` });
+  state.stages.concepts.approvedConceptId = conceptId;
+  await saveRun(runDir, state);
+  console.log(`[integrate] concept "${conceptId}" approved by ${by} (round ${round}, revision-bound)`);
 }
 
 async function cmdRegister(name) {

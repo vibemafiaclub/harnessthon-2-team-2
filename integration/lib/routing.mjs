@@ -114,8 +114,14 @@ export function buildRoutePlan(context) {
   } else {
     const evidence = [{ check: "no_human_gate", detail: "Wireframes are AI-evaluated and the representative is auto-selected (ai_confirmed); no designer gate." }];
     if (has("brand_tokens")) evidence.push({ check: "brand_carried", detail: "Brand palette/fonts are carried as constraints; structure and wireframes are still generated." });
+    // Structural feedback from the 시안 리뷰 lands here, not on the concept
+    // lane, which holds the structure fixed by design.
+    const structuralFeedback = state.stages.wireframe?.feedback ?? null;
+    if (structuralFeedback) evidence.push({ check: "structural_feedback", detail: String(structuralFeedback) });
     add("wireframe", {
-      rationale: "Run the wireframe lane; AI checks + auto-repair, representative selected from the lane's recorded recommendation.",
+      rationale: structuralFeedback
+        ? `Round ${state.stages.wireframe.round ?? 1}: the client's concept-review feedback was structural, so the wireframe stage reopens and the concepts re-run on the new structure.`
+        : "Run the wireframe lane; AI checks + auto-repair, representative selected from the lane's recorded recommendation.",
       evidence,
       unmetChecks: wireframeCandidate ? wireframeCandidate.failures.map((f) => `wireframe_reuse:${f}`) : [],
     });
@@ -150,7 +156,19 @@ export function buildRoutePlan(context) {
     conceptsBase.evidence = [{ check: "design_system_reuse", detail: `Verified design-system material reused for tokens/components (${verifiedOf("design_system").map((m) => m.materialId).join(", ")}); required screens/flows still evaluated separately.` }];
     conceptsBase.selectedArtifacts = verifiedOf("design_system").map((m) => m.materialId);
   }
-  if (adopted && adoptedCoverage === "adequate") {
+  const conceptReview = state.conceptReview ?? null;
+  const conceptRound = state.stages.concepts?.round ?? 1;
+  if (conceptReview?.blocked) {
+    // The round budget is spent: escalate rather than loop. Nothing downstream
+    // may proceed on an output the client already rejected.
+    add("concepts", {
+      ...conceptsBase,
+      decision: "blocked",
+      rationale: conceptReview.blocked.reason,
+      unmetChecks: [`concept_rounds_exhausted:${conceptRound}`],
+      evidence: (conceptReview.rounds || []).map((r) => ({ check: `round_${r.round}_${r.decision}`, detail: r.feedback ?? r.request ?? "" })),
+    });
+  } else if (adopted && adoptedCoverage === "adequate") {
     add("concepts", {
       ...conceptsBase,
       decision: "reuse",
@@ -179,15 +197,31 @@ export function buildRoutePlan(context) {
       unmetChecks: [`adapter:${vcAdapter.status}`],
     });
   } else {
+    const pending = state.stages.concepts?.recolor
+      ? { rationale: `Round ${conceptRound}: apply the client's hue-only main-colour change to the existing concepts (no regeneration).`, check: "recolor_request", detail: state.stages.concepts.recolor.request }
+      : state.stages.concepts?.feedback
+        ? { rationale: `Round ${conceptRound}: regenerate the three concepts with the client's style feedback; the structure stays fixed.`, check: "style_feedback", detail: state.stages.concepts.feedback }
+        : null;
     add("concepts", {
       ...conceptsBase,
-      rationale: "Generate three client-facing concepts (1-2 representative pages each) on the auto-selected wireframe structure.",
+      rationale: pending?.rationale ?? "Generate three client-facing concepts (1-2 representative pages each) on the auto-selected wireframe structure.",
+      evidence: [...(conceptsBase.evidence || []), ...(pending ? [{ check: pending.check, detail: String(pending.detail ?? "") }] : [])],
     });
   }
 
   // --- Concept approval (THE human boundary) ---
   const conceptStage = stages.find((s) => s.id === "concepts");
-  if (adopted && adopted.approvedRevisionMatch) {
+  if (conceptReview?.blocked) {
+    // The client asked for another round the budget cannot pay for. Asking
+    // them to approve anyway would misrepresent the situation, so the
+    // touchpoint stops here and a human has to take the run out of the loop.
+    add("concept_approval", {
+      decision: "blocked",
+      rationale: conceptReview.blocked.reason,
+      unmetChecks: [`concept_rounds_exhausted:${conceptRound}`],
+      evidence: [{ check: "last_request", detail: conceptReview.blocked.requested?.feedback ?? conceptReview.blocked.requested?.request ?? "" }],
+    });
+  } else if (adopted && adopted.approvedRevisionMatch) {
     add("concept_approval", {
       decision: "reuse",
       rationale: "User's declaration explicitly approved this exact template revision; concept review satisfied by that evidence.",
