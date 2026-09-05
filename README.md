@@ -44,6 +44,10 @@ docs/concept.md                               # 컨셉 스펙 전문 (배경·�
 3. 0단계 결과는 `brief.md`, B단계 결과는 `decisions.md`에 남긴다 (템플릿을 프로젝트 폴더로 복사해서 사용).
 4. 완성된 SKILL.md는 팀/코파운더와 공유해 비교한다.
 
+## MCP 서버
+
+이 레포에는 Figma·Playwright MCP 서버 설정이 `.mcp.json`으로 이미 커밋되어 있다. Claude Code로 이 레포를 처음 열면 두 서버를 프로젝트 스코프로 승인하라는 안내가 뜬다 — 승인하면 참가자 각자 MCP를 새로 설정할 필요 없이 바로 Figma 파일에 접근하고 로컬 프로토타입을 브라우저로 열 수 있다. Figma는 첫 사용 시 OAuth 로그인 1회가 필요하다.
+
 ## 라이선스
 
 MIT — [LICENSE](./LICENSE)
