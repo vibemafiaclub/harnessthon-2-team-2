@@ -1,0 +1,9 @@
+{
+  "runId": "demo-wedding-scheduler",
+  "prd": { "path": "../../examples/wedding-scheduler/PRD.md" },
+  "materials": [
+    { "id": "mat-brand", "path": "brand-sheet.md", "role": "brand-tokens",
+      "description": "클라이언트가 지정한 색상과 헤딩 서체" }
+  ],
+  "policy": { "maxResearchAgeDays": 30 }
+}

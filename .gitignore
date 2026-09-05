@@ -2,3 +2,12 @@
 docs/*.ko.html
 research/runs/.*
 research/runs/fixture-*/
+
+# Machine-local workflow registration (absolute paths)
+integration/registry.local.json
+
+# Integration run artifacts are per-machine working state
+integration/runs/
+
+# Session working brief, not project documentation
+docs/integration-brief.md

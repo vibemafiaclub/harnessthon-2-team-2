@@ -1,0 +1,89 @@
+{
+  "stage": "prd_interview",
+  "workflow": "prd-interview",
+  "actor": "ai_confirmed",
+  "purpose": "Walk each persona's journey, run one interview round, and return the questions only a human can answer.",
+  "inputContract": {
+    "required": [
+      "prdPath",
+      "outDir",
+      "promptsDir"
+    ],
+    "optional": [
+      "maxTurns",
+      "skipInterviewer",
+      "stage"
+    ],
+    "notes": "All paths absolute. The workflow itself cannot ask a human, which is exactly why it returns questions[] instead."
+  },
+  "inputExample": {
+    "prdPath": "/abs/examples/wedding-scheduler/PRD.md",
+    "outDir": "/abs/integration/runs/run-demo/prd",
+    "promptsDir": "/abs/.claude/workflows/prd-interview/prompts",
+    "maxTurns": 1,
+    "skipInterviewer": true
+  },
+  "outputContract": {
+    "required": [
+      "stage",
+      "questions",
+      "files"
+    ],
+    "perQuestion": [
+      "id",
+      "kind",
+      "question",
+      "why",
+      "options"
+    ],
+    "notes": "stage is 'interview'. The last question is always Q-free (free-form)."
+  },
+  "outputExample": {
+    "stage": "interview",
+    "personas": [
+      "예비신부",
+      "초대받은 지인"
+    ],
+    "features": 7,
+    "painPoints": {
+      "passed": 5,
+      "rejected": 1
+    },
+    "uncoveredFeatures": [],
+    "missingFlows": {
+      "baseline": [
+        "초대 링크 첫 진입"
+      ],
+      "interview": []
+    },
+    "questions": [
+      {
+        "id": "Q1",
+        "kind": "baseline",
+        "question": "초대받은 사람이 링크를 처음 열었을 때 로그인을 요구할까요?",
+        "why": "F0-1 빠진 플로우 — 응답률을 좌우합니다.",
+        "options": [
+          "로그인 없이 응답",
+          "간편 인증 후 응답"
+        ]
+      },
+      {
+        "id": "Q-free",
+        "kind": "open",
+        "question": "위 질문에 없지만 PRD에 반영하고 싶은 것을 자유롭게 적어주세요.",
+        "why": "인터뷰가 놓친 것을 보탤 수 있도록 항상 마지막에 둔다.",
+        "options": []
+      }
+    ],
+    "files": [
+      "/abs/…/prd/personas.md",
+      "/abs/…/prd/open-questions.md"
+    ],
+    "painDocWritten": true
+  },
+  "handoff": {
+    "to": "prd_answers",
+    "via": "questions[].id becomes the id of each recorded answer; integrate.mjs stores them as state.answers.",
+    "checkedBy": "integration/tests/groundtruth.test.mjs (answer ids ⊆ question ids)"
+  }
+}

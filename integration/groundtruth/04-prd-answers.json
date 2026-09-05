@@ -1,0 +1,52 @@
+{
+  "stage": "prd_answers",
+  "workflow": null,
+  "actor": "human_input",
+  "purpose": "The PRD owner answers the interview's open questions. A genuine human boundary — no AI substitute.",
+  "inputContract": {
+    "required": [
+      "questions"
+    ],
+    "notes": "The questions[] returned by prd_interview, asked with AskUserQuestion."
+  },
+  "inputExample": {
+    "questions": [
+      {
+        "id": "Q1",
+        "question": "초대받은 사람이 링크를 처음 열었을 때 로그인을 요구할까요?",
+        "options": [
+          "로그인 없이 응답",
+          "간편 인증 후 응답"
+        ]
+      }
+    ]
+  },
+  "outputContract": {
+    "required": [
+      "answers"
+    ],
+    "perAnswer": [
+      "id",
+      "answer"
+    ],
+    "notes": "Recorded via `integrate answer <runDir> --file answers.json`; hashed into the run state so later stages invalidate if the answers change."
+  },
+  "outputExample": {
+    "answers": [
+      {
+        "id": "Q1",
+        "answer": "로그인 없이 응답. 이름만 입력받습니다."
+      },
+      {
+        "id": "Q-free",
+        "answer": "없음"
+      }
+    ]
+  },
+  "handoff": {
+    "to": "prd_revise",
+    "via": "answers[] is passed verbatim as the revise pass's args.answers.",
+    "checkedBy": "integration/tests/groundtruth.test.mjs"
+  },
+  "touchpoint": "prd_review"
+}

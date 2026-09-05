@@ -1,0 +1,51 @@
+{
+  "stage": "prd_revise",
+  "workflow": "prd-interview-revise",
+  "actor": "ai_confirmed",
+  "purpose": "Fold the human answers back into the PRD, producing PRD-v2.md.",
+  "inputContract": {
+    "required": [
+      "stage",
+      "prdPath",
+      "outDir",
+      "promptsDir",
+      "answers"
+    ],
+    "notes": "Same script as prd_interview, second pass. stage must be the literal 'revise'."
+  },
+  "inputExample": {
+    "stage": "revise",
+    "prdPath": "/abs/examples/wedding-scheduler/PRD.md",
+    "outDir": "/abs/integration/runs/run-demo/prd",
+    "promptsDir": "/abs/.claude/workflows/prd-interview/prompts",
+    "answers": [
+      {
+        "id": "Q1",
+        "answer": "로그인 없이 응답. 이름만 입력받습니다."
+      },
+      {
+        "id": "Q-free",
+        "answer": "없음"
+      }
+    ]
+  },
+  "outputContract": {
+    "required": [
+      "stage",
+      "file",
+      "written"
+    ],
+    "notes": "file is the absolute PRD-v2.md path; written false means the agent did not produce it."
+  },
+  "outputExample": {
+    "stage": "revise",
+    "file": "/abs/integration/runs/run-demo/prd/PRD-v2.md",
+    "prdV2Summary": "초대 링크 진입을 로그인 없이 처리하도록 F0-1을 확정하고…",
+    "written": true
+  },
+  "handoff": {
+    "to": "prd_approval",
+    "via": "PRD-v2.md is what the human reads before approving; approval produces the approved-prd/v1 JSON.",
+    "checkedBy": "integration/bin/integrate.mjs cmdApprove"
+  }
+}
