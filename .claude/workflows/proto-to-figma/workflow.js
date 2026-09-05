@@ -77,8 +77,13 @@ function applyDecisions(flow, decisions) {
     decisions.filter((d) => d.action === 'merge').map((d) => [d.id, d.into]),
   )
   const resolve = (id) => {
+    const visited = new Set()
     let cur = id
-    while (mergeMap.has(cur)) cur = mergeMap.get(cur)
+    while (mergeMap.has(cur)) {
+      if (visited.has(cur)) break
+      visited.add(cur)
+      cur = mergeMap.get(cur)
+    }
     return cur
   }
 
@@ -87,6 +92,8 @@ function applyDecisions(flow, decisions) {
     .filter((s) => !drop.has(s.id))
     .filter((s) => !mergeMap.has(s.id))
 
+  const validIds = new Set(screens.map((s) => s.id))
+
   const edges = []
   const seen = new Set()
   for (const e of flow.edges) {
@@ -94,6 +101,7 @@ function applyDecisions(flow, decisions) {
     const from = resolve(e.from)
     const to = resolve(e.to)
     if (drop.has(from) || drop.has(to)) continue
+    if (!validIds.has(from) || !validIds.has(to)) continue
     if (from === to) continue
     const key = `${from}->${to}:${e.trigger}`
     if (seen.has(key)) continue
