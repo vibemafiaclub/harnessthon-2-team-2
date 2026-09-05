@@ -11,12 +11,14 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertValid } from './lib/validate.mjs';
 import { sha256File } from './render-review-sheet.mjs';
+import { assertVisualRelease } from './lib/visual-quality.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const reviewSchema = JSON.parse(readFileSync(join(root, 'contracts/review-record.schema.json'), 'utf8'));
 
 export function recordReview(runDir, { decision, decidedAt, feedback, selectedConceptId, axisNotes }) {
   const output = JSON.parse(readFileSync(join(runDir, 'lane-output.json'), 'utf8'));
+  if (decision === 'approved') assertVisualRelease(runDir, output);
 
   const boundRevisions = output.artifacts.map((a) => {
     const actual = sha256File(join(runDir, a.path));

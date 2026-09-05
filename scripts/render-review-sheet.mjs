@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertValid } from './lib/validate.mjs';
+import { assertVisualRelease } from './lib/visual-quality.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const laneOutputSchema = JSON.parse(readFileSync(join(root, 'contracts/lane-output.schema.json'), 'utf8'));
@@ -32,6 +33,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 export function renderReviewSheet(runDir) {
   const output = JSON.parse(readFileSync(join(runDir, 'lane-output.json'), 'utf8'));
   assertValid(laneOutputSchema, output, `lane-output.json in ${runDir}`);
+  assertVisualRelease(runDir, output);
 
   for (const artifact of output.artifacts) {
     const actual = sha256File(join(runDir, artifact.path));

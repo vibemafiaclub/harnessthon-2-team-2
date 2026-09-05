@@ -14,6 +14,17 @@ export const meta = {
 // Subagent model policy (user directive): Sonnet 5 at medium effort for every agent call.
 const SUB = { model: 'sonnet', effort: 'medium' }
 
+const VISUAL_RULES = `Read workflows/visual-quality-rubric.md. Evaluate all seven criteria against real rendered screenshots, not source alone. Preserve client colors/fonts, approved structure and selected system. Cards, gradients and whitespace are not inherently bad: remove only task-inappropriate generic treatment. Concrete observations and region-specific repairs are mandatory. No screenshot or unverified criterion means BLOCKED, never pass.`
+const REQUIRED_VISUAL = ['task-hierarchy', 'content-specificity', 'composition', 'density-rhythm', 'decoration-purpose', 'brand-fidelity', 'visual-finish']
+function blockers(result) {
+  if (!result?.checks?.length) return ['missing-checks']
+  const ids = result.checks.filter(c => c.status !== 'pass' && c.status !== 'not-applicable').map(c => c.criterionId)
+  for (const id of REQUIRED_VISUAL) if (!result.checks.some(c => c.criterionId === id && c.status === 'pass')) ids.push(id)
+  for (const axis of ['mechanical', 'spec-fidelity', 'accessibility', 'aesthetic']) if (!result.checks.some(c => c.axis === axis && c.status === 'pass')) ids.push(`missing-${axis}`)
+  if (result.visualGatePassed !== true || !result.visualReportPath) ids.push('rendered-evidence-gate')
+  return [...new Set(ids)]
+}
+
 // args: { prdPath, runDir, runId, round, startedAt, representativeWireframePath, representativeVariant,
 //         clientPreferences?, feedback? }
 // MANDATORY preference elicitation (user directive 2026-09-05): without clientPreferences this run
@@ -96,6 +107,8 @@ Steps: copy the file to ${runDir}/concept-${system.id}.html, read the current --
   const packageSummary = await agent(
     `Package the recolor round. Compute sha256 for each concept-*.html present in ${runDir}; current time as finishedAt.
 Copy ${fromRunDir}/lane-output.json to ${runDir}/lane-output.json, then update: runId ${JSON.stringify(runId)}, round ${round}, artifacts' revisionHash values, timing {startedAt: ${JSON.stringify(startedAt)}, finishedAt: <now>}, and append to repairHistory one entry per concept: {attempt: 1, trigger: "client recolor request: " + ${JSON.stringify(String(request))}, change: <the hue change made>, result: "contrast re-verified"}. rationaleSummary: note this was a hue-only token recolor (S/L preserved, neutrals/images untouched).
+The previous visual reports are INVALID after recolor. ${VISUAL_RULES}
+For each artifact recapture with scripts/capture-concept.mjs at the manifest viewport, inspect the PNG, write a fresh report matching scripts/lib/visual-quality.mjs, and run scripts/check-visual-report.mjs. Re-evaluate general checks as well. Set visualQuality {version:1,reports:[{artifactId,path}]} to these NEW reports. Never copy old passing assessments or screenshot hashes. If capture/evaluation fails return BLOCKED, not a ready review.
 Run \`node scripts/render-review-sheet.mjs ${runDir}\` from the repo root and confirm the sheet path prints. Return the sheet path.`,
     { ...SUB, label: 'package:recolor', phase: 'Package' }
   )
@@ -184,8 +197,10 @@ const DIRECT_SCHEMA = {
 
 const CHECK_SCHEMA = {
   type: 'object',
-  required: ['checks', 'failingCriterionIds'],
+  required: ['checks', 'failingCriterionIds', 'visualGatePassed', 'visualReportPath'],
   properties: {
+    visualGatePassed: { type: 'boolean' },
+    visualReportPath: { type: 'string' },
     checks: {
       type: 'array',
       items: {
@@ -237,6 +252,7 @@ FIXED structure source: ${representativeWireframePath} - reproduce the represent
 CLIENT AESTHETIC DECISIONS (binding): ${JSON.stringify(clientPreferences)} - the palette/mood come from the client; the system contributes its pattern language (component anatomy, spacing, states, hierarchy), not its default colors.
 ${COLOR_RULES}
 Viewport ${direction.viewport.width}x${direction.viewport.height}. All copy in Korean, realistic content from the PRD at ${prdPath} (no lorem ipsum).
+${VISUAL_RULES}
 ONE PAGE ONLY (speed directive): render just the "대표 화면" - the fixed structure fully styled in this concept, inside a ${direction.viewport.width}px device frame - plus a one-line footer caption naming the pattern system and its official source. NO style tile, NO extra sections.
 Accessibility: real text, body-text contrast >= WCAG AA, lang="ko", tap targets >= 44px.
 Write the file, re-read to verify, return a one-paragraph summary.`,
@@ -255,10 +271,16 @@ Mechanical: self-contained, lang="ko", real Korean text. COLOR TOKENS: all color
 spec-fidelity - STRUCTURE FIXED: compare against ${representativeWireframePath} screen "${direction.representativeScreen.screenId}" - same section order and content blocks ${JSON.stringify(direction.representativeScreen.contentOutline)}; report any structural drift as FAIL (client preference must isolate style). Single page only (대표 화면 + source caption footer) - extra sections are a FAIL.
 accessibility: compute body-text contrast from actual hex; tap targets >= 44px.
 aesthetic: expresses the CLIENT's chosen palette/mood ${JSON.stringify(clientPreferences)} through ${system.name}'s pattern language (${system.patternLanguage}). FAIL immediately if the system's brand tone leaked in - ${system.forbiddenTone} Differences vs the other two concepts must be pattern differences (anatomy/density/hierarchy), not tone differences; coherent hierarchy.
-Concrete evidence per criterion; not-verified when unchecked. failingCriterionIds = fail only.`,
+${VISUAL_RULES}
+Capture THIS revision using: node scripts/capture-concept.mjs ${runDir} concept-${system.id}.html ${system.id}-a${attempt} ${direction.viewport.width} ${direction.viewport.height}
+Read the returned capture JSON and use the image-reading tool to inspect the actual PNG (including clipped/scrolling content where visible). If capture or visual inspection is unavailable, mark criteria not-verified and visualGatePassed false; do not make a substitute image.
+Write ${runDir}/visual-evidence/${system.id}-a${attempt}.report.json with {schemaVersion:1, artifactId:"concept-${system.id}", revisionHash:<capture hash>, capturePath:<run-relative capture path>, screenshotHash:<capture screenshot hash>, checks:[the seven rubric criteria with status, observed, reason, remediation, evidenceRefs:[<run-relative PNG path>]]}. Include these seven criteria also in returned checks with axis aesthetic and concrete expected/observed values. Preserve all general checks above too.
+Run: node scripts/check-visual-report.mjs ${runDir} concept-${system.id} concept-${system.id}.html ${direction.viewport.width} ${direction.viewport.height} visual-evidence/${system.id}-a${attempt}.report.json
+visualGatePassed is true ONLY on successful command exit AND all general mandatory checks pass. visualReportPath is the run-relative report path. Concrete evidence per criterion; not-verified when unchecked. failingCriterionIds includes fail AND not-verified.`,
         { ...SUB, label: `check:${system.id}-a${attempt}`, phase: 'Check & Repair', schema: CHECK_SCHEMA }
       )
       if (!checkResult) return { system, planItem, error: 'check failed', checks: [], repairHistory }
+      checkResult.failingCriterionIds = blockers(checkResult)
       if (!checkResult.failingCriterionIds.length) break
       if (attempt === 3) break
       const repair = await agent(
@@ -273,14 +295,14 @@ Smallest in-place edits; keep the fixed structure, the client's tone decisions, 
         result: 'rechecked',
       })
     }
-    return { system, planItem, checks: checkResult.checks, failing: checkResult.failingCriterionIds, repairHistory }
+    return { system, planItem, checks: checkResult.checks, failing: checkResult.failingCriterionIds, visualReportPath: checkResult.visualReportPath, repairHistory }
   }
 )
 
-const ok = conceptResults.filter(Boolean).filter((r) => !r.error)
-if (!ok.length) throw new Error('all concept generations failed')
-for (const r of conceptResults.filter(Boolean).filter((r) => r.error)) {
-  log(`Concept ${r.system.id} failed: ${r.error} - proceeding with ${ok.length} concept(s), gap will be visible to humans`)
+const ok = conceptResults.filter(Boolean).filter((r) => !r.error && !r.failing?.length && r.visualReportPath)
+if (ok.length !== direction.systemPlans.length) {
+  log('Visual batch blocked: no client review sheet or approval until every concept passes rendered checks')
+  return { laneId: 'visual-concept', runId, round, runDir, status: 'blocked', results: conceptResults }
 }
 
 phase('Package')
@@ -302,10 +324,11 @@ const packageSummary = await agent(
    artifacts: one per concept {id:"concept-<systemId>", type:"combined-concept", path:"concept-<systemId>.html", revisionHash:<sha256>, conceptId:"<systemId>"},
    concepts: ${JSON.stringify(conceptEntries)},
    qualityChecks: ${JSON.stringify(allChecks)},
+   visualQuality: {version:1, reports:${JSON.stringify(ok.map(r => ({ artifactId: `concept-${r.system.id}`, path: r.visualReportPath }))) }},
    repairHistory: ${JSON.stringify(allRepairs)},
    timing: {startedAt: ${JSON.stringify(startedAt)}, finishedAt: <now>, budgetNote: note overruns of the 15-minute lane target},
    rationaleSummary: state that structure is FIXED to ${representativeWireframePath} (${direction.representativeScreen.name}) so differences between the three concepts are pure design-system style - clients compare style only, and structural feedback routes back to the wireframe stage.
-4. Run \`node scripts/render-review-sheet.mjs ${runDir}\` from the repo root; confirm the sheet path prints. Fix lane-output.json (never artifacts) on validation failure and rerun.
+4. Run \`node scripts/render-review-sheet.mjs ${runDir}\` from the repo root; confirm the sheet path prints. Structural JSON errors may be corrected, but NEVER change evidence/check verdicts to pass a gate. If visual evidence validation fails, report blocked; no review sheet is ready.
 Return the sheet path and finishedAt.`,
   { ...SUB, label: 'package:lane-output', phase: 'Package' }
 )

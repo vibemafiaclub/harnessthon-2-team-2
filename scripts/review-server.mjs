@@ -8,6 +8,7 @@ import { createServer } from 'node:http';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertVisualRelease } from './lib/visual-quality.mjs';
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml' };
 
@@ -32,6 +33,15 @@ export function appendFeedback(runDir, payload) {
 export function startReviewServer(runDir, port = 4173) {
   const rootDir = resolve(runDir);
   const server = createServer((req, res) => {
+    // Revalidate on every request, including previously generated review sheets.
+    try {
+      const manifest = join(rootDir, 'lane-output.json');
+      if (existsSync(manifest)) assertVisualRelease(rootDir, JSON.parse(readFileSync(manifest, 'utf8')));
+    } catch (error) {
+      res.writeHead(409, { 'content-type': 'text/plain; charset=utf-8' });
+      res.end(`시안 검수 미완료: ${error.message}`);
+      return;
+    }
     if (req.method === 'POST' && req.url === '/api/feedback') {
       let body = '';
       req.on('data', (c) => (body += c));
