@@ -128,7 +128,7 @@
 
 `reachable: true`인 화면마다:
 1. `generate_figma_design({ fileKey })` 호출 → 캡처 스크립트 + `captureId`.
-2. 캡처 스크립트를 `devUrl + path + query`에 대해 실행(Playwright MCP로 열고 스크립트 주입).
+2. 돌려받은 캡처 스크립트를 `devUrl + path + query`에 대해 도구 안내대로 실행한다 (로컬 dev 서버는 도구가 직접 열고, 안 되면 Playwright MCP로 연다). 정확한 실행 방식은 구현 시 첫 화면으로 한 번 확인한다.
 3. `captureId`로 5초 간격 폴링, 최대 10회. 완료되면 생성된 노드 id를 `screen.figmaNodeId`에 기록.
 4. 실패하면 `result.md`의 "캡처 실패"에 넣고 다음 화면으로. 재시도는 1회.
 
