@@ -1,7 +1,7 @@
 export const meta = {
   name: 'prd-interview-v2',
   description: 'PRD에서 역할별 페르소나를 뽑아 가상 인터뷰를 돌리고, 불편사항을 검증해 v2 PRD로 개정한다 (프롬프트는 prompts/*.md)',
-  whenToUse: 'PRD 초안이 있고 실제 유저 인터뷰가 불가능할 때. 2단계로 돌린다. 1단계 args: {prdPath, outDir, promptsDir, maxTurns?, skipInterviewer?} → 여정 걷기(빠진 플로우) + 인터뷰 1회 + 검증 + 사람에게 물을 질문 목록. 2단계 args: {stage: "revise", prdPath, outDir, promptsDir, answers: [{id, answer}]} → PRD-v2.md (모든 경로는 절대경로)',
+  whenToUse: 'PRD 초안이 있고 실제 유저 인터뷰가 불가능할 때. 2단계로 돌린다. 1단계 args: {prdPath, outDir, promptsDir, maxTurns?, skipInterviewer?} → 여정 걷기(빠진 플로우) + 인터뷰 1회 + 검증 + 사람에게 물을 질문 목록 (반환된 questions는 반드시 AskUserQuestion 도구로 묻는다. 텍스트 나열 금지). 2단계 args: {stage: "revise", prdPath, outDir, promptsDir, answers: [{id, answer}]} → PRD-v2.md (모든 경로는 절대경로)',
   phases: [
     { title: 'Prepare', detail: '페르소나 추출 + 제품 설명서 작성', model: 'sonnet' },
     { title: 'Journey', detail: '페르소나별 첫 진입→마무리 여정을 걸어 빠진 화면·플로우 찾기 (인터뷰 없음)', model: 'sonnet' },
@@ -194,7 +194,7 @@ const QUESTIONS_SCHEMA = {
           kind: { type: 'string', enum: ['baseline', 'undecided', 'conflict', 'followup'], description: 'baseline: 빠진 기본 플로우 결정 / undecided: PRD 미정 사항 / conflict: 페르소나 간 충돌 / followup: 2라운드에서 물었을 후속 질문' },
           question: { type: 'string', description: 'PRD 소유자에게 던지는 한 문장 질문' },
           why: { type: 'string', description: '이 질문이 나온 근거 (관련 기능 id, 불편사항 id, 페르소나 발언)' },
-          options: { type: 'array', items: { type: 'string' }, description: '가능한 선택지 2~4개 (없으면 빈 배열)' },
+          options: { type: 'array', items: { type: 'string' }, description: '선택지 2~4개 (필수, 빈 배열 금지). 각각 10자 내외 짧은 명사구, 설명은 why에. AskUserQuestion 도구로 그대로 보여준다' },
         },
         required: ['id', 'kind', 'question', 'why', 'options'],
       },
@@ -484,9 +484,9 @@ const [painDoc, oq] = await parallel([
 const FREE_QUESTION = {
   id: 'Q-free',
   kind: 'open',
-  question: '위 질문에 없지만 PRD에 반영하고 싶은 것, 빠졌다고 느끼는 것, 방향에 대해 하고 싶은 말이 있으면 자유롭게 적어주세요. (없으면 "없음")',
-  why: '인터뷰와 여정 걷기가 놓친 것을 PRD 소유자가 직접 보탤 수 있도록 항상 마지막에 둔다.',
-  options: [],
+  question: '위 질문에 없지만 PRD에 반영하고 싶은 것, 빠졌다고 느끼는 것, 방향에 대해 하고 싶은 말이 있으면 자유롭게 적어주세요.',
+  why: '인터뷰와 여정 걷기가 놓친 것을 PRD 소유자가 직접 보탤 수 있도록 항상 마지막에 둔다. AskUserQuestion은 선택지가 2개 이상 필요하므로 "없음"과 "있음"을 두고, 있으면 Other로 자유롭게 적게 한다.',
+  options: ['없음', '있음 (Other를 골라 직접 적기)'],
 }
 const questions = [...(oq ? oq.questions : []), FREE_QUESTION]
 log(`사람에게 물을 질문 ${questions.length}개 (자유 응답 1개 포함)`)
@@ -501,5 +501,5 @@ return {
   questions,
   files: [files.personas, files.walkthrough, `${outDir}/journeys/`, files.missingFlows, `${outDir}/stories/`, `${outDir}/interviews/`, files.painPoints, files.openQuestions],
   painDocWritten: !!(painDoc && painDoc.ok),
-  nextStep: `위 questions를 워크플로우를 돌리는 사람에게 순서대로 묻는다. 마지막 Q-free는 선택지 없이 자유롭게 답하게 한다 ("없음"도 답이다). 답을 받은 뒤, 같은 scriptPath로 args: { stage: 'revise', prdPath, outDir, promptsDir, answers: [{ id, answer }] } 를 넘겨 다시 실행하면 PRD-v2.md가 만들어진다.`,
+  nextStep: `위 questions는 반드시 AskUserQuestion 도구로 묻는다. 질문을 텍스트로 나열하고 답을 기다리는 것은 금지. 한 번의 AskUserQuestion 호출에 최대 4개씩 순서대로 나눠 묻고, 각 질문은 header=id(예: Q1), question=question 본문, 선택지=options(원문 그대로 label, why는 첫 선택지 description 또는 질문 본문 끝에 붙임). 사용자가 Other로 직접 적은 답도 그대로 answer로 쓴다. 마지막 Q-free는 "없음"/"있음" 중 고르게 하고, "있음"이나 Other면 그 내용을 answer로 쓴다 ("없음"도 답이다). 모든 답을 받은 뒤, 같은 scriptPath로 args: { stage: 'revise', prdPath, outDir, promptsDir, answers: [{ id, answer }] } 를 넘겨 다시 실행하면 PRD-v2.md가 만들어진다.`,
 }
