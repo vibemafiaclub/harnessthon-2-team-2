@@ -41,6 +41,27 @@
     "actor": "human_approved",
     "evidence": "concept shadcn approved at revision a1d961b5fcfe…"
   },
+  "decisions": {
+    "approve": {
+      "records": "concept_approval",
+      "actor": "human_approved",
+      "cli": "integrate review <runDir> concept_review --decision approve --by \"<name>\" --concept <id>"
+    },
+    "revise": {
+      "records": "conceptReview.rounds[]",
+      "actor": "client_instruction",
+      "cli": "integrate review <runDir> concept_review --decision revise --by \"<name>\" --scope style|structure --feedback \"<text>\"",
+      "effect": "Drops any standing concept approval into approvalsHistory (reason concept_review_revise:<scope>), bumps the concept round, and — for scope structure — bumps the wireframe round so the structure is redone before the concepts are.",
+      "notes": "Not a third touchpoint: the same 시안 리뷰 happens again."
+    },
+    "recolor": {
+      "records": "conceptReview.rounds[]",
+      "actor": "client_instruction",
+      "cli": "integrate review <runDir> concept_review --decision recolor --by \"<name>\" --request \"<text>\"",
+      "effect": "Routes the concepts stage to the visual-concept-recolor pass (hue only, existing concepts are not regenerated)."
+    },
+    "cap": "MAX_CONCEPT_ROUNDS = 5 (research/lib/limits.mjs maxHumanRounds). A further request is refused: the run is marked blocked with the exhaustion reason instead of looping."
+  },
   "handoff": {
     "to": "production",
     "via": "The approved conceptId + revision drive the post-approval outputs; any later change to the concept or the PRD invalidates this approval.",

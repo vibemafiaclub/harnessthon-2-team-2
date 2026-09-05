@@ -8,6 +8,8 @@ function esc(value) {
 const DECISION_LABEL = { run: "생성 실행", reuse: "재사용 (검증됨)", repair: "부분 재사용 + 보수", blocked: "차단됨" };
 const STATUS_LABEL = { pending: "대기", done: "완료", stale: "무효화됨(입력 변경)", blocked: "차단", awaiting_user: "사용자 결정 대기" };
 const TOUCHPOINT_LABEL = { prd_review: "PRD 리뷰", concept_review: "시안 리뷰" };
+const REVIEW_DECISION_LABEL = { revise: "재작업 요청", recolor: "메인 컬러 변경 요청" };
+const SCOPE_LABEL = { style: "스타일 (시안 재생성)", structure: "구조 (와이어프레임으로 회귀)" };
 
 export function renderStatusHtml({ state, materials, assessment, plan, nextAction }) {
   const assessedById = new Map((assessment?.materials || []).map((m) => [m.materialId, m]));
@@ -53,6 +55,21 @@ export function renderStatusHtml({ state, materials, assessment, plan, nextActio
     nextHtml = `<b>[${esc(nextAction.stage ?? "-")}]</b> ${detail}${nextAction.how ? `<div class="obs">${esc(nextAction.how)}</div>` : ""}${nextAction.then ? `<div class="obs">기록: <code>${esc(nextAction.then)}</code></div>` : ""}`;
   }
 
+  const review = state.conceptReview ?? null;
+  const reviewRows = (review?.rounds || []).map((r) => `<tr>
+      <td>${esc(r.round)}</td>
+      <td>${esc(REVIEW_DECISION_LABEL[r.decision] ?? r.decision)}${r.scope ? ` <span class="gate">${esc(SCOPE_LABEL[r.scope] ?? r.scope)}</span>` : ""}</td>
+      <td>${esc(r.by)}<br><code>${esc(r.actor)}</code></td>
+      <td>${esc(r.feedback ?? r.request ?? "")}</td>
+      <td>${esc(r.at)}</td>
+    </tr>`).join("\n");
+  const reviewHtml = review
+    ? `<h2>시안 리뷰 라운드</h2>${review.blocked ? `<div class="unmet">라운드 상한 소진 — ${esc(review.blocked.reason)}</div>` : ""}
+<table><tr><th>라운드</th><th>클라이언트 지시</th><th>요청자</th><th>내용</th><th>시각</th></tr>
+${reviewRows || '<tr><td colspan="5"><em>아직 없음</em></td></tr>'}</table>
+<p style="color:#888;font-size:.8rem">수정·컬러 변경 요청은 <b>승인이 아니라 클라이언트 지시</b>로 기록되며(<code>client_instruction</code>), 기존 시안 승인은 무효화됩니다. 사람이 개입하는 지점은 여전히 2회이며, 재요청은 같은 시안 리뷰가 한 번 더 열리는 것입니다.</p>`
+    : "";
+
   const approvals = Object.entries(state.approvals || {}).map(([gate, a]) =>
     `<li><code>${esc(gate)}</code> — ${esc(a.by)} @ ${esc(a.at)} (rev <code class="hash">${esc((a.revision ?? "").slice(0, 12))}…</code>, actor ${esc(a.actor)})</li>`).join("\n");
 
@@ -93,6 +110,7 @@ ${materialRows || '<tr><td colspan="7"><em>자료 없음 — 전체 정상 경�
 <h2>라우트 플랜 — 무엇을 재사용하고, 무엇을 건너뛰고, 무엇을 생성하는가</h2>
 <table><tr><th>스테이지</th><th>결정</th><th>상태</th><th>근거 / 증거 / 미충족 체크</th><th>산출물</th></tr>
 ${stageRows || '<tr><td colspan="5"><em>인테이크 평가 후 플랜이 생성됩니다</em></td></tr>'}</table>
+${reviewHtml}
 <h2>승인 기록 (리비전 바인딩)</h2>
 <ul>${approvals || "<li><em>아직 없음</em></li>"}</ul>
 <p style="color:#888;font-size:.8rem">ai_confirmed는 인간 승인이 아니며 서로 변환되지 않습니다. 재사용된 스테이지는 "검증된 아티팩트의 재사용"으로 기록되며 생성 성공으로 기록되지 않습니다.</p>

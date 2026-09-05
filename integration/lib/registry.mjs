@@ -45,6 +45,14 @@ export const BUILTIN_WORKFLOWS = {
     scriptPath: "workflows/visual-concept-lane.mjs",
     requiredArgs: ["prdPath", "runDir", "runId", "round", "startedAt", "representativeWireframePath", "clientPreferences"],
   },
+  // Pass 3: the client's "보라색으로 변경해 줘" — a hue-only main-colour change
+  // over the previous round's concepts. The lane's recolor branch returns
+  // before the generation guards, so it needs neither the representative
+  // wireframe nor clientPreferences, but it does need the source round dir.
+  "visual-concept-recolor": {
+    scriptPath: "workflows/visual-concept-lane.mjs",
+    requiredArgs: ["prdPath", "runDir", "runId", "round", "startedAt", "recolor"],
+  },
   "post-approval-prototype": {
     scriptPath: "workflows/post-approval-product.mjs",
     requiredArgs: ["inputPath", "outDir"],
