@@ -1,0 +1,22 @@
+{
+  "$id":"product-spec.schema.json",
+  "title":"Shared declarative frontend, board, documentation and flow specification",
+  "type":"object",
+  "required":["version","id","title","language","system","tokens","viewports","entryScreen","screens","tasks","capabilities","rationale","components"],
+  "properties":{
+    "version":{"type":"number","enum":[1]},"id":{"type":"string"},"title":{"type":"string"},"language":{"type":"string","enum":["ko"]},
+    "system":{"type":"string","enum":["shadcn","seed","wanted-montage"]},
+    "tokens":{"type":"object","required":["primary","onPrimary","bg","surface","text","muted","border","fontFamily","radius"]},
+    "viewports":{"type":"array","items":{"type":"object","required":["id","width","height"]}},
+    "entryScreen":{"type":"string"},
+    "screens":{"type":"array","items":{"type":"object","required":["id","route","title","description","sourceScreenId","states","sections","actions"],"properties":{
+      "id":{"type":"string"},"route":{"type":"string"},"title":{"type":"string"},"sourceScreenId":{"type":"string"},
+      "states":{"type":"array","items":{"type":"object","required":["id","title"]}},
+      "sections":{"type":"array","items":{"type":"object","required":["id"],"properties":{"fields":{"type":"array","items":{"type":"object","required":["id","label","type"],"properties":{"type":{"type":"string","enum":["text","date","number","select","textarea","file"]}}}}}}},
+      "actions":{"type":"array","items":{"type":"object","required":["id","label","to","kind"],"properties":{"kind":{"type":"string","enum":["navigate","submit","copy","reset","unavailable"]}}}}
+    }}},
+    "tasks":{"type":"array","items":{"type":"object","required":["id","name","screenIds","actionIds"]}},
+    "capabilities":{"type":"array","items":{"type":"object","required":["id","status","description"],"properties":{"status":{"type":"string","enum":["mock","unavailable","local"]}}}},
+    "rationale":{"type":"array","items":{"type":"string"}},"components":{"type":"array","items":{"type":"string"}}
+  }
+}

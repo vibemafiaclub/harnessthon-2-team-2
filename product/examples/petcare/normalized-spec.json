@@ -1,0 +1,362 @@
+{
+  "version": 1,
+  "id": "fixture-pet-care-reservation-v1",
+  "title": "포근한 돌봄",
+  "language": "ko",
+  "system": "shadcn",
+  "tokens": {
+    "primary": "#0f766e",
+    "onPrimary": "#ffffff",
+    "bg": "#f8fafc",
+    "surface": "#ffffff",
+    "text": "#0f172a",
+    "muted": "#475569",
+    "border": "#cbd5e1",
+    "fontFamily": "'Pretendard', -apple-system, sans-serif",
+    "radius": "12px"
+  },
+  "viewports": [
+    {
+      "id": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "desktop",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "entryScreen": "reservation-home",
+  "components": [
+    "Button",
+    "Card",
+    "Field",
+    "Notice",
+    "Screen"
+  ],
+  "screens": [
+    {
+      "id": "reservation-home",
+      "route": "/reservation-home",
+      "sourceScreenId": "reservation-home",
+      "title": "반려동물 돌봄을 예약하세요",
+      "description": "가까운 돌봄 서비스를 빠르게 찾을 수 있어요.",
+      "prdScreen": "Service search",
+      "sections": [
+        {
+          "id": "hero",
+          "title": "오늘 필요한 돌봄",
+          "body": "산책, 방문 돌봄, 호텔을 한곳에서 비교해 보세요."
+        },
+        {
+          "id": "search",
+          "title": "예약 조건",
+          "fields": [
+            {
+              "id": "pet-name",
+              "label": "반려동물 이름",
+              "type": "text",
+              "required": true,
+              "value": "콩이"
+            },
+            {
+              "id": "service-type",
+              "label": "돌봄 종류",
+              "type": "select",
+              "required": true,
+              "value": "방문 돌봄",
+              "options": [
+                "방문 돌봄",
+                "산책",
+                "호텔"
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "find-carers",
+          "label": "돌봄 서비스 찾기",
+          "to": "carer-list",
+          "kind": "submit"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류",
+          "message": "필수 정보를 확인한 뒤 다시 시도해 주세요. 입력값은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "carer-list",
+      "route": "/carer-list",
+      "sourceScreenId": "carer-list",
+      "title": "가능한 돌봄 선생님",
+      "description": "조건에 맞는 돌봄 선생님을 골라 주세요.",
+      "prdScreen": "Carer list",
+      "sections": [
+        {
+          "id": "results",
+          "title": "추천 돌봄 선생님",
+          "items": [
+            {
+              "id": "mina",
+              "title": "김미나",
+              "description": "방문 돌봄 · 후기 4.9"
+            },
+            {
+              "id": "jun",
+              "title": "이준",
+              "description": "산책 · 후기 4.8"
+            }
+          ]
+        },
+        {
+          "id": "filter",
+          "title": "방문 시간",
+          "fields": [
+            {
+              "id": "visit-date",
+              "label": "희망 날짜",
+              "type": "date",
+              "required": true,
+              "value": "2026-11-21"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "select-carer",
+          "label": "김미나 선생님 선택",
+          "to": "reservation-form",
+          "kind": "navigate"
+        },
+        {
+          "id": "back-home",
+          "label": "조건 다시 입력",
+          "to": "reservation-home",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        }
+      ]
+    },
+    {
+      "id": "reservation-form",
+      "route": "/reservation-form",
+      "sourceScreenId": "reservation-form",
+      "title": "예약 정보를 확인해 주세요",
+      "description": "돌봄 요청을 보내기 전 마지막 확인 단계예요.",
+      "prdScreen": "Reservation form",
+      "sections": [
+        {
+          "id": "request",
+          "title": "돌봄 요청",
+          "fields": [
+            {
+              "id": "address",
+              "label": "방문 주소",
+              "type": "text",
+              "required": true,
+              "value": "서울시 마포구"
+            },
+            {
+              "id": "care-note",
+              "label": "특이사항",
+              "type": "textarea",
+              "required": true,
+              "value": "낯선 사람에게 조금 수줍어해요."
+            }
+          ]
+        },
+        {
+          "id": "consent",
+          "body": "입력한 정보는 이 브라우저에서만 사용하는 데모 데이터입니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "request-reservation",
+          "label": "예약 요청 보내기",
+          "to": "reservation-complete",
+          "kind": "submit",
+          "targetState": "success"
+        },
+        {
+          "id": "back-list",
+          "label": "선생님 다시 선택",
+          "to": "carer-list",
+          "kind": "navigate",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "error",
+          "title": "입력 오류",
+          "message": "필수 정보를 확인한 뒤 다시 시도해 주세요. 입력값은 유지됩니다.",
+          "tone": "error"
+        }
+      ]
+    },
+    {
+      "id": "reservation-complete",
+      "route": "/reservation-complete",
+      "sourceScreenId": "reservation-complete",
+      "title": "예약 요청을 보냈어요",
+      "description": "김미나 선생님이 확인하면 알려드릴게요.",
+      "prdScreen": "Reservation confirmation",
+      "sections": [
+        {
+          "id": "summary",
+          "title": "{{pet-name}}의 방문 돌봄",
+          "body": "{{visit-date}} · 서울시 마포구"
+        },
+        {
+          "id": "support",
+          "body": "실제 결제와 알림 발송은 이 프로토타입에 연결되어 있지 않습니다."
+        }
+      ],
+      "actions": [
+        {
+          "id": "view-reservation",
+          "label": "예약 내역 보기",
+          "to": "reservation-detail",
+          "kind": "navigate"
+        },
+        {
+          "id": "payment-help",
+          "label": "결제 안내",
+          "to": "reservation-complete",
+          "kind": "unavailable",
+          "capability": "payments",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        },
+        {
+          "id": "success",
+          "title": "예약 요청 완료",
+          "message": "예약 요청을 접수했습니다. 이 데모는 브라우저에만 저장됩니다.",
+          "tone": "success"
+        }
+      ]
+    },
+    {
+      "id": "reservation-detail",
+      "route": "/reservation-detail",
+      "sourceScreenId": "reservation-detail",
+      "title": "예약 내역",
+      "description": "요청한 돌봄 정보를 다시 확인할 수 있어요.",
+      "prdScreen": "Reservation detail",
+      "sections": [
+        {
+          "id": "status",
+          "title": "확인 대기",
+          "body": "김미나 선생님이 요청을 검토하고 있어요."
+        },
+        {
+          "id": "details",
+          "title": "예약 정보",
+          "items": [
+            {
+              "id": "pet",
+              "title": "콩이",
+              "description": "방문 돌봄"
+            },
+            {
+              "id": "time",
+              "title": "2026년 11월 21일",
+              "description": "오후 2시"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "id": "new-reservation",
+          "label": "새 예약 만들기",
+          "to": "reservation-home",
+          "kind": "navigate"
+        },
+        {
+          "id": "contact-carer",
+          "label": "선생님에게 문의",
+          "to": "reservation-detail",
+          "kind": "unavailable",
+          "capability": "messages",
+          "variant": "secondary"
+        }
+      ],
+      "states": [
+        {
+          "id": "default",
+          "title": "기본"
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "book-pet-care",
+      "name": "돌봄 서비스 예약 요청",
+      "screenIds": [
+        "reservation-home",
+        "carer-list",
+        "reservation-form",
+        "reservation-complete",
+        "reservation-detail"
+      ],
+      "actionIds": [
+        "find-carers",
+        "select-carer",
+        "request-reservation",
+        "view-reservation"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "storage",
+      "status": "local",
+      "description": "입력값은 이 브라우저의 로컬 저장소에만 저장합니다."
+    },
+    {
+      "id": "payments",
+      "status": "unavailable",
+      "description": "결제 연동은 이 프로토타입에서 제공하지 않습니다."
+    },
+    {
+      "id": "messages",
+      "status": "unavailable",
+      "description": "메시지 연동은 이 프로토타입에서 제공하지 않습니다."
+    }
+  ],
+  "rationale": [
+    "Synthetic reservation fixture for portability tests; it is not a historical review artifact.",
+    "The flow uses shared tokens and fields across search, selection, request, and recovery states."
+  ]
+}

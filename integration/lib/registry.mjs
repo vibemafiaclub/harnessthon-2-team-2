@@ -45,12 +45,17 @@ export const BUILTIN_WORKFLOWS = {
     scriptPath: "workflows/visual-concept-lane.mjs",
     requiredArgs: ["prdPath", "runDir", "runId", "round", "startedAt", "representativeWireframePath", "clientPreferences"],
   },
+  "post-approval-prototype": {
+    scriptPath: "workflows/post-approval-product.mjs",
+    requiredArgs: ["inputPath", "outDir"],
+  },
 };
 
 // Stages whose workflow does not exist in this repo yet. They stay
 // "unregistered" (a blocked route stage) until someone registers a real
 // script for them, so the plan never claims work that cannot execute.
 export const EXTERNAL_WORKFLOWS = {
+  // Preserve legacy explicit registrations; the built-in prototype is now the default.
   "production-outputs": { requiredArgs: ["prdPath", "runDir", "conceptId"] },
 };
 
