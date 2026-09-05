@@ -11,3 +11,8 @@ integration/runs/
 
 # Session working brief, not project documentation
 docs/integration-brief.md
+
+# Local prototype checks and execution evidence
+product/node_modules/
+product/runs/
+docs/post-approval-brief.md

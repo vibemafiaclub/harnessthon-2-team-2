@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { join, dirname, relative } from "node:path";
 import { sha256, stableStringify } from "../../research/lib/canonical.mjs";
-import { STAGE_ORDER, stageDef, recordStageOutput, recordApproval, refreshStaleness, saveRun, touchpointOf, readyGatesInTouchpoint } from "./runstate.mjs";
+import { STAGE_ORDER, stageDef, stageFingerprint, recordStageOutput, recordApproval, refreshStaleness, saveRun, touchpointOf, readyGatesInTouchpoint } from "./runstate.mjs";
 import { buildInvocation } from "./registry.mjs";
 import { approvedPrdToLaneInput, briefToLaneInput } from "./laneprd.mjs";
 
@@ -289,12 +289,55 @@ async function workflowAction({ repoRoot, runDir, stageId, state, registry, appr
     return asWorkflowAction(stageId, invocation, { saveResultTo: join(runDir, "concepts-result.json"), then: `integrate record ${runDir} concepts --result ${join(runDir, "concepts-result.json")}` });
   }
   if (stageId === "production") {
-    const invocation = buildInvocation(registry, "production-outputs", {
-      prdPath: approvedPrd?.path,
-      runDir: join(runDir, "production"),
-      conceptId: state.approvals.concept_approval ? state.request?.conceptId ?? state.stages.concepts.approvedConceptId ?? state.approvals.concept_approval.note : null,
-    });
-    return asWorkflowAction(stageId, invocation, { saveResultTo: join(runDir, "production-result.json"), then: `integrate record ${runDir} production --result ${join(runDir, "production-result.json")}` });
+    const conceptApproval = state.approvals.concept_approval;
+    const representative = state.stages.wireframe.representative;
+    const conceptId = state.stages.concepts.approvedConceptId ?? conceptApproval?.note;
+    const wireframeManifestPath = state.stages.wireframe.output?.path;
+    const conceptManifestPath = state.stages.concepts.output?.path;
+    if (!approvedPrd?.path || !conceptApproval || !conceptId || !representative?.variantId || !wireframeManifestPath || !conceptManifestPath) {
+      return { type: "blocked", stage: stageId, reason: "Production requires an approved PRD, an AI-confirmed selected wireframe, and a human-approved concept artifact.", unmetChecks: ["production_inputs_missing"] };
+    }
+    const productionDir = join(runDir, "production");
+    const metadataPath = join(productionDir, "product-input-metadata.json");
+    const inputPath = join(productionDir, "product-input.json");
+    const preparationFingerprint = stageFingerprint(state, "production");
+    if (!existsSync(inputPath) || state.stages.production.preparedFingerprint !== preparationFingerprint) {
+      await mkdir(productionDir, { recursive: true });
+      const metadata = {
+        sourceRoot: runDir,
+        outputDir: productionDir,
+        approvedPrdPath: approvedPrd.path,
+        wireframeManifestPath,
+        wireframeId: representative.variantId,
+        conceptManifestPath,
+        conceptId,
+        coordinatorStatePath: join(runDir, "state.json"),
+        approval: {
+          kind: "coordinator-approval",
+          coordinator: {
+            conceptApproval: { by: conceptApproval.by, at: conceptApproval.at, revision: conceptApproval.revision, conceptId },
+            wireframeRepresentative: { variantId: representative.variantId, revisionHash: representative.sha256 ?? null }
+          }
+        },
+        compatibility: representative.compatibility ?? {
+          mode: "normalize-pinned-structure",
+          representativeScreenId: "pending-normalization",
+          sectionOrder: [],
+          basis: "The coordinator pins the selected wireframe HTML and manifest, but this lane output has no structured block inventory. The native normalization workflow must extract its representative screen and ordered blocks from those pinned bytes."
+        }
+      };
+      await writeFile(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`);
+      state.stages.production.preparedFingerprint = preparationFingerprint;
+      return {
+        type: "run_command",
+        stage: stageId,
+        argv: ["node", join(repoRoot, "product/integration.mjs"), "--metadata", metadataPath],
+        then: `integrate next ${runDir}`,
+        note: "Builds a revision-pinned product input from the approved PRD, selected wireframe and selected human-approved concept. It never creates upstream review receipts."
+      };
+    }
+    const invocation = buildInvocation(registry, "post-approval-prototype", { inputPath, outDir: join(productionDir, "package") });
+    return asWorkflowAction(stageId, invocation, { saveResultTo: join(runDir, "production-result.json"), then: `integrate record ${runDir} production --result ${join(runDir, "production-result.json")}`, note: "Native Workflow produces only the portable HTML prototype and all-screen/state inspection board; it does not invoke Figma." });
   }
   throw new Error(`no workflow action for ${stageId}`);
 }

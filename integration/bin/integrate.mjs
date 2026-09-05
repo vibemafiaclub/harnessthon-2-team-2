@@ -200,6 +200,13 @@ async function cmdRecord(runDir, stageId) {
     console.log("[integrate] concepts recorded; next real user decision is concept approval");
   } else if (stageId === "production") {
     const result = JSON.parse(await readFile(resolve(requireFlag("result")), "utf8"));
+    const { inspectRun } = await import("../../product/pipeline.mjs");
+    const productDir = join(runDir, "production/package");
+    const productState = inspectRun(productDir);
+    if (result.status !== "ready-for-review" || productState.status !== "ready-for-review") fail("production is not ready for human inspection; incomplete or failed checks cannot be recorded as done");
+    const handoffPath = join(productDir, productState.revision, "handoff.json");
+    const handoff = JSON.parse(await readFile(handoffPath, "utf8"));
+    if (handoff.specHash !== productState.specHash || handoff.engineHash !== productState.engineHash || handoff.status !== "ready-for-review") fail("production handoff revision mismatch");
     recordStageOutput(state, "production", { path: resolve(flags.result), sha256: sha256(stableStringify(result)), actor: "ai_confirmed", summary: result.summary ?? "production outputs recorded", nowIso });
     await saveRun(runDir, state);
     console.log("[integrate] production outputs recorded");

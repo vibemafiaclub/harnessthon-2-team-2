@@ -1,0 +1,53 @@
+{
+  "prdId": "fixture-pet-care-reservation-v1",
+  "round": 1,
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "qualityChecks": [],
+  "repairHistory": [],
+  "timing": {
+    "startedAt": "2026-01-01T00:00:00.000Z",
+    "finishedAt": "2026-01-01T00:00:01.000Z",
+    "budgetNote": "synthetic fixture"
+  },
+  "rationaleSummary": "Synthetic test fixture only; this is not an approval record.",
+  "laneId": "wireframe",
+  "runId": "fixture-wireframe-v1",
+  "artifacts": [
+    {
+      "id": "fixture-wireframe",
+      "type": "clickable-wireframe",
+      "path": "wireframe.html",
+      "revisionHash": "6bee86705320f1112351332e76a7944812067459f7d19e08dbb863b94c643358"
+    }
+  ],
+  "screens": [
+    {
+      "id": "reservation:reservation-home",
+      "name": "반려동물 돌봄을 예약하세요",
+      "purpose": "Synthetic fixture screen"
+    },
+    {
+      "id": "reservation:carer-list",
+      "name": "가능한 돌봄 선생님",
+      "purpose": "Synthetic fixture screen"
+    },
+    {
+      "id": "reservation:reservation-form",
+      "name": "예약 정보를 확인해 주세요",
+      "purpose": "Synthetic fixture screen"
+    },
+    {
+      "id": "reservation:reservation-complete",
+      "name": "예약 요청을 보냈어요",
+      "purpose": "Synthetic fixture screen"
+    },
+    {
+      "id": "reservation:reservation-detail",
+      "name": "예약 내역",
+      "purpose": "Synthetic fixture screen"
+    }
+  ]
+}

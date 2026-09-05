@@ -22,7 +22,7 @@ export const STAGES = [
   { id: "wireframe", dependsOn: ["research"], humanGate: false, workflow: "wireframe-lane" },
   { id: "concepts", dependsOn: ["wireframe", "concept_answers"], humanGate: false, workflow: "visual-concept-lane" },
   { id: "concept_approval", dependsOn: ["concepts"], humanGate: true, touchpoint: "concept_review", workflow: null },
-  { id: "production", dependsOn: ["concept_approval"], humanGate: false, workflow: "production-outputs" },
+  { id: "production", dependsOn: ["concept_approval"], humanGate: false, workflow: "post-approval-prototype" },
 ];
 
 // Exactly two moments interrupt the human (user directive 2026-09-05):

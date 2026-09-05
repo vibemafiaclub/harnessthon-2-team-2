@@ -1,0 +1,46 @@
+{
+  "prdId": "fixture-pet-care-reservation-v1",
+  "round": 1,
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "qualityChecks": [],
+  "repairHistory": [],
+  "timing": {
+    "startedAt": "2026-01-01T00:00:00.000Z",
+    "finishedAt": "2026-01-01T00:00:01.000Z",
+    "budgetNote": "synthetic fixture"
+  },
+  "rationaleSummary": "Synthetic test fixture only; this is not an approval record.",
+  "laneId": "visual-concept",
+  "runId": "fixture-concept-v1",
+  "artifacts": [
+    {
+      "id": "fixture-concept",
+      "type": "concept-screen",
+      "path": "concept.html",
+      "revisionHash": "a73b6a1681b30d979e3d2367e2ac1810e2279d9efd64089ddd15913c1eaa8d76",
+      "conceptId": "pet-care"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "pet-care",
+      "name": "Calm care",
+      "direction": "Synthetic fixture only",
+      "differentiation": "No production concept claim.",
+      "tokenOverlay": {
+        "primary": "#0f766e",
+        "onPrimary": "#ffffff",
+        "bg": "#f8fafc",
+        "surface": "#ffffff",
+        "text": "#0f172a",
+        "muted": "#475569",
+        "border": "#cbd5e1",
+        "fontFamily": "'Pretendard', -apple-system, sans-serif",
+        "radius": "12px"
+      }
+    }
+  ]
+}

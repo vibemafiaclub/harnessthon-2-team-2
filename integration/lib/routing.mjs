@@ -206,7 +206,7 @@ export function buildRoutePlan(context) {
   }
 
   // --- Production (post-approval outputs) ---
-  const prodAdapter = registry["production-outputs"];
+  const prodAdapter = registry["post-approval-prototype"] ?? registry["production-outputs"];
   add("production", prodAdapter.status === "available"
     ? { rationale: "Produce full frontend pages, component documentation, IA, user flow, and browser prototype from the approved concept." }
     : { decision: "blocked", rationale: "Post-approval production workflow not yet implemented/registered (downstream work not merged).", unmetChecks: [`adapter:${prodAdapter.status}`] });

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "root": "../..",
+  "prd": {
+    "path": "samples/wedding-invitation.prd.json",
+    "sha256": "2f3a4fdf0449f3217a6a0d4097b56e1a44ea5988fe21cc2dd337576678e59e4b"
+  },
+  "spec": {
+    "path": "product/examples/wedding-spec.json",
+    "sha256": "51d95fef1b300c2029f979449d213153b6ca6f1ebe9db11c46f2d984241f6b87"
+  },
+  "system": "shadcn",
+  "wireframe": {
+    "manifest": {
+      "path": "runs/wf-wedding-r3/lane-output.json",
+      "sha256": "5ec8d42d0cc4b3c7e4f8a7bee00efd8edae22fd8094880de7bc0d33f2bf9c1b7"
+    },
+    "artifact": {
+      "path": "runs/wf-wedding-r3/wireframe-wizard.html",
+      "sha256": "af8114e203dc984a3629149626b5a95a3e2faf2b7755cfa0a03e40d8756f04dc"
+    },
+    "artifactId": "wf-wizard",
+    "selectedId": "wizard"
+  },
+  "concept": {
+    "manifest": {
+      "path": "runs/vc-wedding-r3/lane-output.json",
+      "sha256": "a1e412dce638647f38b7e69bdffa5e72d2a8bddea82d023f93e3105e787e7893"
+    },
+    "artifact": {
+      "path": "runs/vc-wedding-r3/concept-shadcn.html",
+      "sha256": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7"
+    },
+    "artifactId": "concept-shadcn",
+    "selectedId": "shadcn"
+  },
+  "scope": {
+    "screens": [
+      {
+        "id": "w-template",
+        "states": [
+          "default",
+          "empty",
+          "error"
+        ]
+      },
+      {
+        "id": "w-info",
+        "states": [
+          "default",
+          "error"
+        ]
+      },
+      {
+        "id": "w-media",
+        "states": [
+          "default",
+          "error"
+        ]
+      },
+      {
+        "id": "w-preview",
+        "states": [
+          "default",
+          "error"
+        ]
+      },
+      {
+        "id": "w-publish",
+        "states": [
+          "default",
+          "success"
+        ]
+      },
+      {
+        "id": "w-guest",
+        "states": [
+          "default"
+        ]
+      },
+      {
+        "id": "w-rsvp",
+        "states": [
+          "default",
+          "error",
+          "success"
+        ]
+      }
+    ],
+    "viewports": [
+      {
+        "id": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "id": "desktop",
+        "width": 1280,
+        "height": 900
+      }
+    ]
+  },
+  "compatibility": {
+    "prdHash": "2f3a4fdf0449f3217a6a0d4097b56e1a44ea5988fe21cc2dd337576678e59e4b",
+    "wireframeHash": "af8114e203dc984a3629149626b5a95a3e2faf2b7755cfa0a03e40d8756f04dc",
+    "conceptHash": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7",
+    "representativeScreenId": "w-guest",
+    "sectionOrder": [
+      "access",
+      "hero",
+      "names",
+      "greeting",
+      "ceremony",
+      "calendar",
+      "directions",
+      "map",
+      "address-copy",
+      "transport",
+      "parking",
+      "transfer"
+    ],
+    "basis": "The concept manifest explicitly names runs/wf-wedding-r3/wireframe-wizard.html and w-guest; inspected representative HTML blocks in this exact order. r5 has no manifest and is intentionally not used."
+  },
+  "approval": {
+    "kind": "user-authorized-scenario",
+    "authorization": "User instruction in this session: assume upstream flow/wireframe and visual concept are approved as explicitly authorized by the user.",
+    "assumption": "Use the committed r3 wizard + shadcn concept as the approved representative scenario. This is not a new historical human review record."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$id":"product-handoff.schema.json",
+  "title":"Portable HTML prototype prepared for final human inspection",
+  "type":"object",
+  "required":["version","stage","status","revision","inputHash","specHash","engineHash","entry","reviewRequired","reviewDecision","artifacts","evidence","limits","repairHistory"],
+  "properties":{
+    "version":{"type":"number","enum":[1]},
+    "stage":{"type":"string","enum":["post-approval-prototype"]},
+    "status":{"type":"string","enum":["ready-for-review","awaiting-browser-verification","needs-repair","blocked"]},
+    "revision":{"type":"string"},"inputHash":{"type":"string"},"specHash":{"type":"string"},"engineHash":{"type":"string"},
+    "entry":{"type":"string"},"reviewRequired":{"type":"boolean","enum":[true]},"reviewDecision":{"type":"string","enum":["not-recorded"]},
+    "artifacts":{"type":"array","items":{"type":"object","required":["path","sha256"]}},
+    "evidence":{"type":"object","required":["path","sha256"]},"limits":{"type":"array"},"repairHistory":{"type":"array"}
+  }
+}

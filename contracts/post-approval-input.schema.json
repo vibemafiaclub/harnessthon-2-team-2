@@ -1,0 +1,19 @@
+{
+  "$id": "post-approval-input.schema.json",
+  "title": "Revision-pinned post-approval coordinator handoff",
+  "type": "object",
+  "required": ["version", "prd", "wireframe", "concept", "system", "scope", "compatibility", "approval"],
+  "properties": {
+    "version": {"type":"number","enum":[1]},
+    "root": {"type":"string"},
+    "prd": {"type":"object","required":["path","sha256"]},
+    "spec": {"type":"object","required":["path","sha256"]},
+    "wireframe": {"type":"object","required":["manifest","artifact","artifactId","selectedId"]},
+    "concept": {"type":"object","required":["manifest","artifact","artifactId","selectedId"]},
+    "system": {"type":"string","enum":["shadcn","seed","wanted-montage"]},
+    "scope": {"type":"object","required":["screens","viewports"],"properties":{"screens":{"type":"array","items":{"type":"object","required":["id","states"]}},"viewports":{"type":"array","items":{"type":"object","required":["id","width","height"]}}}},
+    "brandConstraints": {"type":"object"},
+    "compatibility": {"type":"object","required":["prdHash","wireframeHash","conceptHash","representativeScreenId","sectionOrder","basis"]},
+    "approval": {"type":"object","required":["kind"],"properties":{"kind":{"type":"string","enum":["human-review","coordinator-approval","user-authorized-scenario"]},"authorization":{"type":"string"},"assumption":{"type":"string"}}}
+  }
+}

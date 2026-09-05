@@ -1,0 +1,41 @@
+{
+  "id": "fixture-pet-care-reservation-v1",
+  "title": "포근한 돌봄",
+  "domain": "pet-care-reservation",
+  "sampleInput": true,
+  "problem": "보호자가 신뢰할 수 있는 돌봄 요청을 빠르게 만들 수 있어야 합니다.",
+  "targetUsers": [
+    "반려동물 보호자"
+  ],
+  "background": "Synthetic test fixture only. It does not represent an upstream human approval or production source.",
+  "coreFlows": [
+    {
+      "id": "book-pet-care",
+      "name": "돌봄 서비스 예약 요청",
+      "steps": [
+        "검색",
+        "선생님 선택",
+        "요청 작성",
+        "완료 확인"
+      ]
+    }
+  ],
+  "mustHaveScreens": [
+    "Service search",
+    "Carer list",
+    "Reservation form",
+    "Reservation confirmation",
+    "Reservation detail"
+  ],
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "brandConstraints": {
+    "primary": "#0f766e",
+    "bg": "#f8fafc",
+    "surface": "#ffffff",
+    "text": "#0f172a",
+    "fontFamily": "'Pretendard', -apple-system, sans-serif"
+  }
+}
