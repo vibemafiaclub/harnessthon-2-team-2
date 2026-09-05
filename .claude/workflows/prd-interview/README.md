@@ -27,8 +27,8 @@ Workflow({
 })
 ```
 
-반환값의 `questions` (id, kind, question, why, options)를 사용자에게 물어 답을 받는다. 같은 내용이 `outDir/open-questions.md`에도 저장된다.
-마지막 항목은 항상 `Q-free`(자유 응답)다. 위 질문에 없지만 빠진 것이나 하고 싶은 말을 적는 자리이고, 답은 다른 답변과 같이 `answers`에 넣는다. 2단계에서 이 답이 가장 우선한다.
+반환값의 `questions` (id, kind, question, why, options)는 **반드시 `AskUserQuestion` 도구로** 사용자에게 묻는다. 질문을 채팅에 텍스트로 나열하고 답을 기다리는 방식은 금지한다. 한 호출에 최대 4개씩 순서대로 나눠 묻고, `options`를 선택지로 그대로 보여준다 (그래서 모든 질문의 options는 2~4개, 빈 배열 없음). 사용자가 "Other"로 직접 적은 답도 그대로 `answer`가 된다. 같은 내용이 `outDir/open-questions.md`에도 저장된다.
+마지막 항목은 항상 `Q-free`(자유 응답)다. 선택지는 "없음"/"있음"이고, "있음" 또는 Other로 적은 내용이 답이다. 위 질문에 없지만 빠진 것이나 하고 싶은 말을 적는 자리이고, 답은 다른 답변과 같이 `answers`에 넣는다. 2단계에서 이 답이 가장 우선한다.
 
 ### 2단계: 답변 반영해 PRD-v2
 
