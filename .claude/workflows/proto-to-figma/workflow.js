@@ -148,5 +148,76 @@ if (stage === 'extract') {
   }
 }
 
-// stage: build는 Task 4, 5에서 이어서 작성
+const PREFLIGHT_SCHEMA = {
+  type: 'object',
+  properties: {
+    ok: { type: 'boolean' },
+    checks: {
+      type: 'object',
+      properties: {
+        figmaConnected: { type: 'boolean' },
+        fileKeyValid: { type: 'boolean' },
+        fileCreated: { type: 'boolean' },
+        devServer: { type: 'boolean' },
+        sampleCapture: { type: 'boolean' },
+      },
+      required: ['figmaConnected', 'fileKeyValid', 'fileCreated', 'devServer', 'sampleCapture'],
+    },
+    message: { type: 'string' },
+    figmaFileKey: { type: 'string' },
+    figmaFileUrl: { type: 'string' },
+    sampleScreenId: { type: 'string' },
+    sampleFigmaNodeId: { type: 'string' },
+    sampleCaptureError: { type: 'string' },
+    fileCreateError: { type: 'string' },
+  },
+  required: ['ok', 'checks', 'message', 'figmaFileKey', 'figmaFileUrl', 'sampleScreenId', 'sampleFigmaNodeId', 'sampleCaptureError', 'fileCreateError'],
+}
+
+// =====================================================================
+// stage: build
+// =====================================================================
+if (stage === 'build') {
+  const devUrl = args && args.devUrl
+  const figmaFileKeyArg = args && args.figmaFileKey // 옵션 — 없으면 Preflight가 새로 만든다
+  const figmaFileName = (args && args.figmaFileName) || 'proto-to-figma'
+  const rawFlow = args && args.flow
+  const decisions = (args && args.decisions) || []
+  const concurrency = (args && args.concurrency) || 3
+  if (!devUrl || !rawFlow) {
+    throw new Error('stage=build 에는 args.devUrl, args.flow (stage=extract 반환값의 flow)가 필요합니다')
+  }
+
+  const flow = applyDecisions(rawFlow, decisions)
+  log(`decisions 반영 후 화면 ${flow.screens.length}개, 전이 ${flow.edges.length}개`)
+
+  phase('Preflight')
+  const preflight = await agent(
+    withPrompt('00-preflight.md', {
+      devUrl,
+      figmaFileKey: figmaFileKeyArg,
+      figmaFileName,
+      '화면 목록': flow.screens,
+    }),
+    { schema: PREFLIGHT_SCHEMA, ...SUB_LOW, label: 'preflight', phase: 'Preflight' },
+  )
+  if (!preflight || !preflight.ok) {
+    const message = preflight ? preflight.message : 'Preflight 에이전트가 응답하지 않았습니다.'
+    log(`Preflight 실패: ${message}`)
+    return {
+      stage: 'build',
+      ok: false,
+      phase: 'preflight',
+      checks: preflight ? preflight.checks : null,
+      message,
+      nextStep: '안내된 항목을 고친 뒤 같은 args로 다시 실행하세요.',
+    }
+  }
+  const figmaFileKey = preflight.figmaFileKey
+  log(`Preflight 통과 (figmaFileKey=${figmaFileKey}, 샘플 화면 ${preflight.sampleScreenId} 캡처 재사용)`)
+
+  // Capture, Connect, Report는 Task 5, 6에서 이어서 작성
+  throw new Error('Capture/Connect/Report 미구현 (Task 5, 6에서 추가)')
+}
+
 throw new Error(`알 수 없는 stage: ${stage}`)
