@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>허브 대시보드 와이어프레임</title>
+<style>
+  :root{
+    --ink:#111; --ink2:#444; --ink3:#777;
+    --line:#bbb; --line2:#888;
+    --bg:#f4f4f4; --panel:#fff; --ph:#e2e2e2; --ph2:#d0d0d0;
+  }
+  *{box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink); font-size:14px;}
+
+  /* ---------- review banner ---------- */
+  .review-banner{
+    position:sticky; top:0; z-index:50;
+    background:#222; color:#eee; text-align:center;
+    font-size:11px; letter-spacing:.02em; padding:5px 8px;
+  }
+
+  /* ---------- top tabs (flowmap / screens) ---------- */
+  .app-tabs{
+    position:sticky; top:24px; z-index:40;
+    display:flex; gap:6px; padding:8px 10px;
+    background:var(--bg); border-bottom:1px solid var(--line);
+  }
+  .app-tabs a{
+    flex:1; text-align:center; padding:8px 0;
+    border:1px solid var(--line2); border-radius:6px;
+    background:var(--panel); color:var(--ink); text-decoration:none; font-weight:600;
+  }
+  .app-tabs a[aria-current="true"]{background:#333; color:#fff; border-color:#333;}
+
+  main{padding:10px;}
+  .view[hidden]{display:none;}
+
+  /* ---------- flowmap ---------- */
+  .flow-scroll{overflow-x:auto; border:1px dashed var(--line); background:var(--panel); border-radius:8px;}
+  .flow-canvas{position:relative; width:900px; height:740px;}
+  .flow-canvas svg{position:absolute; inset:0; width:900px; height:740px;}
+  .flow-canvas svg path{fill:none; stroke:var(--line2); stroke-width:1.5;}
+  .flow-canvas svg text{
+    font-size:10px; fill:var(--ink2);
+    paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round;
+  }
+  .fnode{
+    position:absolute; display:block; text-align:left;
+    border:1.5px solid var(--ink2); border-radius:6px; background:#fafafa;
+    padding:8px 10px; cursor:pointer; font-size:12px; color:var(--ink);
+  }
+  .fnode:hover{background:#eee;}
+  .fnode b{display:block; font-size:12px;}
+  .fnode small{color:var(--ink3); font-size:10px;}
+  .fnode.guest{border-style:dashed;}
+  .flow-legend{font-size:11px; color:var(--ink3); margin:8px 2px;}
+
+  /* ---------- device frame ---------- */
+  .device-wrap{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .device-meta{font-size:11px; color:var(--ink3);}
+  .device{
+    width:100%; max-width:390px; height:700px;
+    border:2px solid var(--ink2); border-radius:14px; background:var(--panel);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .screen[hidden]{display:none;}
+  .screen{display:flex; flex-direction:column; height:100%;}
+  .topbar{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px; border-bottom:1px solid var(--line); background:#fafafa; flex:0 0 auto;
+  }
+  .topbar h1{font-size:15px; margin:0; flex:1; font-weight:700;}
+  .backbtn{
+    border:1px solid var(--line2); background:#fff; border-radius:6px;
+    padding:4px 8px; font-size:12px; cursor:pointer; color:var(--ink); text-decoration:none;
+  }
+  .body{flex:1 1 auto; overflow-y:auto; padding:12px;}
+
+  /* low-fi atoms */
+  .ph{background:var(--ph); border:1px dashed var(--line2); border-radius:6px;
+      display:flex; align-items:center; justify-content:center; color:var(--ink3); font-size:11px;}
+  .card{border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; margin-bottom:10px;}
+  .card h2{font-size:13px; margin:0 0 8px;}
+  .btn{
+    display:block; width:100%; text-align:center; padding:12px;
+    border:1px solid var(--ink2); border-radius:8px; background:#fff;
+    font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; text-decoration:none;
+  }
+  .btn.primary{background:#333; color:#fff;}
+  .btn.primary[disabled]{background:#ccc; border-color:#ccc; color:#777; cursor:not-allowed;}
+  .btn.sub{font-weight:400;}
+  .btn + .btn{margin-top:8px;}
+  .row{display:flex; gap:8px;}
+  .row > *{flex:1;}
+  label{display:block; font-size:12px; color:var(--ink2); margin:10px 0 4px;}
+  input[type=text], input[type=date], input[type=time], input[type=search], textarea, select{
+    width:100%; padding:10px; border:1px solid var(--line2); border-radius:6px;
+    font-size:14px; background:#fff; color:var(--ink);
+  }
+  textarea{resize:vertical;}
+  .gauge{height:10px; border:1px solid var(--line2); border-radius:5px; background:#fff; overflow:hidden;}
+  .gauge > div{height:100%; width:75%; background:#888;}
+  .checkline{display:flex; justify-content:space-between; align-items:center; font-size:13px;}
+  .badge{font-size:10px; border:1px solid var(--line2); border-radius:4px; padding:1px 5px; color:var(--ink2); background:#f0f0f0;}
+  .warn{border:1px dashed var(--ink2); background:#eee; padding:10px; border-radius:6px; font-size:12px; margin-bottom:10px;}
+  .thumb-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .thumb{border:1px solid var(--line); border-radius:6px; padding:6px; background:#fff; cursor:pointer; text-align:center; font-size:11px; color:var(--ink2);}
+  .thumb .ph{height:110px; margin-bottom:6px;}
+  .seg{display:flex; border:1px solid var(--line2); border-radius:8px; overflow:hidden;}
+  .seg button{flex:1; padding:10px; border:0; background:#fff; font-size:13px; cursor:pointer; color:var(--ink);}
+  .seg button[aria-pressed="true"]{background:#333; color:#fff;}
+  .stepper{display:flex; align-items:center; gap:12px;}
+  .stepper button{width:40px; height:40px; border:1px solid var(--line2); background:#fff; border-radius:8px; font-size:18px; cursor:pointer;}
+  .stepper output{font-size:16px; min-width:32px; text-align:center;}
+  .listline{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee; font-size:13px;}
+  .handle{color:var(--ink3); cursor:grab;}
+
+  /* guest bottom tabbar */
+  .tabbar{
+    flex:0 0 auto; display:flex; border-top:1px solid var(--line); background:#fafafa;
+  }
+  .tabbar a{
+    flex:1; text-align:center; padding:10px 0 12px; font-size:12px;
+    color:var(--ink3); text-decoration:none;
+  }
+  .tabbar a[aria-current="true"]{color:#111; font-weight:700; border-top:2px solid #333; margin-top:-1px;}
+  .tabbar a .ico{display:block; width:18px; height:18px; margin:0 auto 3px; border:1px solid var(--line2); border-radius:4px; background:#eee;}
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="review-banner">내부 검토용 — 클라이언트 공유 금지</div>
+
+<nav class="app-tabs" aria-label="와이어프레임 보기 전환">
+  <a href="#flowmap" id="tab-flow">플로맵</a>
+  <a href="#screen-h-dashboard" id="tab-screens">화면</a>
+</nav>
+
+<main>
+
+<!-- ================= 플로맵 ================= -->
+<section id="view-flowmap" class="view" hidden>
+  <h1 style="font-size:16px; margin:4px 2px 8px;">화면 플로맵 — 허브 대시보드 + 탭형 하객 페이지</h1>
+  <p class="flow-legend">박스를 탭하면 해당 화면으로 이동합니다. 실선 화살표 = 이동 액션. 점선 박스 = 하객 측 화면.</p>
+  <div class="flow-scroll">
+    <div class="flow-canvas">
+      <svg aria-hidden="true">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#888" stroke="none"></path>
+          </marker>
+        </defs>
+        <!-- h-dashboard -> h-template -->
+        <path d="M340,230 L150,115" marker-end="url(#arr)"></path>
+        <text x="160" y="160">'템플릿' 카드 탭</text>
+        <!-- h-template -> h-dashboard -->
+        <path d="M190,115 L380,230" marker-end="url(#arr)"></path>
+        <text x="255" y="205">템플릿 적용 후 복귀</text>
+        <!-- h-dashboard -> h-info -->
+        <path d="M385,230 L385,115" marker-end="url(#arr)"></path>
+        <text x="290" y="176">'기본 정보' 카드 탭</text>
+        <!-- h-info -> h-dashboard -->
+        <path d="M425,115 L425,230" marker-end="url(#arr)"></path>
+        <text x="432" y="150">저장 후 복귀</text>
+        <!-- h-dashboard -> h-media -->
+        <path d="M472,230 L618,115" marker-end="url(#arr)"></path>
+        <text x="470" y="180">'사진·인사말' 카드 탭</text>
+        <!-- h-media -> h-dashboard -->
+        <path d="M660,115 L505,245" marker-end="url(#arr)"></path>
+        <text x="596" y="210">저장 후 복귀</text>
+        <!-- h-dashboard -> h-preview-publish -->
+        <path d="M505,255 L635,255" marker-end="url(#arr)"></path>
+        <text x="507" y="248">'미리보기' 또는 '발행하기'</text>
+        <!-- h-preview-publish -> h-dashboard -->
+        <path d="M635,295 L505,295" marker-end="url(#arr)"></path>
+        <text x="500" y="315">미완료 섹션 경고 → 허브 복귀</text>
+        <!-- h-preview-publish -> h-guest-invite -->
+        <path d="M740,315 L740,435" marker-end="url(#arr)"></path>
+        <text x="640" y="380">발행 후 링크 공유 → 하객이 링크 열기</text>
+        <!-- h-guest-invite -> h-guest-way -->
+        <path d="M635,478 L513,478" marker-end="url(#arr)"></path>
+        <text x="530" y="470">'오시는 길' 탭</text>
+        <!-- h-guest-invite -> h-guest-rsvp -->
+        <path d="M710,525 L620,600" marker-end="url(#arr)"></path>
+        <text x="655" y="572">'RSVP' 탭</text>
+        <!-- h-guest-way -> h-guest-rsvp -->
+        <path d="M430,525 L525,600" marker-end="url(#arr)"></path>
+        <text x="420" y="572">'RSVP' 탭</text>
+      </svg>
+
+      <a class="fnode" href="#screen-h-template" style="left:40px; top:45px; width:180px;"><b>템플릿 갤러리</b><small>h-template</small></a>
+      <a class="fnode" href="#screen-h-info" style="left:305px; top:45px; width:180px;"><b>기본 정보 편집</b><small>h-info</small></a>
+      <a class="fnode" href="#screen-h-media" style="left:575px; top:45px; width:180px;"><b>사진·인사말 편집</b><small>h-media</small></a>
+      <a class="fnode" href="#screen-h-dashboard" style="left:300px; top:230px; width:205px;"><b>제작 허브 대시보드</b><small>h-dashboard</small></a>
+      <a class="fnode" href="#screen-h-preview-publish" style="left:635px; top:230px; width:210px;"><b>미리보기·발행 시트</b><small>h-preview-publish</small></a>
+      <a class="fnode guest" href="#screen-h-guest-invite" style="left:635px; top:435px; width:210px;"><b>하객: 초대장 탭</b><small>h-guest-invite</small></a>
+      <a class="fnode guest" href="#screen-h-guest-way" style="left:330px; top:435px; width:183px;"><b>하객: 오시는 길 탭</b><small>h-guest-way</small></a>
+      <a class="fnode guest" href="#screen-h-guest-rsvp" style="left:480px; top:600px; width:200px;"><b>하객: RSVP 탭</b><small>h-guest-rsvp</small></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 화면 ================= -->
+<section id="view-screens" class="view" hidden>
+  <div class="device-wrap">
+    <div class="device-meta">디바이스 프레임 390×844 (저해상도 와이어프레임)</div>
+    <div class="device">
+
+      <!-- h-dashboard -->
+      <article class="screen" id="screen-h-dashboard" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#flowmap">← 플로맵</a>
+          <h1>내 청첩장 만들기</h1>
+        </div>
+        <div class="body">
+          <div class="card">
+            <h2>완성도</h2>
+            <div class="gauge" role="img" aria-label="완성도 4분의 3"><div></div></div>
+            <p style="font-size:12px; color:var(--ink3); margin:6px 0 0;">3/4 완료 — 사진·인사말이 남았어요</p>
+          </div>
+
+          <a class="card" href="#screen-h-template" style="display:block; text-decoration:none; color:inherit;">
+            <div class="checkline"><span><b>템플릿</b> — 클래식 A 적용 중</span><span class="badge">완료 ✓</span></div>
+          </a>
+          <a class="card" href="#screen-h-info" style="display:block; text-decoration:none; color:inherit;">
+            <div class="checkline"><span><b>기본 정보</b> — 이름·일시·예식장</span><span class="badge">완료 ✓</span></div>
+          </a>
+          <a class="card" href="#screen-h-media" style="display:block; text-decoration:none; color:inherit;">
+            <div class="checkline"><span><b>사진·인사말</b> — 사진 0장</span><span class="badge">미완료</span></div>
+          </a>
+
+          <a class="btn sub" href="#screen-h-preview-publish">미리보기</a>
+          <a class="btn primary" href="#screen-h-preview-publish">발행하기</a>
+          <p style="font-size:11px; color:var(--ink3); text-align:center;">모든 섹션 완료 시 발행할 수 있어요</p>
+        </div>
+      </article>
+
+      <!-- h-template -->
+      <article class="screen" id="screen-h-template" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-dashboard">← 허브</a>
+          <h1>템플릿 갤러리</h1>
+        </div>
+        <div class="body">
+          <p style="font-size:12px; color:var(--ink3); margin:0 0 10px;">탭하면 즉시 적용됩니다. 언제든 교체할 수 있어요.</p>
+          <div class="thumb-grid">
+            <button class="thumb tpl" type="button"><span class="ph" style="height:110px;">템플릿 썸네일</span>클래식 A <span class="badge">적용 중</span></button>
+            <button class="thumb tpl" type="button"><span class="ph" style="height:110px;">템플릿 썸네일</span>모던 B</button>
+            <button class="thumb tpl" type="button"><span class="ph" style="height:110px;">템플릿 썸네일</span>필름 C</button>
+            <button class="thumb tpl" type="button"><span class="ph" style="height:110px;">템플릿 썸네일</span>수채화 D</button>
+          </div>
+          <p id="tpl-applied" hidden style="font-size:12px; text-align:center; margin:10px 0 8px;">템플릿이 적용되었습니다 ✓</p>
+          <a class="btn primary" href="#screen-h-dashboard" style="margin-top:12px;">허브로 돌아가기</a>
+        </div>
+      </article>
+
+      <!-- h-info -->
+      <article class="screen" id="screen-h-info" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-dashboard">← 허브</a>
+          <h1>기본 정보 편집</h1>
+        </div>
+        <div class="body">
+          <div class="row">
+            <div>
+              <label for="groom">신랑 이름</label>
+              <input type="text" id="groom" value="김민준">
+            </div>
+            <div>
+              <label for="bride">신부 이름</label>
+              <input type="text" id="bride" value="이서연">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="wdate">예식 날짜</label>
+              <input type="date" id="wdate" value="2026-11-14">
+            </div>
+            <div>
+              <label for="wtime">예식 시간</label>
+              <input type="time" id="wtime" value="13:00">
+            </div>
+          </div>
+          <label for="venue">예식장 검색</label>
+          <input type="search" id="venue" value="더채플 웨딩홀">
+          <div class="ph" style="height:130px; margin-top:8px;">지도 미리보기 (자리표시자)</div>
+          <a class="btn primary" href="#screen-h-dashboard" style="margin-top:14px;">저장하고 허브로 돌아가기</a>
+        </div>
+      </article>
+
+      <!-- h-media -->
+      <article class="screen" id="screen-h-media" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-dashboard">← 허브</a>
+          <h1>사진·인사말 편집</h1>
+        </div>
+        <div class="body">
+          <div class="card">
+            <h2>대표 사진</h2>
+            <button type="button" class="ph" style="width:100%; height:140px;">탭해서 대표 사진 업로드</button>
+          </div>
+          <div class="card">
+            <h2>갤러리 (순서 변경 가능)</h2>
+            <div class="listline"><span>사진 1.jpg</span><span class="handle" aria-hidden="true">≡</span></div>
+            <div class="listline"><span>사진 2.jpg</span><span class="handle" aria-hidden="true">≡</span></div>
+            <button type="button" class="btn sub" style="margin-top:10px;">+ 사진 추가</button>
+          </div>
+          <div class="card">
+            <h2>인사말</h2>
+            <label for="greeting" style="margin-top:0;">인사말 문구</label>
+            <textarea id="greeting" rows="4">저희 두 사람이 하나 되는 날, 소중한 걸음으로 축복해 주세요.</textarea>
+            <button type="button" class="btn sub" id="btn-random-greeting" style="margin-top:8px;">추천 문구 랜덤 받기</button>
+          </div>
+          <a class="btn primary" href="#screen-h-dashboard">저장하고 허브로 돌아가기</a>
+        </div>
+      </article>
+
+      <!-- h-preview-publish -->
+      <article class="screen" id="screen-h-preview-publish" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-dashboard">← 허브</a>
+          <h1>미리보기·발행</h1>
+        </div>
+        <div class="body">
+          <div class="warn">
+            ⚠ '사진·인사말' 섹션이 아직 미완료입니다.
+            <a href="#screen-h-media" style="color:var(--ink); font-weight:600;">해당 섹션 완성하러 가기</a>
+            · <a href="#screen-h-dashboard" style="color:var(--ink);">허브로 돌아가기</a>
+          </div>
+
+          <div class="card">
+            <h2>하객 페이지 미리보기 (실시간 렌더)</h2>
+            <div class="ph" style="height:230px; flex-direction:column; gap:6px;">
+              <span>초대장 탭 렌더 (자리표시자)</span>
+              <span style="border:1px dashed var(--line2); padding:2px 6px;">초대장 | 오시는 길 | RSVP</span>
+            </div>
+          </div>
+
+          <div id="publish-before">
+            <button type="button" class="btn primary" id="btn-publish">발행하기</button>
+          </div>
+          <div id="publish-after" hidden>
+            <div class="card">
+              <h2>발행 완료! 링크를 공유하세요</h2>
+              <div class="ph" style="height:36px; margin-bottom:8px;">https://example.invite/minjun-seoyeon</div>
+              <button type="button" class="btn sub">공유 링크 복사</button>
+              <button type="button" class="btn sub">카카오톡으로 공유</button>
+              <button type="button" class="btn sub">QR 코드 보기</button>
+            </div>
+            <a class="btn primary" href="#screen-h-guest-invite">하객이 링크 열기 (하객 화면 보기)</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- h-guest-invite -->
+      <article class="screen" id="screen-h-guest-invite" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-preview-publish">← 뒤로</a>
+          <h1>민준 ♥ 서연 결혼합니다</h1>
+        </div>
+        <div class="body">
+          <div class="ph" style="height:200px; margin-bottom:10px;">대표 사진 (자리표시자)</div>
+          <div class="card">
+            <h2>인사말</h2>
+            <p style="font-size:13px; margin:0; color:var(--ink2);">저희 두 사람이 하나 되는 날, 소중한 걸음으로 축복해 주세요.</p>
+          </div>
+          <div class="card">
+            <h2>예식 일시</h2>
+            <p style="font-size:13px; margin:0 0 4px;">2026년 11월 14일 (토) 오후 1시</p>
+            <p style="font-size:13px; margin:0; color:var(--ink2);">더채플 웨딩홀 · <b>D-70</b></p>
+          </div>
+          <div class="card">
+            <h2>사진 갤러리</h2>
+            <div class="row">
+              <div class="ph" style="height:90px;">사진</div>
+              <div class="ph" style="height:90px;">사진</div>
+              <div class="ph" style="height:90px;">사진</div>
+            </div>
+            <p style="font-size:11px; color:var(--ink3); margin:6px 0 0;">← 좌우로 넘겨보기 →</p>
+          </div>
+          <button type="button" class="btn">축의금 송금하기 (앱으로 열기)</button>
+        </div>
+        <nav class="tabbar" aria-label="하객 페이지 탭">
+          <a href="#screen-h-guest-invite" aria-current="true"><span class="ico" aria-hidden="true"></span>초대장</a>
+          <a href="#screen-h-guest-way"><span class="ico" aria-hidden="true"></span>오시는 길</a>
+          <a href="#screen-h-guest-rsvp"><span class="ico" aria-hidden="true"></span>RSVP</a>
+        </nav>
+      </article>
+
+      <!-- h-guest-way -->
+      <article class="screen" id="screen-h-guest-way" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-guest-invite">← 초대장</a>
+          <h1>오시는 길</h1>
+        </div>
+        <div class="body">
+          <div class="ph" style="height:190px; margin-bottom:8px;">지도 (자리표시자)</div>
+          <button type="button" class="btn sub">주소 복사 — 서울시 강남구 예식로 12</button>
+          <div class="row" style="margin-top:8px;">
+            <button type="button" class="btn sub">카카오맵으로 열기</button>
+            <button type="button" class="btn sub">티맵으로 열기</button>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <h2>대중교통 안내</h2>
+            <div class="listline"><span>지하철</span><span>2호선 OO역 3번 출구 도보 5분</span></div>
+            <div class="listline"><span>버스</span><span>140, 402 OO정류장 하차</span></div>
+            <div class="listline" style="border-bottom:0;"><span>셔틀</span><span>OO역 1번 출구 20분 간격</span></div>
+          </div>
+          <div class="card">
+            <h2>주차 안내</h2>
+            <p style="font-size:13px; margin:0; color:var(--ink2);">건물 지하 주차장 2시간 무료 (안내데스크 등록)</p>
+          </div>
+        </div>
+        <nav class="tabbar" aria-label="하객 페이지 탭">
+          <a href="#screen-h-guest-invite"><span class="ico" aria-hidden="true"></span>초대장</a>
+          <a href="#screen-h-guest-way" aria-current="true"><span class="ico" aria-hidden="true"></span>오시는 길</a>
+          <a href="#screen-h-guest-rsvp"><span class="ico" aria-hidden="true"></span>RSVP</a>
+        </nav>
+      </article>
+
+      <!-- h-guest-rsvp -->
+      <article class="screen" id="screen-h-guest-rsvp" hidden>
+        <div class="topbar">
+          <a class="backbtn" href="#screen-h-guest-invite">← 초대장</a>
+          <h1>참석 여부 회신 (RSVP)</h1>
+        </div>
+        <div class="body">
+          <form id="rsvp-form">
+            <label id="lb-attend">참석 여부</label>
+            <div class="seg" role="group" aria-labelledby="lb-attend">
+              <button type="button" id="att-yes" aria-pressed="true">참석</button>
+              <button type="button" id="att-no" aria-pressed="false">불참</button>
+            </div>
+
+            <label for="headcount-out">참석 인원</label>
+            <div class="stepper">
+              <button type="button" id="hc-minus" aria-label="인원 줄이기">−</button>
+              <output id="headcount-out">1</output>
+              <button type="button" id="hc-plus" aria-label="인원 늘리기">＋</button>
+              <span style="font-size:12px; color:var(--ink3);">명</span>
+            </div>
+
+            <label for="meal">식사 여부</label>
+            <select id="meal">
+              <option>식사함</option>
+              <option>식사 안 함</option>
+              <option>미정</option>
+            </select>
+
+            <label for="guest-name">이름</label>
+            <input type="text" id="guest-name" placeholder="이름을 입력해 주세요">
+
+            <button type="submit" class="btn primary" style="margin-top:16px;">회신 보내기</button>
+          </form>
+
+          <div id="rsvp-done" hidden>
+            <div class="card" style="text-align:center; padding:24px 12px;">
+              <h2 style="font-size:15px;">회신이 전달되었습니다 ✓</h2>
+              <p style="font-size:13px; color:var(--ink2); margin:6px 0 0;">참석 · 1명 · 식사함</p>
+              <button type="button" class="btn sub" id="btn-rsvp-edit" style="margin-top:14px;">회신 수정하기</button>
+            </div>
+          </div>
+        </div>
+        <nav class="tabbar" aria-label="하객 페이지 탭">
+          <a href="#screen-h-guest-invite"><span class="ico" aria-hidden="true"></span>초대장</a>
+          <a href="#screen-h-guest-way"><span class="ico" aria-hidden="true"></span>오시는 길</a>
+          <a href="#screen-h-guest-rsvp" aria-current="true"><span class="ico" aria-hidden="true"></span>RSVP</a>
+        </nav>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  var screenIds = ["h-dashboard","h-template","h-info","h-media","h-preview-publish","h-guest-invite","h-guest-way","h-guest-rsvp"];
+  var lastScreen = "h-dashboard";
+
+  function route(){
+    var h = location.hash || "#flowmap";
+    var flowView = document.getElementById("view-flowmap");
+    var screenView = document.getElementById("view-screens");
+    var tabFlow = document.getElementById("tab-flow");
+    var tabScreens = document.getElementById("tab-screens");
+
+    var isScreen = h.indexOf("#screen-") === 0;
+    var id = isScreen ? h.slice(8) : null;
+    if (isScreen && screenIds.indexOf(id) === -1) { id = "h-dashboard"; }
+
+    flowView.hidden = isScreen;
+    screenView.hidden = !isScreen;
+    tabFlow.setAttribute("aria-current", String(!isScreen));
+    tabScreens.setAttribute("aria-current", String(isScreen));
+
+    screenIds.forEach(function(s){
+      document.getElementById("screen-" + s).hidden = !(isScreen && s === id);
+    });
+    if (isScreen) {
+      lastScreen = id;
+      tabScreens.setAttribute("href", "#screen-" + id);
+      var body = document.querySelector("#screen-" + id + " .body");
+      if (body) body.scrollTop = 0;
+    } else {
+      tabScreens.setAttribute("href", "#screen-" + lastScreen);
+    }
+  }
+  window.addEventListener("hashchange", route);
+  route();
+
+  /* 템플릿: 탭하면 즉시 적용 배지 이동 */
+  var tplButtons = Array.prototype.slice.call(document.querySelectorAll(".tpl"));
+  tplButtons.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      tplButtons.forEach(function(b){
+        var old = b.querySelector(".badge");
+        if (old) old.remove();
+      });
+      var badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = "적용 중";
+      btn.appendChild(badge);
+      document.getElementById("tpl-applied").hidden = false;
+    });
+  });
+
+  /* 추천 문구 랜덤 */
+  var phrases = [
+    "서로 마주 보며 다져온 사랑을 이제 함께 한곳을 바라보며 걸어가려 합니다.",
+    "두 사람이 사랑으로 만나 한 가정을 이루려 합니다. 귀한 걸음 하시어 축복해 주세요.",
+    "평생을 함께할 약속의 자리에 소중한 분들을 모십니다."
+  ];
+  var pi = 0;
+  document.getElementById("btn-random-greeting").addEventListener("click", function(){
+    document.getElementById("greeting").value = phrases[pi % phrases.length];
+    pi++;
+  });
+
+  /* 발행하기 → 공유 UI 전환 */
+  document.getElementById("btn-publish").addEventListener("click", function(){
+    document.getElementById("publish-before").hidden = true;
+    document.getElementById("publish-after").hidden = false;
+  });
+
+  /* RSVP 토글/스테퍼/제출 */
+  var yes = document.getElementById("att-yes"), no = document.getElementById("att-no");
+  yes.addEventListener("click", function(){ yes.setAttribute("aria-pressed","true"); no.setAttribute("aria-pressed","false"); });
+  no.addEventListener("click", function(){ no.setAttribute("aria-pressed","true"); yes.setAttribute("aria-pressed","false"); });
+
+  var hc = 1, hcOut = document.getElementById("headcount-out");
+  document.getElementById("hc-minus").addEventListener("click", function(){ hc = Math.max(1, hc - 1); hcOut.textContent = hc; });
+  document.getElementById("hc-plus").addEventListener("click", function(){ hc = Math.min(10, hc + 1); hcOut.textContent = hc; });
+
+  document.getElementById("rsvp-form").addEventListener("submit", function(e){
+    e.preventDefault();
+    var attend = yes.getAttribute("aria-pressed") === "true" ? "참석" : "불참";
+    var meal = document.getElementById("meal").value;
+    document.querySelector("#rsvp-done p").textContent = attend + " · " + hc + "명 · " + meal;
+    document.getElementById("rsvp-form").hidden = true;
+    document.getElementById("rsvp-done").hidden = false;
+  });
+  document.getElementById("btn-rsvp-edit").addEventListener("click", function(){
+    document.getElementById("rsvp-form").hidden = false;
+    document.getElementById("rsvp-done").hidden = true;
+  });
+})();
+</script>
+</body>
+</html>

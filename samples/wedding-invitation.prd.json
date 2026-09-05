@@ -1,0 +1,52 @@
+{
+  "id": "prd-wedding-invitation-v1",
+  "title": "Mobile wedding invitation builder",
+  "domain": "wedding-invitation",
+  "sampleInput": true,
+  "problem": "Couples want a polished mobile wedding invitation page without hiring a designer, and guests need directions, schedule, and RSVP in one place.",
+  "targetUsers": [
+    "Engaged couples with no design experience",
+    "Wedding guests opening a shared link on their phone"
+  ],
+  "background": "SAMPLE INPUT for lane-workflow testing. Couples currently juggle messenger threads, map links, and bank-transfer notes. The product generates a single shareable invitation page and a small builder to customize it.",
+  "coreFlows": [
+    {
+      "id": "flow-build",
+      "name": "Build and publish an invitation",
+      "steps": [
+        "Choose a template",
+        "Enter couple names, date, venue",
+        "Add photos and greeting message",
+        "Preview the guest view",
+        "Publish and copy the share link"
+      ]
+    },
+    {
+      "id": "flow-guest",
+      "name": "Guest views invitation and RSVPs",
+      "steps": [
+        "Open shared link",
+        "Read greeting, date, and venue with map",
+        "Check transport and parking guidance",
+        "Submit RSVP with headcount and meal preference",
+        "Optionally send congratulatory transfer via deep link"
+      ]
+    }
+  ],
+  "mustHaveScreens": [
+    "Template gallery",
+    "Invitation editor",
+    "Guest invitation page",
+    "RSVP form"
+  ],
+  "brandHints": [
+    "warm",
+    "celebratory",
+    "trustworthy enough for parents' generation"
+  ],
+  "constraints": [
+    "All user-facing copy must be written in Korean (service targets Korean users)",
+    "Guest page must be readable without login",
+    "RSVP must work on low-end phones"
+  ]
+}

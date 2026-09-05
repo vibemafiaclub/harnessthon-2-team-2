@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모바일 청첩장 와이어프레임 (2차)</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: #e5e5e5;
+    color: #222;
+  }
+  header.app-header {
+    background: #fff;
+    border-bottom: 1px solid #bbb;
+    padding: 12px 16px;
+  }
+  header.app-header p { margin: 4px 0 0; font-size: 12px; color: #666; }
+  header.app-header .title { font-size: 16px; font-weight: 700; margin: 0; }
+  nav.tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 2px solid #999;
+  }
+  nav.tabs button {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    background: #f0f0f0;
+    border-right: 1px solid #ccc;
+    cursor: pointer;
+  }
+  nav.tabs button[aria-selected="true"] {
+    background: #444;
+    color: #fff;
+    font-weight: 700;
+  }
+  main { padding: 16px; }
+
+  /* ---------- 플로우 맵 ---------- */
+  #view-flow { max-width: 760px; margin: 0 auto; }
+  #view-flow .hint { font-size: 12px; color: #555; margin: 0 0 8px; }
+  #view-flow svg { width: 100%; height: auto; background: #fafafa; border: 1px solid #aaa; }
+  svg a { cursor: pointer; }
+  svg a rect { fill: #fff; stroke: #444; stroke-width: 1.5; }
+  svg a:hover rect, svg a:focus rect { fill: #ddd; }
+  svg .box-title { font-size: 15px; font-weight: 700; fill: #111; }
+  svg .box-sub { font-size: 10px; fill: #666; }
+  svg .edge { stroke: #555; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  svg .edge-label { font-size: 10px; fill: #333; }
+
+  /* ---------- 화면(디바이스 프레임) ---------- */
+  #view-screens { display: flex; flex-direction: column; align-items: center; }
+  .device {
+    width: 390px;
+    height: 844px;
+    background: #fff;
+    border: 3px solid #333;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .device-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #ddd;
+    border-bottom: 1px solid #999;
+    flex: none;
+  }
+  .device-topbar button {
+    border: 1px solid #666;
+    background: #fff;
+    padding: 4px 10px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .device-topbar .crumb { font-size: 12px; color: #444; }
+  .screen { display: none; overflow-y: auto; flex: 1; padding: 16px; }
+  .screen.active { display: block; }
+  .screen h1 { font-size: 18px; margin: 0 0 4px; }
+  .screen .purpose { font-size: 11px; color: #777; margin: 0 0 14px; }
+  .screen h2 { font-size: 13px; margin: 16px 0 6px; color: #333; }
+  .ph {
+    background: #e8e8e8;
+    border: 1px dashed #999;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    text-align: center;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1.5px solid #444;
+    background: #f5f5f5;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .btn.primary { background: #444; color: #fff; font-weight: 700; }
+  .link-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: #333;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 8px 0;
+    display: block;
+    margin: 8px auto 0;
+  }
+  label { display: block; font-size: 12px; margin: 12px 0 4px; font-weight: 700; }
+  input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid #888;
+    background: #fff;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; }
+  fieldset { border: 1px solid #999; padding: 10px; margin: 0; }
+  fieldset legend { font-size: 12px; font-weight: 700; padding: 0 4px; }
+  .radio-row { display: flex; gap: 16px; }
+  .radio-row label { font-weight: 400; margin: 4px 0; display: flex; align-items: center; gap: 4px; font-size: 13px; }
+  .card {
+    border: 1px solid #999;
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+  .banner {
+    background: #ddd;
+    border: 1px solid #999;
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tpl-grid .card { margin-bottom: 0; }
+  .tpl-grid .card p { margin: 6px 0; font-size: 13px; font-weight: 700; }
+  .tpl-grid .card .desc { font-weight: 400; font-size: 11px; color: #777; }
+  .info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #eee; }
+  .info-row .k { color: #777; }
+  .share-link-row { display: flex; gap: 8px; align-items: stretch; }
+  .share-link-row input { flex: 1; }
+  .share-link-row button { flex: none; width: auto; margin-top: 0; padding: 0 14px; }
+  .done-msg { text-align: center; font-size: 16px; font-weight: 700; margin: 24px 0 4px; }
+  .done-sub { text-align: center; font-size: 12px; color: #777; margin: 0 0 20px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <p class="title">모바일 청첩장 서비스 — 저해상도 클릭형 와이어프레임 (라운드 2)</p>
+  <p>구조 스케치용 흑백 와이어프레임입니다. 시각 디자인(색상·브랜드)은 별도 단계에서 진행합니다.</p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="보기 전환">
+  <button id="tab-flow" role="tab" aria-selected="true" aria-controls="view-flow">플로우 맵</button>
+  <button id="tab-screens" role="tab" aria-selected="false" aria-controls="view-screens">화면</button>
+</nav>
+
+<main>
+  <!-- ===================== 플로우 맵 ===================== -->
+  <section id="view-flow" role="tabpanel" aria-labelledby="tab-flow">
+    <p class="hint">상자를 클릭하면 해당 화면으로 이동합니다. 화살표 라벨은 이동을 일으키는 동작입니다.</p>
+    <svg viewBox="0 0 700 950" role="img" aria-label="화면 이동 플로우 맵: 6개 화면과 8개 이동 경로">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#555"></path>
+        </marker>
+      </defs>
+
+      <!-- 순방향 화살표 (아래 방향) -->
+      <path class="edge" d="M340,100 L340,186"></path>
+      <text class="edge-label" x="352" y="146">"이 템플릿 선택" 버튼 탭</text>
+
+      <path class="edge" d="M340,260 L340,346"></path>
+      <text class="edge-label" x="352" y="306">"미리보기" 버튼 탭</text>
+
+      <path class="edge" d="M340,420 L340,506"></path>
+      <text class="edge-label" x="352" y="466">"게시하기" 버튼 탭</text>
+
+      <path class="edge" d="M340,580 L340,666"></path>
+      <text class="edge-label" x="352" y="616">"게시된 청첩장 보기" 탭</text>
+      <text class="edge-label" x="352" y="630">(하객은 공유 링크로 진입)</text>
+
+      <path class="edge" d="M340,740 L340,826"></path>
+      <text class="edge-label" x="352" y="786">"참석 여부 전하기" 버튼 탭</text>
+
+      <!-- 역방향 화살표 (왼쪽 곡선) -->
+      <path class="edge" d="M190,385 C120,385 120,225 186,225"></path>
+      <text class="edge-label" x="10" y="300">"편집으로 돌아가기"</text>
+      <text class="edge-label" x="10" y="314">버튼 탭</text>
+
+      <path class="edge" d="M190,555 C50,555 50,245 186,245"></path>
+      <text class="edge-label" x="10" y="410">"계속 수정하기"</text>
+      <text class="edge-label" x="10" y="424">링크 탭</text>
+
+      <!-- 역방향 화살표 (오른쪽 곡선): 참석 회신 -> 하객용 청첩장 -->
+      <path class="edge" d="M490,880 C580,880 580,720 494,720"></path>
+      <text class="edge-label" x="520" y="806">제출 완료 후</text>
+      <text class="edge-label" x="520" y="820">"청첩장으로 돌아가기"</text>
+      <text class="edge-label" x="520" y="834">링크 탭</text>
+
+      <!-- 화면 상자 -->
+      <a href="#screen-template-gallery" aria-label="템플릿 갤러리 화면으로 이동">
+        <rect x="190" y="30" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="60" text-anchor="middle">템플릿 갤러리</text>
+        <text class="box-sub" x="340" y="80" text-anchor="middle">신랑·신부 진입 화면 · 템플릿 선택</text>
+      </a>
+      <a href="#screen-invitation-editor" aria-label="청첩장 편집 화면으로 이동">
+        <rect x="190" y="190" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="220" text-anchor="middle">청첩장 편집</text>
+        <text class="box-sub" x="340" y="240" text-anchor="middle">이름·일시·예식장·사진·인사말 입력</text>
+      </a>
+      <a href="#screen-guest-preview" aria-label="게스트 화면 미리보기 화면으로 이동">
+        <rect x="190" y="350" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="380" text-anchor="middle">게스트 화면 미리보기</text>
+        <text class="box-sub" x="340" y="400" text-anchor="middle">게시 전 하객 시점 확인</text>
+      </a>
+      <a href="#screen-publish-share" aria-label="게시 완료 및 링크 공유 화면으로 이동">
+        <rect x="190" y="510" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="540" text-anchor="middle">게시 완료·링크 공유</text>
+        <text class="box-sub" x="340" y="560" text-anchor="middle">공유 링크 복사·전달</text>
+      </a>
+      <a href="#screen-guest-invitation" aria-label="하객용 청첩장 화면으로 이동">
+        <rect x="190" y="670" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="700" text-anchor="middle">하객용 청첩장</text>
+        <text class="box-sub" x="340" y="720" text-anchor="middle">로그인 없이 열람 · 오시는 길·안내</text>
+      </a>
+      <a href="#screen-rsvp-form" aria-label="참석 여부 회신 화면으로 이동">
+        <rect x="190" y="830" width="300" height="70" rx="6"></rect>
+        <text class="box-title" x="340" y="860" text-anchor="middle">참석 여부 회신</text>
+        <text class="box-sub" x="340" y="880" text-anchor="middle">참석·인원·식사 선택 제출 (경량 폼)</text>
+      </a>
+    </svg>
+  </section>
+
+  <!-- ===================== 화면 ===================== -->
+  <section id="view-screens" role="tabpanel" aria-labelledby="tab-screens" hidden>
+    <div class="device">
+      <div class="device-topbar">
+        <button type="button" id="back-btn" aria-label="이전 화면으로 돌아가기">← 뒤로</button>
+        <span class="crumb" id="crumb">템플릿 갤러리</span>
+      </div>
+
+      <!-- 1. 템플릿 갤러리 -->
+      <section class="screen" id="screen-template-gallery">
+        <h1>청첩장 템플릿 고르기</h1>
+        <p class="purpose">마음에 드는 디자인을 골라 청첩장 제작을 시작하세요. (실제 서비스에서는 따뜻하고 축하 분위기의 저채도 톤 적용 예정)</p>
+        <div class="tpl-grid">
+          <div class="card">
+            <div class="ph" style="height:120px">템플릿 썸네일</div>
+            <p>따뜻한 봄날 <span class="desc">— 부드러운 파스텔 톤</span></p>
+            <button type="button" class="btn primary" data-go="template-gallery->invitation-editor">이 템플릿 선택</button>
+          </div>
+          <div class="card">
+            <div class="ph" style="height:120px">템플릿 썸네일</div>
+            <p>클래식 화이트 <span class="desc">— 단정한 정통 스타일</span></p>
+            <button type="button" class="btn" data-go="template-gallery->invitation-editor">이 템플릿 선택</button>
+          </div>
+          <div class="card">
+            <div class="ph" style="height:120px">템플릿 썸네일</div>
+            <p>가을 정원 <span class="desc">— 잔잔한 어스 톤</span></p>
+            <button type="button" class="btn" data-go="template-gallery->invitation-editor">이 템플릿 선택</button>
+          </div>
+          <div class="card">
+            <div class="ph" style="height:120px">템플릿 썸네일</div>
+            <p>모던 미니멀 <span class="desc">— 여백 중심 레이아웃</span></p>
+            <button type="button" class="btn" data-go="template-gallery->invitation-editor">이 템플릿 선택</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 청첩장 편집 -->
+      <section class="screen" id="screen-invitation-editor">
+        <h1>청첩장 편집</h1>
+        <p class="purpose">기본 정보를 입력하면 청첩장이 완성됩니다.</p>
+
+        <label for="groom-name">신랑 이름</label>
+        <input type="text" id="groom-name" placeholder="예: 김민준">
+
+        <label for="bride-name">신부 이름</label>
+        <input type="text" id="bride-name" placeholder="예: 이서연">
+
+        <label for="wedding-date">예식 날짜</label>
+        <input type="date" id="wedding-date">
+
+        <label for="wedding-time">예식 시간</label>
+        <input type="time" id="wedding-time">
+
+        <label for="venue">예식장</label>
+        <input type="text" id="venue" placeholder="예: 더채플 앳 청담">
+
+        <h2>사진 추가</h2>
+        <button type="button" class="btn"><span aria-hidden="true">＋</span> 사진 추가</button>
+        <div class="ph" style="height:90px; margin-top:8px">업로드한 대표 사진 미리보기 영역</div>
+
+        <label for="greeting">인사말</label>
+        <textarea id="greeting" rows="4" placeholder="하객분들께 전할 인사말을 적어주세요"></textarea>
+
+        <button type="button" class="btn primary" data-go="invitation-editor->guest-preview" style="margin-top:16px">미리보기</button>
+      </section>
+
+      <!-- 3. 게스트 화면 미리보기 -->
+      <section class="screen" id="screen-guest-preview">
+        <h1>게스트 화면 미리보기</h1>
+        <div class="banner">하객에게 이렇게 보여요</div>
+        <div class="card">
+          <div class="ph" style="height:140px">대표 사진</div>
+          <p style="text-align:center; font-weight:700; margin:10px 0 4px">민준 ♥ 서연</p>
+          <p style="text-align:center; font-size:12px; color:#666; margin:0 0 10px">저희 두 사람, 하나 되는 날에 소중한 분들을 모십니다.</p>
+          <div class="info-row"><span class="k">일시</span><span>2026년 10월 24일 (토) 오후 1시</span></div>
+          <div class="info-row"><span class="k">예식장</span><span>더채플 앳 청담</span></div>
+          <div class="info-row"><span class="k">인사말</span><span>입력한 인사말 요약 표시</span></div>
+        </div>
+        <button type="button" class="btn" data-go="guest-preview->invitation-editor">편집으로 돌아가기</button>
+        <button type="button" class="btn primary" data-go="guest-preview->publish-share">게시하기</button>
+      </section>
+
+      <!-- 4. 게시 완료·링크 공유 -->
+      <section class="screen" id="screen-publish-share">
+        <h1>게시 완료·링크 공유</h1>
+        <p class="done-msg">청첩장이 게시되었어요!</p>
+        <p class="done-sub">아래 링크를 하객분들께 전달해 주세요.</p>
+
+        <h2>공유 링크</h2>
+        <div class="share-link-row">
+          <input type="text" id="share-url" value="https://example.invite/minjun-seoyeon" readonly aria-label="공유 링크 주소">
+          <button type="button" class="btn">링크 복사</button>
+        </div>
+
+        <h2>공유 방법</h2>
+        <div class="card">
+          <button type="button" class="btn">카카오톡으로 공유</button>
+          <button type="button" class="btn">문자 메시지로 공유</button>
+          <p style="font-size:11px; color:#777; margin:8px 0 0">하객은 별도 로그인 없이 링크만으로 청첩장을 볼 수 있어요.</p>
+        </div>
+
+        <button type="button" class="btn primary" data-go="publish-share->guest-invitation" style="margin-top:16px">게시된 청첩장 보기</button>
+        <button type="button" class="link-btn" data-go="publish-share->invitation-editor">계속 수정하기</button>
+      </section>
+
+      <!-- 5. 하객용 청첩장 -->
+      <section class="screen" id="screen-guest-invitation">
+        <h1>민준 ♥ 서연</h1>
+        <p class="purpose">하객용 청첩장 — 공유 링크로 로그인 없이 열람</p>
+        <div class="ph" style="height:180px">대표 사진</div>
+
+        <h2>인사말</h2>
+        <div class="card">
+          <p style="font-size:13px; margin:0">서로의 봄이 되어 함께 걸어가려 합니다. 저희 두 사람의 새로운 시작을 축복해 주시면 감사하겠습니다.</p>
+        </div>
+
+        <h2>예식 안내</h2>
+        <div class="card">
+          <div class="info-row"><span class="k">일시</span><span>2026년 10월 24일 (토) 오후 1시</span></div>
+          <div class="info-row"><span class="k">예식장</span><span>더채플 앳 청담 3층 채플홀</span></div>
+        </div>
+
+        <h2>오시는 길</h2>
+        <div class="ph" style="height:130px">지도 영역</div>
+
+        <h2>교통·주차 안내</h2>
+        <div class="card">
+          <div class="info-row"><span class="k">지하철</span><span>7호선 청담역 3번 출구 도보 5분</span></div>
+          <div class="info-row"><span class="k">셔틀</span><span>청담역 2번 출구 앞 15분 간격 운행</span></div>
+          <div class="info-row"><span class="k">주차</span><span>건물 지하 주차장 2시간 무료</span></div>
+        </div>
+
+        <button type="button" class="btn primary" data-go="guest-invitation->rsvp-form">참석 여부 전하기</button>
+        <button type="button" class="btn">축하 마음 전하기 (송금 앱으로 이동)</button>
+      </section>
+
+      <!-- 6. 참석 여부 회신 -->
+      <section class="screen" id="screen-rsvp-form">
+        <h1>참석 여부 회신</h1>
+        <p class="purpose">간단한 정보만 남겨 주시면 준비에 큰 도움이 됩니다.</p>
+
+        <form id="rsvp">
+          <label for="rsvp-name">성함</label>
+          <input type="text" id="rsvp-name" placeholder="성함을 입력해주세요">
+
+          <fieldset style="margin-top:14px">
+            <legend>참석 여부</legend>
+            <div class="radio-row">
+              <label><input type="radio" name="attend" value="yes" checked> 참석</label>
+              <label><input type="radio" name="attend" value="no"> 불참</label>
+            </div>
+          </fieldset>
+
+          <label for="companions">동행 인원</label>
+          <input type="number" id="companions" min="0" max="10" value="0">
+
+          <fieldset style="margin-top:14px">
+            <legend>식사 여부</legend>
+            <div class="radio-row">
+              <label><input type="radio" name="meal" value="yes" checked> 식사함</label>
+              <label><input type="radio" name="meal" value="no"> 식사 안 함</label>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn primary" style="margin-top:16px">제출하기</button>
+        </form>
+
+        <div id="rsvp-done" hidden>
+          <p class="done-msg">소중한 회신 감사합니다</p>
+          <p class="done-sub">전해 주신 내용은 신랑·신부에게 전달됩니다.</p>
+        </div>
+        <button type="button" class="link-btn" data-go="rsvp-form->guest-invitation">청첩장으로 돌아가기</button>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var SCREENS = ["template-gallery", "invitation-editor", "guest-preview", "publish-share", "guest-invitation", "rsvp-form"];
+  var NAMES = {
+    "template-gallery": "템플릿 갤러리",
+    "invitation-editor": "청첩장 편집",
+    "guest-preview": "게스트 화면 미리보기",
+    "publish-share": "게시 완료·링크 공유",
+    "guest-invitation": "하객용 청첩장",
+    "rsvp-form": "참석 여부 회신"
+  };
+  var tabFlow = document.getElementById("tab-flow");
+  var tabScreens = document.getElementById("tab-screens");
+  var viewFlow = document.getElementById("view-flow");
+  var viewScreens = document.getElementById("view-screens");
+  var crumb = document.getElementById("crumb");
+  var backStack = [];
+  var current = null;
+
+  function setView(which) {
+    var flow = which === "flow";
+    tabFlow.setAttribute("aria-selected", flow ? "true" : "false");
+    tabScreens.setAttribute("aria-selected", flow ? "false" : "true");
+    viewFlow.hidden = !flow;
+    viewScreens.hidden = flow;
+  }
+
+  function showScreen(id, pushBack) {
+    if (SCREENS.indexOf(id) === -1) id = "template-gallery";
+    if (pushBack && current && current !== id) backStack.push(current);
+    SCREENS.forEach(function (s) {
+      document.getElementById("screen-" + s).classList.toggle("active", s === id);
+    });
+    crumb.textContent = NAMES[id];
+    current = id;
+    setView("screens");
+    var pane = document.getElementById("screen-" + id);
+    pane.scrollTop = 0;
+  }
+
+  function route() {
+    var h = location.hash;
+    if (h === "" || h === "#flow") {
+      setView("flow");
+      return;
+    }
+    if (h.indexOf("#screen-") === 0) {
+      showScreen(h.slice(8), true);
+    }
+  }
+
+  tabFlow.addEventListener("click", function () { location.hash = "#flow"; });
+  tabScreens.addEventListener("click", function () {
+    location.hash = "#screen-" + (current || "template-gallery");
+  });
+
+  document.querySelectorAll("[data-go]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var target = el.getAttribute("data-go").split("->")[1];
+      location.hash = "#screen-" + target;
+    });
+  });
+
+  document.getElementById("back-btn").addEventListener("click", function () {
+    var prev = backStack.pop();
+    if (prev) {
+      current = null; /* 뒤로 이동은 스택에 다시 쌓지 않음 */
+      location.hash = "#screen-" + prev;
+    } else {
+      location.hash = "#flow";
+    }
+  });
+
+  document.getElementById("rsvp").addEventListener("submit", function (e) {
+    e.preventDefault();
+    this.hidden = true;
+    document.getElementById("rsvp-done").hidden = false;
+  });
+
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>

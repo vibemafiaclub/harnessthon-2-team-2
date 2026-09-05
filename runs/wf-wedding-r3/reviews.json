@@ -1,0 +1,26 @@
+[
+  {
+    "reviewId": "wf-wedding-r3-r3-1",
+    "laneId": "wireframe",
+    "runId": "wf-wedding-r3",
+    "round": 3,
+    "decision": "approved",
+    "decidedBy": "human",
+    "decidedAt": "2026-09-05T16:31:45+09:00",
+    "boundRevisions": [
+      {
+        "artifactId": "wf-wizard",
+        "revisionHash": "af8114e203dc984a3629149626b5a95a3e2faf2b7755cfa0a03e40d8756f04dc"
+      },
+      {
+        "artifactId": "wf-hub",
+        "revisionHash": "195b7319eb18fae6e0f6bde210488d0ee70ead8f6d393e6543c22819d8793c89"
+      },
+      {
+        "artifactId": "wf-canvas",
+        "revisionHash": "75f2827a476614ced8a424497b005529373fa614c2746e887f38caea4256c298"
+      }
+    ],
+    "feedback": "디자이너 게이트: 대표 구조로 wizard(선형 위저드) 선택. AI 추천과 일치. 내부용 산출물이며 클라이언트 비노출."
+  }
+]

@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review: wireframe · wf-wedding-r1</title>
+<style>
+  body{font:14px/1.5 -apple-system,system-ui,sans-serif;margin:0;background:#f6f5f2;color:#1f2328}
+  header{background:#1f2328;color:#fff;padding:16px 24px}
+  header code{background:#3a3f45;padding:1px 6px;border-radius:4px}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  h2{margin-top:32px;border-bottom:2px solid #d8d5cf;padding-bottom:6px}
+  table{border-collapse:collapse;width:100%;background:#fff}
+  td,th{border:1px solid #d8d5cf;padding:6px 10px;text-align:left;vertical-align:top}
+  .st-pass .status{color:#0a7a35;font-weight:600}
+  .st-fail .status{color:#c22525;font-weight:600}
+  .st-not-verified .status{color:#9a6700;font-weight:600}
+  .artifact{background:#fff;border:1px solid #d8d5cf;border-radius:8px;padding:16px;margin:16px 0}
+  .artifact iframe{width:100%;height:720px;border:1px solid #d8d5cf;border-radius:6px;background:#fff}
+  .rev{color:#57606a}
+  .notice{background:#fff8e5;border:1px solid #e6d9a8;border-radius:8px;padding:12px 16px}
+</style></head><body>
+<header>
+  <h1>wireframe lane review — round 1</h1>
+  <p>run <code>wf-wedding-r1</code> · PRD <code>prd-wedding-invitation-v1</code> · viewport 390×844 · generated 2026-09-05T15:31:44+09:00 → 2026-09-05T15:34:43+09:00</p>
+</header>
+<main>
+<div class="notice">Approve, request revision, or reject <b>in the terminal session</b>. Your decision is recorded against the exact revision hashes shown here. Review axes are reported separately on purpose — there is no single combined score.</div>
+<h2>Screen inventory</h2><ul><li><b>Template Gallery</b> (template-gallery) — Couple browses and selects an invitation template to start building.</li>
+<li><b>Invitation Editor</b> (invitation-editor) — Couple enters names, date, venue, photos, and greeting message onto the chosen template.</li>
+<li><b>Guest View Preview</b> (guest-preview) — Couple previews exactly what guests will see before publishing.</li>
+<li><b>Publish and Share</b> (publish-share) — Confirms the invitation is live and lets the couple copy the shareable link.</li>
+<li><b>Guest Invitation Page</b> (guest-invitation) — Guest opens the shared link (no login) and reads greeting, date, venue with map, and transport/parking guidance.</li>
+<li><b>RSVP Form</b> (rsvp-form) — Guest submits attendance with headcount and meal preference; lightweight for low-end phones.</li></ul>
+
+<h2>Artifacts</h2>
+<section class="artifact">
+  <h3>wireframe <code>clickable-wireframe</code></h3>
+  <p class="rev">revision <code>0fb5bdc4ca614eb2</code> · <a href="wireframe.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe.html" loading="lazy"></iframe>
+</section>
+<h2>Quality checks (separate axes)</h2>
+<table><tr><th>Criterion</th><th>Axis</th><th>Status</th><th>Expected</th><th>Observed</th></tr>
+<tr class="st-pass"><td>mech-screens-routable</td><td>Mechanical</td><td class="status">pass</td><td>All 6 plan screens exist as routable sections</td><td>div ids screen-template-gallery/-invitation-editor/-guest-preview/-publish-share/-guest-invitation/-rsvp-form all present (lines 238-356); SCREENS array (line 390) lists all 6 ids and render() routes #screen-&lt;id&gt; hashes to them</td></tr>
+<tr class="st-pass"><td>mech-edge-gallery-editor</td><td>Mechanical</td><td class="status">pass</td><td>Choose a template routes template-gallery -&gt; invitation-editor</td><td>Three 'Use this template' buttons with onclick go('invitation-editor') (lines 246, 253, 260)</td></tr>
+<tr class="st-pass"><td>mech-edge-editor-preview</td><td>Mechanical</td><td class="status">pass</td><td>Preview the guest view routes invitation-editor -&gt; guest-preview</td><td>CTA 'Preview the guest view' onclick go('guest-preview') (line 292)</td></tr>
+<tr class="st-pass"><td>mech-edge-preview-editor</td><td>Mechanical</td><td class="status">pass</td><td>Back to edit routes guest-preview -&gt; invitation-editor</td><td>CTA 'Back to edit' onclick go('invitation-editor') (line 310); device-bar back button also targets data-back='invitation-editor'</td></tr>
+<tr class="st-pass"><td>mech-edge-preview-publish</td><td>Mechanical</td><td class="status">pass</td><td>Publish routes guest-preview -&gt; publish-share</td><td>CTA 'Publish' onclick go('publish-share') (line 311)</td></tr>
+<tr class="st-pass"><td>mech-edge-publish-guest</td><td>Mechanical</td><td class="status">pass</td><td>Open shared link routes publish-share -&gt; guest-invitation</td><td>Anchor 'Open guest page' href=#screen-guest-invitation (line 327); hashchange listener + render() activates that screen since 'guest-invitation' is in SCREENS</td></tr>
+<tr class="st-pass"><td>mech-edge-guest-rsvp</td><td>Mechanical</td><td class="status">pass</td><td>Tap RSVP routes guest-invitation -&gt; rsvp-form</td><td>CTA 'RSVP' onclick go('rsvp-form') (line 350)</td></tr>
+<tr class="st-pass"><td>mech-edge-rsvp-guest</td><td>Mechanical</td><td class="status">pass</td><td>Submit RSVP returns to guest-invitation with confirmation</td><td>submitRsvp() (line 432) unhides #rsvp-confirm toast ('RSVP received. Thank you!', line 332) then go('guest-invitation')</td></tr>
+<tr class="st-pass"><td>mech-no-external-assets</td><td>Mechanical</td><td class="status">pass</td><td>No external asset URLs fetched</td><td>grep for src=/https/url() found only url(#arrowhead) (local SVG fragment) and a display-only https URL as readonly input value (line 322); no img src, external scripts, fonts, or stylesheets</td></tr>
+<tr class="st-pass"><td>mech-lang-h1</td><td>Mechanical</td><td class="status">pass</td><td>lang attribute set; each screen has an h1</td><td>html lang='en' (line 2); h1 in all 6 screens (lines 239, 266, 297, 316, 335, 357) - guest-invitation's h1 is the couple-names heading 'Jiyoon &amp; Minho'</td></tr>
+<tr class="st-pass"><td>mech-inputs-labeled</td><td>Mechanical</td><td class="status">pass</td><td>Every form input has an accessible label</td><td>label[for] pairs for ed-names, ed-date, ed-venue, ed-address, ed-greeting, share-link; all radios wrapped in &lt;label class='radio-row'&gt;; stepper buttons carry aria-label Decrease/Increase headcount and the output has aria-live inside a legend-ed fieldset</td></tr>
+<tr class="st-pass"><td>ux-flow-build</td><td>UX task success</td><td class="status">pass</td><td>flow-build (choose template, enter details, photos+greeting, preview, publish+copy link) completable by clicking</td><td>Traced path: Flow map &gt; Template Gallery &gt; 'Use this template' &gt; Invitation Editor (couple names, date, venue name/address inputs; two '+ Add photo' placeholders; greeting textarea) &gt; 'Preview the guest view' &gt; Guest View Preview &gt; 'Publish' &gt; Publish and Share showing live toast, share link field and working 'Copy link' button (flips to 'Copied!')</td></tr>
+<tr class="st-pass"><td>ux-flow-guest</td><td>UX task success</td><td class="status">pass</td><td>flow-guest (open link, read greeting/date/venue+map, transport/parking, RSVP with headcount+meal, transfer deep link) completable by clicking</td><td>Traced path: Publish and Share &gt; 'Open guest page' &gt; Guest Invitation Page (hero, names, date, greeting, Venue card with map placeholder, 'Getting there &amp; parking' card with subway/parking placeholders) &gt; 'RSVP' &gt; RSVP Form (attend radios, 1-10 headcount stepper via step(), meal radios) &gt; 'Submit RSVP' &gt; returns to guest page with 'RSVP received' toast; 'Send congratulatory transfer' button present with 'Opens your banking app via deep link' note (static stub, appropriate for wireframe)</td></tr>
+<tr class="st-pass"><td>spec-must-have-screens</td><td>Spec fidelity</td><td class="status">pass</td><td>mustHaveScreens (Template gallery, Invitation editor, Guest invitation page, RSVP form) all represented</td><td>All four present as dedicated screens, plus guest-preview and publish-share covering the remaining flow-build steps; guest page notes 'No login needed to open it' matching the no-login constraint</td></tr>
+<tr class="st-pass"><td>spec-flow-steps</td><td>Spec fidelity</td><td class="status">pass</td><td>Every PRD flow step represented in the wireframe</td><td>All 5 flow-build steps and all 5 flow-guest steps have concrete UI (template cards, detail inputs, photo/greeting fields, preview screen, share-link copy, greeting/date/venue+map, transport/parking card, RSVP form with headcount+meal, transfer deep-link button)</td></tr>
+<tr class="st-pass"><td>a11y-basics</td><td>Accessibility</td><td class="status">pass</td><td>Mechanical accessibility basics hold</td><td>lang set, per-screen h1s, labeled inputs, aria-label on icon-only back/stepper buttons, role='status' on both confirmation toasts, aria-selected on view tabs, aria-hidden on the decorative flow-map SVG</td></tr>
+<tr class="st-pass"><td>aes-lowfi-discipline</td><td>Aesthetic</td><td class="status">pass</td><td>Low-fi discipline: no brand styling leaked; legible hierarchy</td><td>Entirely grayscale (#f2f2f2/#fff/#444 etc.), hatched .ph placeholders for photos/map/greeting, system font stack, no brand colors or decorative fonts despite 'warm/celebratory' brandHints; hierarchy legible - numbered flow nodes with subtitles, h1 per screen, cards, solid primary vs dashed secondary CTAs</td></tr></table>
+<h2>Automatic repair history (shown for transparency)</h2>
+<p>No automatic repairs were needed.</p>
+<h2>Rationale summary</h2><p>The six-screen inventory splits the PRD's two personas into a builder path (gallery &gt; editor &gt; preview &gt; publish) and a guest path (invitation page &gt; RSVP), with guest-preview and publish-share added beyond the four must-have screens so every flow-build step is clickable rather than implied. All screens live in one hash-routed HTML file with a flow-map landing view, keeping the prototype dependency-free and traceable edge-by-edge. Styling stays deliberately grayscale with hatched placeholders so review feedback targets structure and flow, not visual design.</p>
+</main></body></html>

@@ -1,0 +1,86 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리뷰: 와이어프레임 · wf-wedding-r2</title>
+<style>
+  body{font:14px/1.5 -apple-system,system-ui,sans-serif;margin:0;background:#f6f5f2;color:#1f2328}
+  header{background:#1f2328;color:#fff;padding:16px 24px}
+  header code{background:#3a3f45;padding:1px 6px;border-radius:4px}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  h2{margin-top:32px;border-bottom:2px solid #d8d5cf;padding-bottom:6px}
+  table{border-collapse:collapse;width:100%;background:#fff}
+  td,th{border:1px solid #d8d5cf;padding:6px 10px;text-align:left;vertical-align:top}
+  .st-pass .status{color:#0a7a35;font-weight:600}
+  .st-fail .status{color:#c22525;font-weight:600}
+  .st-not-verified .status{color:#9a6700;font-weight:600}
+  .artifact{background:#fff;border:1px solid #d8d5cf;border-radius:8px;padding:16px;margin:16px 0}
+  .artifact iframe{width:100%;height:720px;border:1px solid #d8d5cf;border-radius:6px;background:#fff}
+  .rev{color:#57606a}
+  .notice{background:#fff8e5;border:1px solid #e6d9a8;border-radius:8px;padding:12px 16px}
+  .fb-label{display:block;margin-top:12px;font-weight:600}
+  textarea.fb{width:100%;box-sizing:border-box;min-height:64px;margin-top:6px;padding:8px;border:1px solid #d8d5cf;border-radius:6px;font:inherit}
+  #fb-submit{margin-top:12px;padding:10px 20px;border:0;border-radius:6px;background:#1f2328;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  #fb-status{margin-left:12px;font-weight:600}
+</style></head><body>
+<header>
+  <h1>와이어프레임 레인 리뷰 — 라운드 2</h1>
+  <p>run <code>wf-wedding-r2</code> · PRD <code>prd-wedding-invitation-v1</code> · 뷰포트 390×844 · 생성 2026-09-05T15:37:39+09:00 → 2026-09-05T15:41:47+09:00</p>
+</header>
+<main>
+<div class="notice">승인/수정 요청/거부는 <b>터미널 세션에서</b> 입력해주세요. 결정은 여기 표시된 리비전 해시에 그대로 바인딩되어 기록됩니다. 리뷰 축은 의도적으로 분리 보고되며, 단일 통합 점수는 없습니다.</div>
+<h2>화면 목록</h2><ul><li><b>템플릿 갤러리</b> (template-gallery) — 커플이 청첩장 디자인 템플릿을 둘러보고 하나를 선택해 제작을 시작하는 진입 화면 (mustHave: Template gallery, flow-build 1단계)</li>
+<li><b>청첩장 편집</b> (invitation-editor) — 신랑·신부 이름, 예식 일시, 예식장, 사진, 인사말을 입력해 청첩장을 완성하는 화면 (mustHave: Invitation editor, flow-build 2~3단계 병합)</li>
+<li><b>게스트 화면 미리보기</b> (guest-preview) — 게시 전에 하객에게 보일 모습을 그대로 확인하는 화면 (flow-build 4단계)</li>
+<li><b>게시 완료·링크 공유</b> (publish-share) — 청첩장을 게시하고 공유 링크를 복사해 하객에게 전달하는 화면 (flow-build 5단계)</li>
+<li><b>하객용 청첩장</b> (guest-invitation) — 하객이 로그인 없이 공유 링크로 열어 인사말·일시·오시는 길·교통/주차 안내를 보는 화면 (mustHave: Guest invitation page, flow-guest 1~3단계 병합)</li>
+<li><b>참석 여부 회신</b> (rsvp-form) — 하객이 참석 여부, 인원수, 식사 선택을 제출하는 화면 (mustHave: RSVP form, flow-guest 4단계, 저사양 폰 대응 경량 폼)</li></ul>
+
+<h2>산출물</h2>
+<section class="artifact">
+  <h3>wireframe <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>ecfd48399ceb691c</code> · <a href="wireframe.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wireframe">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wireframe" data-target="wireframe" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<h2>품질 검사 (축별 분리)</h2>
+<table><tr><th>기준</th><th>축</th><th>상태</th><th>기대</th><th>관찰</th></tr>
+<tr class="st-pass"><td>mech-screens-exist</td><td>기계적 검사</td><td class="status">pass</td><td>All 6 plan screens exist as routable sections</td><td>All 6 sections present with ids screen-template-gallery, screen-invitation-editor, screen-guest-preview, screen-publish-share, screen-guest-invitation, screen-rsvp-form; the hash router (route()/showScreen()) activates each, and SCREENS array lists exactly these 6.</td></tr>
+<tr class="st-pass"><td>mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>Every plan edge has a working clickable route to an existing screen</td><td>All 8 plan edges have data-go handlers with correct Korean button copy: template-gallery-&gt;invitation-editor (4x '이 템플릿 선택'), invitation-editor-&gt;guest-preview ('미리보기'), guest-preview-&gt;invitation-editor ('편집으로 돌아가기'), guest-preview-&gt;publish-share ('게시하기'), publish-share-&gt;invitation-editor ('계속 수정하기' link-btn), publish-share-&gt;guest-invitation ('게시된 청첩장 보기'), guest-invitation-&gt;rsvp-form ('참석 여부 전하기'), rsvp-form-&gt;guest-invitation ('청첩장으로 돌아가기'). Each target is in SCREENS; click sets location.hash and hashchange routes it. Flow-map SVG boxes also link to all 6 screens via href=#screen-*.</td></tr>
+<tr class="st-pass"><td>mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external asset URLs (scripts, styles, images, fonts)</td><td>No external src/href/link/@import anywhere; all CSS and JS inline, images are dashed .ph placeholder divs. The only http string is 'https://example.invite/minjun-seoyeon' as inert text in the readonly share-link input value, not a loaded asset.</td></tr>
+<tr class="st-pass"><td>mech-lang-h1</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute on html; one h1 per screen</td><td>&lt;html lang=&quot;ko&quot;&gt; present; each of the 6 screen sections contains exactly one h1 (e.g. '청첩장 템플릿 고르기', '참석 여부 회신', guest page uses '민준 ♥ 서연').</td></tr>
+<tr class="st-pass"><td>mech-inputs-labeled</td><td>기계적 검사</td><td class="status">pass</td><td>Every input/textarea/select associated with a label</td><td>All 13 form controls labeled: 9 via label[for] matching ids (groom-name, bride-name, wedding-date, wedding-time, venue, greeting, rsvp-name, companions), share-url via aria-label='공유 링크 주소', 4 radios wrapped in &lt;label&gt; inside fieldsets with legends ('참석 여부', '식사 여부').</td></tr>
+<tr class="st-pass"><td>ux-flow-build</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-build (choose template → enter details → photos/greeting → preview → publish/copy link) completable by clicking</td><td>Traced: 화면 tab → screen-template-gallery → '이 템플릿 선택' → screen-invitation-editor (신랑/신부 이름, 예식 날짜/시간, 예식장 inputs; '＋ 사진 추가' button + preview placeholder; 인사말 textarea) → '미리보기' → screen-guest-preview (guest-view card) → '게시하기' → screen-publish-share showing share URL input + '링크 복사' button and 카카오톡/문자 share options. Every step is a real clickable transition.</td></tr>
+<tr class="st-pass"><td>ux-flow-guest</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-guest (open link → greeting/date/venue+map → transport/parking → RSVP with headcount+meal → optional transfer) completable by clicking</td><td>Traced: screen-guest-invitation (인사말 card, 예식 안내 date/venue, 오시는 길 map placeholder, 교통·주차 안내 card with 지하철/셔틀/주차 rows; '축하 마음 전하기 (송금 앱으로 이동)' button covers the optional transfer step) → '참석 여부 전하기' → screen-rsvp-form (성함, 참석 여부 radios, 동행 인원 number = headcount, 식사 여부 radios) → '제출하기' submit swaps form for #rsvp-done thank-you via JS → '청첩장으로 돌아가기' returns to guest invitation. Also matches constraint '로그인 없이 열람' noted on the guest page.</td></tr>
+<tr class="st-pass"><td>spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>mustHaveScreens (Template gallery, Invitation editor, Guest invitation page, RSVP form) and all coreFlow steps represented</td><td>All 4 mustHaveScreens present, plus guest-preview and publish-share covering the 'Preview the guest view' and 'Publish and copy the share link' flow steps. Every step of both coreFlows maps to visible UI (see ux checks); all copy is Korean per constraint 1.</td></tr>
+<tr class="st-pass"><td>aesthetic-lowfi</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi discipline (no brand styling leaked) and legible hierarchy</td><td>Pure grayscale palette (#e5e5e5 bg, #444 primary buttons, dashed #999 placeholders) — brandHints ('warm, celebratory') deliberately deferred, noted in copy as '시각 디자인은 별도 단계에서 진행'. Hierarchy legible: 18px h1 + 11px purpose line + 13px h2 sections, primary vs secondary buttons distinguished by fill weight only.</td></tr>
+<tr class="st-pass"><td>a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics (lang, per-screen h1, labeled inputs)</td><td>All mechanical a11y checks above pass; additionally tabs use role=tablist/tab with aria-selected, flow SVG has role=img with aria-label, SVG screen links and back button carry aria-labels, decorative '＋' is aria-hidden.</td></tr></table>
+<h2>자동 수리 이력 (투명성 공개)</h2>
+<p>자동 수리가 필요하지 않았습니다.</p>
+<h2>근거 요약</h2><p>The prototype keeps the PRD's two core flows as two disjoint clickable loops (builder: template-gallery → editor → preview → publish; guest: invitation → RSVP), merging PRD steps that share one surface (editor absorbs details+photos+greeting; guest page absorbs greeting/venue/transport) to stay at 6 screens. A hash-based router with one section per screen keeps every edge a real navigable link, including a flow-map overview whose SVG boxes deep-link to each screen. Low-fi grayscale styling and dashed placeholders deliberately defer brand direction to the visual-concept lane.</p>
+<h2>피드백 제출</h2>
+<label class="fb-label" for="fb-general">전체 코멘트</label>
+<textarea class="fb" id="fb-general" placeholder="레인 전체에 대한 피드백을 자유롭게 적어주세요."></textarea>
+<button id="fb-submit">피드백 제출</button><span id="fb-status"></span>
+<p class="rev">제출된 피드백은 이 run의 <code>feedback.json</code>에 리비전 해시와 함께 기록되어 Claude 세션이 다음 라운드에 반영합니다. 파일로 직접 열었다면(주소가 file://) 제출 시 클립보드에 복사되니 터미널에 붙여넣어 주세요.</p>
+<script>
+const REVISIONS = [{"artifactId":"wireframe","revisionHash":"ecfd48399ceb691ce11f6e9fe7de17aa978e2bc9fc7023b08732c14c5d4c0c7c"}];
+document.getElementById('fb-submit').addEventListener('click', async () => {
+  const items = [...document.querySelectorAll('textarea.fb[data-target]')]
+    .map((t) => ({ target: t.dataset.target, text: t.value }))
+    .filter((i) => i.text.trim());
+  const general = document.getElementById('fb-general').value.trim();
+  const status = document.getElementById('fb-status');
+  if (!items.length && !general) { status.textContent = '작성된 피드백이 없습니다.'; return; }
+  const payload = { items, general, revisions: REVISIONS };
+  try {
+    const res = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('server rejected');
+    status.textContent = '제출 완료 — Claude 세션이 feedback.json에서 읽습니다.';
+  } catch {
+    const text = [...items.map((i) => '[' + i.target + '] ' + i.text), general ? '[전체] ' + general : ''].filter(Boolean).join('\n');
+    try { await navigator.clipboard.writeText(text); status.textContent = '서버가 없어 클립보드에 복사했습니다 — 터미널에 붙여넣어 주세요.'; }
+    catch { status.textContent = '전송 실패. 아래 내용을 직접 복사해 터미널에 붙여넣어 주세요:\n' + text; }
+  }
+});
+</script>
+</main></body></html>

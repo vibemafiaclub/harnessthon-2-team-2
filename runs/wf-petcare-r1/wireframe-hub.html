@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>펫시터 예약 — Hub 와이어프레임</title>
+<style>
+  :root{
+    --ink:#222; --mid:#666; --line:#bbb; --soft:#e8e8e8; --bg:#f4f4f4; --card:#fff;
+  }
+  *{box-sizing:border-box; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-size:14px;}
+  button{font:inherit; cursor:pointer;}
+  .ph{background:repeating-linear-gradient(45deg,#e0e0e0,#e0e0e0 6px,#eee 6px,#eee 12px); border:1px solid var(--line); color:#777; display:flex; align-items:center; justify-content:center; font-size:11px;}
+
+  /* review banner */
+  #review-banner{position:sticky; top:0; z-index:50; background:#333; color:#fff; text-align:center; font-size:12px; padding:4px 8px; letter-spacing:.02em;}
+
+  /* app header + view tabs */
+  header.app{max-width:1280px; margin:0 auto; padding:10px 16px 0;}
+  header.app .ttl{font-size:15px; font-weight:700; margin:0 0 8px;}
+  .viewtabs{display:flex; gap:6px; border-bottom:2px solid var(--line);}
+  .viewtabs button{border:1px solid var(--line); border-bottom:none; background:var(--soft); padding:8px 20px; border-radius:6px 6px 0 0; color:var(--mid);}
+  .viewtabs button[aria-selected="true"]{background:var(--card); color:var(--ink); font-weight:700;}
+
+  main{max-width:1280px; margin:0 auto; padding:12px 16px 40px;}
+
+  /* ===== flow map ===== */
+  #view-flow h1{font-size:16px; margin:4px 0 10px;}
+  .flow-scroll{overflow-x:auto; border:1px solid var(--line); background:var(--card);}
+  .flow-canvas{position:relative; width:1260px; height:700px;}
+  .flow-canvas svg{position:absolute; inset:0;}
+  .node{position:absolute; width:150px; height:60px; background:var(--card); border:2px solid var(--ink); border-radius:4px; padding:4px 6px; text-align:left; display:flex; flex-direction:column; justify-content:center; gap:2px;}
+  .node .nm{font-weight:700; font-size:12px; line-height:1.25;}
+  .node .id{font-size:10px; color:var(--mid); font-family:monospace;}
+  .node:hover{background:var(--soft);}
+  .edgebtn{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid var(--line); border-radius:10px; font-size:10px; color:var(--ink); padding:2px 7px; max-width:190px; line-height:1.3;}
+  .edgebtn:hover{background:var(--soft); border-color:var(--ink);}
+  .flow-legend{font-size:12px; color:var(--mid); margin-top:8px;}
+
+  /* ===== screens view ===== */
+  #view-screens{display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .device{width:390px; height:844px; background:var(--card); border:2px solid var(--ink); border-radius:24px; overflow:hidden; display:flex; flex-direction:column;}
+  .topbar{display:flex; align-items:center; gap:8px; padding:8px 10px; border-bottom:1px solid var(--line); background:var(--soft); flex:0 0 auto;}
+  .topbar .back{border:1px solid var(--line); background:#fff; border-radius:4px; padding:4px 10px; font-size:13px;}
+  .topbar .crumb{font-size:12px; color:var(--mid); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .screen{flex:1 1 auto; overflow-y:auto; padding:14px 14px 20px;}
+  .screen h1{font-size:18px; margin:0 0 12px;}
+  .tabbar{flex:0 0 auto; display:flex; border-top:2px solid var(--ink); background:var(--card);}
+  .tabbar button{flex:1; background:none; border:none; border-left:1px solid var(--soft); padding:9px 2px 10px; font-size:12px; color:var(--mid); display:flex; flex-direction:column; align-items:center; gap:3px;}
+  .tabbar button:first-child{border-left:none;}
+  .tabbar button .ico{width:20px; height:20px; border:1px solid var(--line); border-radius:4px; background:var(--soft);}
+  .tabbar button[aria-current="page"]{color:var(--ink); font-weight:700;}
+  .tabbar button[aria-current="page"] .ico{background:var(--ink);}
+
+  /* generic lo-fi widgets */
+  .card{border:1px solid var(--line); border-radius:6px; background:var(--card); padding:10px; margin-bottom:10px;}
+  .card.tap{width:100%; text-align:left; display:block;}
+  .card.tap:hover{background:var(--soft);}
+  .row{display:flex; gap:10px; align-items:center;}
+  .grow{flex:1; min-width:0;}
+  .cta{display:block; width:100%; background:var(--ink); color:#fff; border:none; border-radius:6px; padding:12px; font-size:15px; font-weight:700; margin-top:10px;}
+  .cta.sub{background:#fff; color:var(--ink); border:1px solid var(--ink); font-weight:400;}
+  .chip{display:inline-block; border:1px solid var(--line); border-radius:12px; padding:2px 9px; font-size:11px; color:var(--mid); background:var(--soft);}
+  .chip.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .muted{color:var(--mid); font-size:12px;}
+  .sec{font-size:13px; font-weight:700; margin:16px 0 6px;}
+  label.fld{display:block; font-size:12px; font-weight:700; margin:12px 0 4px;}
+  input[type=text],input[type=date],select,textarea{width:100%; border:1px solid var(--line); border-radius:4px; padding:8px; font:inherit; background:#fff; color:var(--ink);}
+  .stepper{display:flex; align-items:center; margin:8px 0 14px;}
+  .stepper .st{flex:1; text-align:center; font-size:11px; color:var(--mid);}
+  .stepper .st .dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--line); background:#fff; margin:0 auto 3px;}
+  .stepper .st.done .dot{background:var(--ink); border-color:var(--ink);}
+  .stepper .st.done{color:var(--ink); font-weight:700;}
+  .stars{letter-spacing:2px; font-size:12px;}
+  .roleseg{display:flex; border:1px solid var(--ink); border-radius:6px; overflow:hidden; margin-bottom:12px;}
+  .roleseg button{flex:1; border:none; background:#fff; padding:9px; font-size:13px; color:var(--mid);}
+  .roleseg button[aria-pressed="true"]{background:var(--ink); color:#fff; font-weight:700;}
+  .bubble{max-width:75%; border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:8px; background:var(--soft);}
+  .bubble.me{margin-left:auto; background:#fff;}
+  .qreply{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0;}
+  .qreply button{border:1px solid var(--line); background:#fff; border-radius:14px; padding:5px 10px; font-size:12px;}
+  fieldset{border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:0 0 10px;}
+  legend{font-size:12px; font-weight:700; padding:0 4px;}
+  .payrow{display:flex; justify-content:space-between; font-size:13px; padding:4px 0;}
+  .payrow.total{border-top:1px solid var(--line); margin-top:4px; padding-top:8px; font-weight:700;}
+  .cal{display:grid; grid-template-columns:repeat(7,1fr); gap:2px; font-size:10px; text-align:center;}
+  .cal span{border:1px solid var(--soft); padding:5px 0;}
+  .cal span.on{background:var(--soft); font-weight:700;}
+  .filterbar{position:sticky; top:0; background:var(--card); padding-bottom:8px; border-bottom:1px solid var(--soft); margin-bottom:10px;}
+  .filterbar .row{gap:6px;}
+  .filterbar select,.filterbar input{font-size:12px; padding:6px;}
+  .seg2{display:inline-flex; border:1px solid var(--line); border-radius:4px; overflow:hidden;}
+  .seg2 button{border:none; background:#fff; padding:5px 10px; font-size:11px; color:var(--mid);}
+  .seg2 button[aria-pressed="true"]{background:var(--ink); color:#fff;}
+  .badge{display:inline-block; min-width:16px; text-align:center; background:var(--ink); color:#fff; border-radius:8px; font-size:10px; padding:1px 5px;}
+</style>
+</head>
+<body>
+
+<div id="review-banner">내부 검토용 — 클라이언트 공유 금지</div>
+
+<header class="app">
+  <p class="ttl">펫시터 예약 · Hub-and-spoke 와이어프레임 (lo-fi)</p>
+  <div class="viewtabs" role="tablist">
+    <button id="tab-flow" role="tab" aria-selected="true" onclick="go('flowmap')">플로맵</button>
+    <button id="tab-screens" role="tab" aria-selected="false" onclick="go('screen-home-hub')">화면</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= FLOW MAP ================= -->
+<section id="view-flow" aria-labelledby="flow-h1">
+  <h1 id="flow-h1">플로맵 — 화면 상자 또는 화살표 라벨을 누르면 해당 화면으로 이동합니다</h1>
+  <div class="flow-scroll">
+    <div class="flow-canvas">
+      <svg width="1260" height="700" aria-hidden="true">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#555"></path>
+          </marker>
+        </defs>
+        <g stroke="#555" stroke-width="1.5" fill="none">
+          <path d="M105,300 L238,105" marker-end="url(#arr)"></path>              <!-- e1 home->list -->
+          <path d="M400,90 L446,90" marker-end="url(#arr)"></path>               <!-- e2 list->profile -->
+          <path d="M600,90 L646,90" marker-end="url(#arr)"></path>               <!-- e3 profile->form -->
+          <path d="M725,120 L725,296" marker-end="url(#arr)"></path>             <!-- e4 form->chat -->
+          <path d="M800,330 L846,330" marker-end="url(#arr)"></path>             <!-- e5 chat->payment -->
+          <path d="M1000,330 L1046,330" marker-end="url(#arr)"></path>           <!-- e6 payment->status -->
+          <path d="M160,360 L160,440 L1125,440 L1125,364" marker-end="url(#arr)"></path> <!-- e7 home->status -->
+          <path d="M105,360 L238,552" marker-end="url(#arr)"></path>             <!-- e8 home->inbox -->
+          <path d="M400,570 L446,570" marker-end="url(#arr)"></path>             <!-- e9 inbox->detail -->
+          <path d="M525,540 L718,364" marker-end="url(#arr)"></path>             <!-- e10 detail->chat -->
+          <path d="M600,590 L646,590" marker-end="url(#arr)"></path>             <!-- e11 detail->care -->
+          <path d="M770,540 L1118,364" marker-end="url(#arr)"></path>            <!-- e12 care->status -->
+          <path d="M800,570 L846,570" marker-end="url(#arr)"></path>             <!-- e13 care->earnings -->
+        </g>
+      </svg>
+
+      <!-- nodes -->
+      <button class="node" style="left:30px;top:300px"  onclick="go('screen-home-hub')"><span class="nm">홈 허브 (탭 루트)</span><span class="id">home-hub</span></button>
+      <button class="node" style="left:250px;top:60px"  onclick="go('screen-sitter-list')"><span class="nm">시터 목록 + 필터</span><span class="id">sitter-list</span></button>
+      <button class="node" style="left:450px;top:60px"  onclick="go('screen-sitter-profile')"><span class="nm">시터 프로필</span><span class="id">sitter-profile</span></button>
+      <button class="node" style="left:650px;top:60px"  onclick="go('screen-request-form')"><span class="nm">예약 요청 폼</span><span class="id">request-form</span></button>
+      <button class="node" style="left:650px;top:300px" onclick="go('screen-chat')"><span class="nm">채팅</span><span class="id">chat</span></button>
+      <button class="node" style="left:850px;top:300px" onclick="go('screen-payment')"><span class="nm">결제</span><span class="id">payment</span></button>
+      <button class="node" style="left:1050px;top:300px" onclick="go('screen-booking-status')"><span class="nm">예약 현황 / 케어 리포트</span><span class="id">booking-status</span></button>
+      <button class="node" style="left:250px;top:540px" onclick="go('screen-sitter-inbox')"><span class="nm">시터 요청함</span><span class="id">sitter-inbox</span></button>
+      <button class="node" style="left:450px;top:540px" onclick="go('screen-request-detail')"><span class="nm">요청 상세 (시터)</span><span class="id">request-detail</span></button>
+      <button class="node" style="left:650px;top:540px" onclick="go('screen-care-report-compose')"><span class="nm">케어 리포트 작성</span><span class="id">care-report-compose</span></button>
+      <button class="node" style="left:850px;top:540px" onclick="go('screen-earnings')"><span class="nm">정산 내역</span><span class="id">earnings</span></button>
+
+      <!-- edge labels (clickable, route to edge target) -->
+      <button class="edgebtn" style="left:120px;top:190px"  onclick="go('screen-sitter-list')">탐색 탭 선택</button>
+      <button class="edgebtn" style="left:424px;top:35px"   onclick="go('screen-sitter-profile')">시터 카드 탭</button>
+      <button class="edgebtn" style="left:624px;top:35px"   onclick="go('screen-request-form')">예약 요청 CTA</button>
+      <button class="edgebtn" style="left:725px;top:205px"  onclick="go('screen-chat')">요청 전송 → 채팅으로 세부 조율</button>
+      <button class="edgebtn" style="left:823px;top:280px"  onclick="go('screen-payment')">조건 확정 후 결제 진행 CTA</button>
+      <button class="edgebtn" style="left:1023px;top:275px" onclick="go('screen-booking-status')">결제 완료 → 예약 확정 확인</button>
+      <button class="edgebtn" style="left:330px;top:440px"  onclick="go('screen-booking-status')">예약 탭 (보호자 모드)</button>
+      <button class="edgebtn" style="left:118px;top:505px"  onclick="go('screen-sitter-inbox')">예약 탭 (시터 모드) / 요청 알림 탭</button>
+      <button class="edgebtn" style="left:424px;top:640px"  onclick="go('screen-request-detail')">요청 카드 탭 (반려동물·날짜 검토)</button>
+      <button class="edgebtn" style="left:565px;top:455px"  onclick="go('screen-chat')">수락 또는 변경 제안</button>
+      <button class="edgebtn" style="left:624px;top:660px"  onclick="go('screen-care-report-compose')">돌봄중 상태에서 방문 완료 처리</button>
+      <button class="edgebtn" style="left:930px;top:475px"  onclick="go('screen-booking-status')">리포트 전송 → 보호자 상태 화면에 반영</button>
+      <button class="edgebtn" style="left:823px;top:640px"  onclick="go('screen-earnings')">완료 처리 → 정산 확인</button>
+    </div>
+  </div>
+  <p class="flow-legend">위 = 보호자 스포크(탐색→예약→결제), 아래 = 시터 스포크(요청함→리포트→정산). 모든 스포크는 홈 허브(탭 루트)에서 출발해 허브로 돌아옵니다.</p>
+</section>
+
+<!-- ================= SCREENS ================= -->
+<section id="view-screens" hidden>
+  <div class="device">
+    <div class="topbar">
+      <button class="back" onclick="goBack()" aria-label="이전 화면으로 돌아가기">‹ 뒤로</button>
+      <span class="crumb" id="crumb">홈</span>
+    </div>
+
+    <!-- home-hub -->
+    <div class="screen" id="screen-home-hub" hidden>
+      <h1>홈</h1>
+      <div class="roleseg" role="group" aria-label="역할 전환">
+        <button id="role-owner" aria-pressed="true" onclick="setRole('owner')">보호자</button>
+        <button id="role-sitter" aria-pressed="false" onclick="setRole('sitter')">시터</button>
+      </div>
+
+      <p class="sec">진행 중인 예약</p>
+      <button class="card tap" onclick="go(reserveTarget())">
+        <div class="row">
+          <div class="ph" style="width:48px;height:48px;border-radius:50%">사진</div>
+          <div class="grow">
+            <strong>초코 · 김OO 시터</strong>
+            <div class="muted">9/12(토) ~ 9/14(월) · 방문 돌봄</div>
+          </div>
+          <span class="chip on">돌봄중</span>
+        </div>
+        <div class="stepper" style="margin-bottom:0">
+          <div class="st done"><div class="dot"></div>요청됨</div>
+          <div class="st done"><div class="dot"></div>수락됨</div>
+          <div class="st done"><div class="dot"></div>돌봄중</div>
+          <div class="st"><div class="dot"></div>완료</div>
+        </div>
+      </button>
+      <p class="muted" id="role-hint">예약 탭: 보호자 모드 → 예약 현황</p>
+
+      <p class="sec">최근 이용한 시터</p>
+      <div class="row" style="overflow-x:auto">
+        <button class="card tap" style="min-width:110px" onclick="go('screen-sitter-profile')"><div class="ph" style="height:56px;margin-bottom:6px">사진</div>김OO<div class="muted">★ 4.9</div></button>
+        <button class="card tap" style="min-width:110px" onclick="go('screen-sitter-profile')"><div class="ph" style="height:56px;margin-bottom:6px">사진</div>박OO<div class="muted">★ 4.8</div></button>
+        <button class="card tap" style="min-width:110px" onclick="go('screen-sitter-profile')"><div class="ph" style="height:56px;margin-bottom:6px">사진</div>이OO<div class="muted">★ 4.7</div></button>
+      </div>
+
+      <p class="sec">알림</p>
+      <button class="card tap" onclick="go('screen-sitter-inbox')">
+        <span class="badge">1</span> 새 예약 요청이 도착했습니다 <span class="muted">(시터) — 요청함 열기</span>
+      </button>
+    </div>
+
+    <!-- sitter-list -->
+    <div class="screen" id="screen-sitter-list" hidden>
+      <h1>시터 찾기</h1>
+      <div class="filterbar">
+        <div class="row">
+          <div class="grow">
+            <label class="fld" for="f-pet" style="margin-top:0">반려동물 종류</label>
+            <select id="f-pet"><option>강아지</option><option>고양이</option><option>소동물</option></select>
+          </div>
+          <div class="grow">
+            <label class="fld" for="f-date" style="margin-top:0">날짜</label>
+            <input type="date" id="f-date" value="2026-09-12">
+          </div>
+          <div class="grow">
+            <label class="fld" for="f-dist" style="margin-top:0">거리</label>
+            <select id="f-dist"><option>1km 이내</option><option>3km 이내</option><option>5km 이내</option></select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px;justify-content:space-between">
+          <span class="seg2" role="group" aria-label="보기 방식">
+            <button aria-pressed="true">목록</button><button aria-pressed="false">지도</button>
+          </span>
+          <span class="muted">검색 결과 3명</span>
+        </div>
+      </div>
+
+      <button class="card tap" onclick="go('screen-sitter-profile')">
+        <div class="row">
+          <div class="ph" style="width:56px;height:56px;border-radius:50%">사진</div>
+          <div class="grow"><strong>김OO 시터</strong> <span class="chip">인증됨</span>
+            <div class="stars">★★★★★ <span class="muted">4.9 · 리뷰 128</span></div>
+            <div class="muted">방문 돌봄 · 1회 25,000원 · 0.8km</div>
+          </div>
+        </div>
+      </button>
+      <button class="card tap" onclick="go('screen-sitter-profile')">
+        <div class="row">
+          <div class="ph" style="width:56px;height:56px;border-radius:50%">사진</div>
+          <div class="grow"><strong>박OO 시터</strong>
+            <div class="stars">★★★★☆ <span class="muted">4.8 · 리뷰 87</span></div>
+            <div class="muted">위탁 돌봄 · 1박 40,000원 · 1.2km</div>
+          </div>
+        </div>
+      </button>
+      <button class="card tap" onclick="go('screen-sitter-profile')">
+        <div class="row">
+          <div class="ph" style="width:56px;height:56px;border-radius:50%">사진</div>
+          <div class="grow"><strong>이OO 시터</strong>
+            <div class="stars">★★★★☆ <span class="muted">4.7 · 리뷰 45</span></div>
+            <div class="muted">산책 · 1회 15,000원 · 2.1km</div>
+          </div>
+        </div>
+      </button>
+
+      <div class="card" style="text-align:center">
+        <p class="muted">조건에 맞는 시터가 더 없어요</p>
+        <button class="cta sub" style="margin-top:6px">필터 초기화</button>
+      </div>
+    </div>
+
+    <!-- sitter-profile -->
+    <div class="screen" id="screen-sitter-profile" hidden>
+      <h1>시터 프로필</h1>
+      <div class="card">
+        <div class="row">
+          <div class="ph" style="width:64px;height:64px;border-radius:50%">사진</div>
+          <div class="grow">
+            <strong>김OO 시터</strong> <span class="chip">신원 인증됨</span>
+            <div class="stars">★★★★★ <span class="muted">4.9 · 리뷰 128</span></div>
+          </div>
+        </div>
+        <p class="muted" style="margin:8px 0 0">“10년차 반려인입니다. 1~3일 단기 여행 시 방문 돌봄을 전문으로 해요. 안심하고 다녀오세요.”</p>
+      </div>
+
+      <p class="sec">서비스 범위</p>
+      <div class="card">
+        <div class="row"><span>☑</span><span class="grow">산책 (30분)</span><span class="muted">포함</span></div>
+        <div class="row"><span>☑</span><span class="grow">급식 · 물 교체</span><span class="muted">포함</span></div>
+        <div class="row"><span>☑</span><span class="grow">투약 (경구)</span><span class="muted">포함</span></div>
+        <div class="row"><span>☐</span><span class="grow">목욕</span><span class="muted">미제공</span></div>
+      </div>
+
+      <p class="sec">예약 가능일 (9월)</p>
+      <div class="card">
+        <div class="cal" aria-label="9월 예약 가능일 달력">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span class="on">12</span>
+          <span class="on">13</span><span class="on">14</span><span>15</span><span>16</span><span>17</span><span class="on">18</span><span class="on">19</span>
+        </div>
+      </div>
+
+      <p class="sec">리뷰 128</p>
+      <div class="card"><div class="stars">★★★★★</div><p class="muted" style="margin:4px 0 0">사진을 자주 보내주셔서 여행 내내 안심됐어요. (최OO)</p></div>
+      <div class="card"><div class="stars">★★★★☆</div><p class="muted" style="margin:4px 0 0">투약까지 꼼꼼하게 챙겨주셨습니다. (정OO)</p></div>
+
+      <button class="cta" onclick="go('screen-request-form')">예약 요청하기</button>
+    </div>
+
+    <!-- request-form -->
+    <div class="screen" id="screen-request-form" hidden>
+      <h1>예약 요청</h1>
+      <label class="fld" for="rf-pet">반려동물 선택</label>
+      <select id="rf-pet">
+        <option>초코 (말티즈 · 4세)</option>
+        <option>나비 (코숏 · 2세)</option>
+      </select>
+
+      <label class="fld" for="rf-start">시작일</label>
+      <input type="date" id="rf-start" value="2026-09-12">
+      <label class="fld" for="rf-end">종료일</label>
+      <input type="date" id="rf-end" value="2026-09-14">
+
+      <label class="fld" for="rf-note">요청 사항</label>
+      <textarea id="rf-note" rows="4" placeholder="예: 하루 2회 방문, 아침 투약 필수, 산책은 30분 이상"></textarea>
+
+      <p class="sec">예상 금액</p>
+      <div class="card">
+        <div class="payrow"><span>방문 돌봄 25,000원 × 3일</span><span>75,000원</span></div>
+        <div class="payrow"><span>투약 추가</span><span>6,000원</span></div>
+        <div class="payrow total"><span>예상 합계</span><span>81,000원</span></div>
+        <p class="muted" style="margin:6px 0 0">결제는 채팅으로 조건 확정 후 진행됩니다.</p>
+      </div>
+
+      <button class="cta" onclick="go('screen-chat')">요청 보내기</button>
+    </div>
+
+    <!-- chat -->
+    <div class="screen" id="screen-chat" hidden>
+      <h1>채팅 — 김OO 시터</h1>
+      <div class="card" style="background:var(--soft)">
+        <div class="row">
+          <div class="grow"><strong>초코 · 9/12~9/14 방문 돌봄</strong><div class="muted">예상 81,000원 · 상태: 요청됨</div></div>
+          <span class="chip">고정됨</span>
+        </div>
+      </div>
+
+      <div class="bubble">안녕하세요! 요청 확인했습니다. 아침 투약 시간은 몇 시인가요?</div>
+      <div class="bubble me">8시 전후로 부탁드려요. 산책은 오후가 좋아요.</div>
+      <div class="bubble">좋아요. 하루 2회 방문(8시/17시)으로 진행할게요. 조건 확정되면 결제 부탁드립니다.</div>
+
+      <div class="qreply" aria-label="빠른 답장">
+        <button>네 좋아요</button>
+        <button>시간 조정 원해요</button>
+        <button>사진 자주 부탁해요</button>
+      </div>
+
+      <p class="sec">시터용 액션</p>
+      <div class="qreply">
+        <button class="chip">요청 수락</button>
+        <button class="chip">변경 제안 보내기</button>
+      </div>
+
+      <button class="cta" onclick="go('screen-payment')">조건 확정 · 결제 진행하기</button>
+    </div>
+
+    <!-- payment -->
+    <div class="screen" id="screen-payment" hidden>
+      <h1>결제</h1>
+      <p class="sec">결제 금액</p>
+      <div class="card">
+        <div class="payrow"><span>방문 돌봄 25,000원 × 3일</span><span>75,000원</span></div>
+        <div class="payrow"><span>투약 추가</span><span>6,000원</span></div>
+        <div class="payrow"><span>플랫폼 수수료</span><span>4,000원</span></div>
+        <div class="payrow total"><span>총 결제 금액</span><span>85,000원</span></div>
+      </div>
+
+      <fieldset>
+        <legend>결제 수단</legend>
+        <div class="row"><input type="radio" id="pay-card" name="pay" checked><label for="pay-card">신용/체크카드</label></div>
+        <div class="row"><input type="radio" id="pay-transfer" name="pay"><label for="pay-transfer">계좌이체</label></div>
+        <div class="row"><input type="radio" id="pay-simple" name="pay"><label for="pay-simple">간편결제</label></div>
+      </fieldset>
+
+      <div class="row"><input type="checkbox" id="pay-terms"><label for="pay-terms">이용약관 및 환불 규정에 동의합니다</label></div>
+
+      <button class="cta" onclick="go('screen-booking-status')">85,000원 결제하기</button>
+      <p class="muted" style="text-align:center">결제 완료 시 예약이 확정되고 예약 현황으로 이동합니다.</p>
+    </div>
+
+    <!-- booking-status -->
+    <div class="screen" id="screen-booking-status" hidden>
+      <h1>예약 현황</h1>
+      <div class="card">
+        <strong>초코 · 김OO 시터 · 9/12~9/14</strong>
+        <div class="stepper">
+          <div class="st done"><div class="dot"></div>요청됨</div>
+          <div class="st done"><div class="dot"></div>수락됨</div>
+          <div class="st done"><div class="dot"></div>돌봄중</div>
+          <div class="st"><div class="dot"></div>완료</div>
+        </div>
+        <span class="chip on">현재 상태: 돌봄중</span>
+      </div>
+
+      <p class="sec">케어 리포트</p>
+      <div class="card">
+        <div class="muted">9/12(토) 08:10 · 1차 방문</div>
+        <div class="row" style="margin-top:6px">
+          <div class="ph" style="width:72px;height:72px">사진</div>
+          <div class="ph" style="width:72px;height:72px">사진</div>
+          <div class="ph" style="width:72px;height:72px">사진</div>
+        </div>
+        <p style="margin:8px 0 0">아침 급식과 투약 완료했어요. 컨디션 좋습니다!</p>
+        <div style="margin-top:6px"><span class="chip">산책</span> <span class="chip">급식</span> <span class="chip">투약</span></div>
+      </div>
+      <div class="card">
+        <div class="muted">9/12(토) 17:20 · 2차 방문</div>
+        <div class="row" style="margin-top:6px">
+          <div class="ph" style="width:72px;height:72px">사진</div>
+          <div class="ph" style="width:72px;height:72px">사진</div>
+        </div>
+        <p style="margin:8px 0 0">30분 산책 다녀왔습니다. 배변도 정상이에요.</p>
+        <div style="margin-top:6px"><span class="chip">산책</span> <span class="chip">배변</span></div>
+      </div>
+
+      <p class="sec">방문 타임라인</p>
+      <div class="card">
+        <div class="payrow"><span>9/12 08:10</span><span>1차 방문 완료</span></div>
+        <div class="payrow"><span>9/12 17:20</span><span>2차 방문 완료</span></div>
+        <div class="payrow"><span>9/13 08:00</span><span class="muted">예정</span></div>
+      </div>
+
+      <button class="cta sub" disabled aria-disabled="true">리뷰 남기기 (완료 후 활성화)</button>
+    </div>
+
+    <!-- sitter-inbox -->
+    <div class="screen" id="screen-sitter-inbox" hidden>
+      <h1>요청함 (시터)</h1>
+      <div class="card" style="background:var(--soft)">
+        <span class="badge">1</span> 새 예약 요청 알림이 있습니다
+      </div>
+      <div class="row" style="margin-bottom:10px" role="group" aria-label="상태 필터">
+        <button class="chip on">새 요청 1</button>
+        <button class="chip">진행중 1</button>
+        <button class="chip">완료 12</button>
+      </div>
+
+      <button class="card tap" onclick="go('screen-request-detail')">
+        <div class="row">
+          <div class="ph" style="width:48px;height:48px;border-radius:50%">사진</div>
+          <div class="grow">
+            <strong>최OO 보호자 · 초코 (말티즈)</strong>
+            <div class="muted">9/12(토) ~ 9/14(월) · 방문 돌봄 · 하루 2회</div>
+          </div>
+          <span class="chip on">새 요청</span>
+        </div>
+      </button>
+
+      <button class="card tap" onclick="go('screen-request-detail')">
+        <div class="row">
+          <div class="ph" style="width:48px;height:48px;border-radius:50%">사진</div>
+          <div class="grow">
+            <strong>정OO 보호자 · 나비 (코숏)</strong>
+            <div class="muted">9/18(금) ~ 9/19(토) · 위탁 돌봄</div>
+          </div>
+          <span class="chip">돌봄중</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- request-detail -->
+    <div class="screen" id="screen-request-detail" hidden>
+      <h1>요청 상세</h1>
+      <div class="card">
+        <div class="row">
+          <div class="ph" style="width:56px;height:56px;border-radius:50%">사진</div>
+          <div class="grow"><strong>초코</strong><div class="muted">말티즈 · 4세 · 3.2kg</div></div>
+        </div>
+        <p class="sec" style="margin-top:10px">특이사항</p>
+        <p class="muted" style="margin:0">아침 8시 경구 투약 필수 · 낯가림 있음 · 산책 줄 당김 주의</p>
+      </div>
+
+      <div class="card">
+        <p class="sec" style="margin-top:0">요청 기간</p>
+        <div class="payrow"><span>9/12(토) ~ 9/14(월)</span><span>3일 · 하루 2회 방문</span></div>
+        <div class="payrow"><span>예상 수입</span><span>81,000원</span></div>
+      </div>
+
+      <button class="cta" onclick="go('screen-chat')">수락하기</button>
+      <button class="cta sub" onclick="go('screen-chat')">변경 제안하기 (채팅으로 이동)</button>
+      <details style="margin-top:10px">
+        <summary class="muted">거절하기</summary>
+        <label class="fld" for="rd-reason">거절 사유</label>
+        <select id="rd-reason"><option>일정이 맞지 않아요</option><option>서비스 범위 밖이에요</option><option>기타</option></select>
+      </details>
+
+      <p class="sec">돌봄중 요청</p>
+      <button class="cta sub" onclick="go('screen-care-report-compose')">방문 완료 처리 · 케어 리포트 작성</button>
+    </div>
+
+    <!-- care-report-compose -->
+    <div class="screen" id="screen-care-report-compose" hidden>
+      <h1>케어 리포트 작성</h1>
+      <label class="fld" for="cr-photos">사진 첨부 (여러 장 가능)</label>
+      <input type="file" id="cr-photos" multiple>
+      <div class="row" style="margin-top:8px">
+        <div class="ph" style="width:72px;height:72px">사진 1</div>
+        <div class="ph" style="width:72px;height:72px">사진 2</div>
+        <div class="ph" style="width:72px;height:72px">+ 추가</div>
+      </div>
+
+      <fieldset style="margin-top:14px">
+        <legend>수행한 활동</legend>
+        <div class="row"><input type="checkbox" id="cr-walk" checked><label for="cr-walk">산책</label></div>
+        <div class="row"><input type="checkbox" id="cr-feed" checked><label for="cr-feed">급식</label></div>
+        <div class="row"><input type="checkbox" id="cr-poop"><label for="cr-poop">배변</label></div>
+        <div class="row"><input type="checkbox" id="cr-med"><label for="cr-med">투약</label></div>
+      </fieldset>
+
+      <label class="fld" for="cr-memo">메모</label>
+      <textarea id="cr-memo" rows="4" placeholder="오늘 초코의 상태를 보호자에게 알려주세요"></textarea>
+
+      <button class="cta" onclick="go('screen-booking-status')">리포트 전송 (보호자 상태 화면에 반영)</button>
+      <button class="cta sub" onclick="go('screen-earnings')">완료 처리 · 정산 확인하기</button>
+    </div>
+
+    <!-- earnings -->
+    <div class="screen" id="screen-earnings" hidden>
+      <h1>정산 내역</h1>
+      <div class="card">
+        <div class="payrow"><span>9월 총 수입</span><strong>326,000원</strong></div>
+        <div class="payrow"><span>정산 예정 금액</span><span>81,000원</span></div>
+        <div class="payrow"><span>다음 정산 예정일</span><span>9/20(일)</span></div>
+      </div>
+
+      <p class="sec">예약별 정산</p>
+      <div class="card">
+        <div class="payrow"><span>초코 · 9/12~9/14</span><span>81,000원</span></div>
+        <div class="muted">상태: 정산 대기 · 9/20 지급 예정</div>
+      </div>
+      <div class="card">
+        <div class="payrow"><span>나비 · 9/1~9/2</span><span>80,000원</span></div>
+        <div class="muted">상태: 지급 완료 · 9/6</div>
+      </div>
+      <div class="card">
+        <div class="payrow"><span>보리 · 8/28 산책</span><span>15,000원</span></div>
+        <div class="muted">상태: 지급 완료 · 9/6</div>
+      </div>
+
+      <button class="cta sub">정산 계좌 관리</button>
+    </div>
+
+    <!-- bottom tabs -->
+    <nav class="tabbar" aria-label="하단 탭">
+      <button id="tb-explore" onclick="go('screen-sitter-list')"><span class="ico"></span>탐색</button>
+      <button id="tb-reserve" onclick="go(reserveTarget())"><span class="ico"></span><span id="tb-reserve-label">예약</span></button>
+      <button id="tb-chat" onclick="go('screen-chat')"><span class="ico"></span>채팅</button>
+      <button id="tb-me" onclick="go('screen-home-hub')"><span class="ico"></span>내 정보</button>
+    </nav>
+  </div>
+  <p class="muted">390×844 · 해시 라우팅(#screen-id) · 홈 허브의 역할 전환에 따라 ‘예약’ 탭이 예약 현황 ↔ 시터 요청함으로 바뀝니다.</p>
+</section>
+
+</main>
+
+<script>
+(function(){
+  var SCREEN_TITLES = {
+    'screen-home-hub':'홈 허브','screen-sitter-list':'시터 목록 + 필터','screen-sitter-profile':'시터 프로필',
+    'screen-request-form':'예약 요청 폼','screen-chat':'채팅','screen-payment':'결제',
+    'screen-booking-status':'예약 현황 / 케어 리포트','screen-sitter-inbox':'시터 요청함',
+    'screen-request-detail':'요청 상세 (시터)','screen-care-report-compose':'케어 리포트 작성','screen-earnings':'정산 내역'
+  };
+  var TAB_OF = {
+    'screen-sitter-list':'tb-explore','screen-sitter-profile':'tb-explore','screen-request-form':'tb-explore',
+    'screen-booking-status':'tb-reserve','screen-sitter-inbox':'tb-reserve','screen-request-detail':'tb-reserve',
+    'screen-care-report-compose':'tb-reserve','screen-earnings':'tb-reserve','screen-payment':'tb-reserve',
+    'screen-chat':'tb-chat','screen-home-hub':'tb-me'
+  };
+  var role = 'owner';
+
+  window.reserveTarget = function(){
+    return role === 'owner' ? 'screen-booking-status' : 'screen-sitter-inbox';
+  };
+  window.setRole = function(r){
+    role = r;
+    document.getElementById('role-owner').setAttribute('aria-pressed', String(r==='owner'));
+    document.getElementById('role-sitter').setAttribute('aria-pressed', String(r==='sitter'));
+    document.getElementById('role-hint').textContent =
+      r==='owner' ? '예약 탭: 보호자 모드 → 예약 현황' : '예약 탭: 시터 모드 → 시터 요청함';
+    document.getElementById('tb-reserve-label').textContent = r==='owner' ? '예약' : '요청함';
+  };
+  window.go = function(id){ location.hash = '#' + id; };
+  window.goBack = function(){
+    if (history.length > 1) history.back();
+    else go('screen-home-hub');
+  };
+
+  function render(){
+    var h = (location.hash || '#flowmap').slice(1);
+    var isScreen = h.indexOf('screen-') === 0 && SCREEN_TITLES[h];
+    if (!isScreen && h !== 'flowmap') { h = 'flowmap'; }
+
+    document.getElementById('view-flow').hidden = !!isScreen;
+    document.getElementById('view-screens').hidden = !isScreen;
+    document.getElementById('tab-flow').setAttribute('aria-selected', String(!isScreen));
+    document.getElementById('tab-screens').setAttribute('aria-selected', String(!!isScreen));
+
+    if (isScreen){
+      var screens = document.querySelectorAll('.screen');
+      for (var i=0;i<screens.length;i++){ screens[i].hidden = (screens[i].id !== h); }
+      document.getElementById('crumb').textContent = SCREEN_TITLES[h];
+      var tabs = document.querySelectorAll('.tabbar button');
+      for (var j=0;j<tabs.length;j++){ tabs[j].removeAttribute('aria-current'); }
+      var t = TAB_OF[h];
+      if (t) document.getElementById(t).setAttribute('aria-current','page');
+      document.getElementById('view-screens').querySelector('.screen:not([hidden])').scrollTop = 0;
+    }
+  }
+
+  window.addEventListener('hashchange', render);
+  render();
+})();
+</script>
+</body>
+</html>

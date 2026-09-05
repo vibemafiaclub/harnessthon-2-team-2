@@ -1,0 +1,137 @@
+{
+  "laneId": "visual-concept",
+  "runId": "vc-wedding-r2",
+  "prdId": "prd-wedding-invitation-v1",
+  "round": 2,
+  "viewport": { "width": 390, "height": 844 },
+  "artifacts": [
+    {
+      "id": "concept-concept-blush-letterpress",
+      "type": "combined-concept",
+      "path": "concept-concept-blush-letterpress.html",
+      "revisionHash": "89f5d0e923ae759a4c2976a6efcd8c3cb41e0c65d2393979933bf42889508056",
+      "conceptId": "concept-blush-letterpress"
+    },
+    {
+      "id": "concept-concept-midnight-garden",
+      "type": "combined-concept",
+      "path": "concept-concept-midnight-garden.html",
+      "revisionHash": "50157ca01cf5d18981fcac00793d83538183ff58831e6ab847da4b7fcfa21eb0",
+      "conceptId": "concept-midnight-garden"
+    },
+    {
+      "id": "concept-concept-sunlit-editorial",
+      "type": "combined-concept",
+      "path": "concept-concept-sunlit-editorial.html",
+      "revisionHash": "81ca44b955c7ce03aead187e70ff5924750f79b5a6ba4f949bf8fbcddc9be37e",
+      "conceptId": "concept-sunlit-editorial"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "concept-blush-letterpress",
+      "name": "블러쉬 레터프레스 (Blush Letterpress)",
+      "direction": "종이 청첩장의 격식을 디지털로 옮긴 방향. 아이보리 바탕에 은은한 블러쉬 핑크 포인트, 세리프 제목과 가는 괘선·레터프레스풍 오너먼트로 '어른들께 보여드려도 되는' 전통적 예의를 갖춘 청첩장. 인사말과 혼주 성함 블록을 중앙 정렬로 크게 두어 혼주 세대의 신뢰감을 최우선으로 하고, 여백을 넉넉히 쓰는 저밀도 레이아웃. 모든 카피는 격식체 한국어 (예: '삼가 모시는 글', '마음 전하실 곳').",
+      "differentiation": "셋 중 유일하게 라이트·저채도·따뜻한 종이 질감 방향이며(미드나잇 가든은 다크, 선릿 에디토리얼은 고대비 화이트), 중앙 정렬 + 대칭 구도와 얇은 괘선 장식을 쓴다. 무드는 '격식·전통·안심'으로, 미드나잇 가든의 로맨틱한 무드나 선릿 에디토리얼의 경쾌한 잡지 무드와 밀도 축(가장 성김)·색온도 축(웜 뉴트럴)·형태 언어 축(대칭/괘선) 모두에서 갈라진다.",
+      "tokenOverlay": {
+        "color": { "bg": "#FAF6F0", "surface": "#FFFFFF", "text": "#3E3A36", "primary": "#C4756B", "accent": "#A98E63" },
+        "radius": [2, 4, 8],
+        "shadow": "거의 없음 — 1px 헤어라인 보더와 아주 옅은 확산 그림자(0 1px 2px rgba(62,58,54,0.06))로 종이가 겹친 느낌만",
+        "mood": ["격식 있는", "따뜻한", "단정한", "혼주 세대도 안심되는"]
+      }
+    },
+    {
+      "id": "concept-midnight-garden",
+      "name": "미드나잇 가든 (Midnight Garden)",
+      "direction": "저녁 정원 예식의 분위기를 담은 다크 럭셔리 방향. 딥 그린-네이비 바탕에 샴페인 골드 포인트, 보태니컬 라인 일러스트 프레임과 부드러운 대형 라운드 카드로 로맨틱하고 고급스러운 무드를 만든다. 사진과 갤러리가 어두운 배경 위에서 보석처럼 떠 보이도록 하고, RSVP·계좌 카드 같은 실용 블록은 골드 보더 카드로 승격해 '귀한 초대'라는 인상을 유지한다. 카피는 부드러운 존댓말 한국어 (예: '소중한 분들을 초대합니다', '참석 의사 전달').",
+      "differentiation": "유일한 다크 테마이자 쿨-딥 색온도로, 두 라이트 컨셉과 배경 명도 축에서 정반대다. 형태 언어도 대형 라운드(16-24px)와 유기적 보태니컬 곡선으로, 블러쉬 레터프레스의 직선 괘선·선릿 에디토리얼의 기하학적 블록과 다르다. 무드는 '로맨틱·럭셔리·야간'이며 그림자를 글로우처럼 적극 사용해, 그림자를 거의 안 쓰는 블러쉬나 플랫한 선릿과 그림자 성격 축에서도 구분된다.",
+      "tokenOverlay": {
+        "color": { "bg": "#12211C", "surface": "#1C2F28", "text": "#F2EDE3", "primary": "#D4B36A", "accent": "#8FAE9B", "onPrimary": "#12211C" },
+        "radius": [12, 16, 24],
+        "shadow": "부드럽고 넓게 퍼지는 앰비언트 글로우 — 0 8px 32px rgba(0,0,0,0.45) + 골드 카드에 은은한 inner highlight",
+        "mood": ["로맨틱한", "고급스러운", "밤 정원 같은", "귀하게 초대받은"]
+      }
+    },
+    {
+      "id": "concept-sunlit-editorial",
+      "name": "선릿 에디토리얼 (Sunlit Editorial)",
+      "direction": "라이프스타일 매거진 화보 같은 밝고 경쾌한 방향. 순백 바탕에 코랄-오렌지 포인트, 좌측 정렬의 볼드한 제목과 큼직한 풀블리드 사진, 또렷한 섹션 라벨(오시는 길 / 참석 여부 / 마음 전하실 곳)로 정보를 잡지 목차처럼 스캔 가능하게 배치하는 고밀도 레이아웃. 젊은 커플의 취향을 앞세우되, 혼주 성함·격식 인사말 블록은 세리프로 톤을 낮춰 세대 간 균형을 잡는다. 카피는 간결하고 명료한 한국어.",
+      "differentiation": "셋 중 가장 밀도가 높고 정보 스캔성이 강한 에디토리얼 그리드로, 저밀도 중앙 정렬의 블러쉬 레터프레스와 밀도·정렬 축에서 반대다. 색온도는 고대비 화이트 + 비비드 코랄로, 블러쉬의 저채도 웜 뉴트럴·미드나잇의 딥 쿨 톤과 다르다. 형태 언어는 샤프한 소형 라운드와 두꺼운 룰 라인, 그림자 없는 플랫 처리로, 무드가 '경쾌·모던·활기'라는 점에서 격식(블러쉬)·로맨틱(미드나잇)과 세 번째 축을 이룬다.",
+      "tokenOverlay": {
+        "color": { "bg": "#FFFFFF", "surface": "#FFF7F2", "text": "#1F1B18", "primary": "#E8603C", "accent": "#2E5E4E" },
+        "radius": [0, 4, 6],
+        "shadow": "없음 — 플랫. 구획은 2px 솔리드 룰 라인과 서피스 컬러 블록으로만 구분",
+        "mood": ["경쾌한", "모던한", "화보 같은", "햇살 가득한"]
+      }
+    }
+  ],
+  "qualityChecks": [
+    { "criterionId": "concept-blush-letterpress:mech-self-contained", "axis": "mechanical", "status": "pass", "expected": "No external URLs; fully self-contained HTML", "observed": "grep for http(s):// returns 0 matches in the 32KB file; all imagery is CSS gradients and inline SVG; fonts are system font stacks with fallbacks" },
+    { "criterionId": "concept-blush-letterpress:mech-lang", "axis": "mechanical", "status": "pass", "expected": "lang attribute set", "observed": "<html lang=\"ko\"> at line 2" },
+    { "criterionId": "concept-blush-letterpress:mech-real-text", "axis": "mechanical", "status": "pass", "expected": "Real text content, no lorem ipsum", "observed": "All copy is real formal Korean: '삼가 모시는 글' greeting paragraphs, parents' names (김성호 · 박정숙의 장남 민준), venue address, transit lines, account numbers, RSVP labels" },
+    { "criterionId": "concept-blush-letterpress:spec-hero", "axis": "spec-fidelity", "status": "pass", "expected": "Hero: couple photo + bride/groom names + wedding phrase ornament", "observed": "Lines 296-308: hero photo placeholder with letterpress-style matte frame, names '김민준 그리고 이서연', sub-line '저희 두 사람, 결혼합니다', SVG diamond ornament with hairlines" },
+    { "criterionId": "concept-blush-letterpress:spec-datetime-dday", "axis": "spec-fidelity", "status": "pass", "expected": "Ceremony date/time block with D-day countdown", "observed": "Lines 311-325: '2026년 10월 24일 토요일 / 오후 1시 30분' plus a 4-cell countdown (414일 03시간 27분 45초) and D-day note. Static values (no JS), acceptable for a wireframe concept" },
+    { "criterionId": "concept-blush-letterpress:spec-greeting-parents", "axis": "spec-fidelity", "status": "pass", "expected": "Formal greeting + both families' parents' names with child designation", "observed": "Lines 328-350: '삼가 모시는 글' with two formal greeting paragraphs, '김성호 · 박정숙의 장남 민준' / '이재원 · 최은희의 장녀 서연', plus contact buttons for each side" },
+    { "criterionId": "concept-blush-letterpress:spec-venue-map", "axis": "spec-fidelity", "status": "pass", "expected": "Venue name + address + map preview", "observed": "Lines 353-373: '더채플앳청담 3층 아너스홀', full address + phone, CSS-drawn map with pin and label (role=img with aria-label), map app buttons (네이버 지도/카카오맵/주소 복사)" },
+    { "criterionId": "concept-blush-letterpress:spec-directions-parking", "axis": "spec-fidelity", "status": "pass", "expected": "Subway/bus/car directions + collapsible parking section", "observed": "Lines 376-414: three <details> accordions — 지하철 (open, 청담역 13번 출구), 버스 (routes 145/240/463/4318), 자차·주차 안내 (2시간 무료 주차, 만차 시 대안)" },
+    { "criterionId": "concept-blush-letterpress:spec-gallery", "axis": "spec-fidelity", "status": "pass", "expected": "Gallery of 4-6 couple photos in grid or carousel", "observed": "Lines 417-429: 5-photo grid (1 wide + 4 half-width) with labeled gradient placeholders (스튜디오 촬영, 한옥 촬영, 제주 여행, 첫 데이트, 프러포즈)" },
+    { "criterionId": "concept-blush-letterpress:spec-rsvp", "axis": "spec-fidelity", "status": "pass", "expected": "RSVP card: attend/decline + companion count + meal choice + 44pt CTA '참석 여부 전하기'", "observed": "Lines 432-466: segmented 참석합니다/참석이 어렵습니다 with aria-pressed, +/- stepper (44x44 buttons) for 동행 인원, 3-way 식사 여부, full-width primary '참석 여부 전하기' (min-height 44px), privacy note" },
+    { "criterionId": "concept-blush-letterpress:spec-accounts", "axis": "spec-fidelity", "status": "pass", "expected": "Groom-side/bride-side account collapsible cards + copy/transfer deep-link buttons", "observed": "Lines 469-519: two <details> folds (신랑측/신부측 계좌번호), each account row with bank, number, holder, and 복사 + 송금 buttons" },
+    { "criterionId": "concept-blush-letterpress:spec-footer", "axis": "spec-fidelity", "status": "pass", "expected": "Share (KakaoTalk/link copy) + service credit", "observed": "Lines 522-534: '카카오톡으로 공유하기' primary and '링크 복사' secondary buttons, credit 'MARRY LETTER — 모바일 청첩장 서비스로 제작되었습니다'" },
+    { "criterionId": "concept-blush-letterpress:spec-style-tile", "axis": "spec-fidelity", "status": "pass", "expected": "Style tile with palette + type scale + buttons in 4 states + card", "observed": "Lines 541-632: 5 palette swatches with token names and hex, 6-step type scale (24/20/17/15/13/12) with serif/sans split, Primary and Secondary buttons each in enabled/pressed/selected/disabled, demo Location card, plus radius/shadow and mood sections" },
+    { "criterionId": "concept-blush-letterpress:a11y-contrast", "axis": "accessibility", "status": "pass", "expected": "Body-text contrast >= 4.5:1 computed from actual hex values", "observed": "Computed: #3E3A36 on #FAF6F0 = 10.6:1, on #FFFFFF = 11.4:1; soft text #6E675F on #FAF6F0 = 5.2:1; button text #FFFDFB on #A85B51 = 4.85:1 — all AA. Minor caveat: decorative gold eyebrow/section labels #A98E63 on ivory = 2.9:1, but these are ornamental uppercase micro-labels, not body text" },
+    { "criterionId": "concept-blush-letterpress:a11y-tap-targets", "axis": "accessibility", "status": "pass", "expected": "Tap targets >= 44px", "observed": ".btn and .btn-sm both have min-height:44px; stepper buttons are 44x44; details summary min-height:44px; RSVP CTA is full-width 44px+" },
+    { "criterionId": "concept-blush-letterpress:aes-direction-coherence", "axis": "aesthetic", "status": "pass", "expected": "Coherent with 'blush letterpress' direction: ivory ground, blush pink accents, serif titles, thin hairlines, letterpress ornaments, centered low-density layout, formal Korean copy", "observed": "Ivory #FAF6F0 ground, blush #C4756B/#A85B51 accents, Nanum Myeongjo serif headings, 1px #E4DCD0 hairlines everywhere (rules, ornament flanks, borders), inline SVG letterpress-style diamond/circle ornaments, everything center-aligned with 40px section padding, tiny radii (2/4px) and near-zero shadow reading as layered paper, formal copy ('삼가 모시는 글', '마음 전하실 곳', '앞날을 축복해 주시면 감사하겠습니다')" },
+    { "criterionId": "concept-blush-letterpress:aes-hierarchy", "axis": "aesthetic", "status": "pass", "expected": "Readable visual hierarchy", "observed": "Consistent section pattern (letterspaced gold eyebrow > serif h2 > content), greeting and parents' names given a full white-surface section with the largest serif treatment, single high-emphasis filled CTA reserved for RSVP, captions/soft text stepped down in size and color" },
+    { "criterionId": "concept-blush-letterpress:aes-distinct", "axis": "aesthetic", "status": "pass", "expected": "Does not drift into a generic look indistinguishable from the dark green/gold botanical or white/coral magazine directions", "observed": "No dark surfaces or gold-border 'jewel' cards (direction 2's signature); no left-aligned bold sans headlines, full-bleed photos, or coral high-density magazine labels (direction 3's signature). Instead: centered symmetric composition, matte-framed photo, hairline-flanked ornaments, 2px radii — a recognizably paper-invitation identity" },
+    { "criterionId": "concept-midnight-garden:mech-self-contained", "axis": "mechanical", "status": "pass", "expected": "No external URLs; file renders standalone", "observed": "Single 628-line HTML file; no <link>, <script src>, @import, or http(s) references. All imagery is inline SVG; fonts are system font-family stacks (Nanum Myeongjo/Apple SD Gothic Neo with Georgia/serif fallbacks, no webfont loading)." },
+    { "criterionId": "concept-midnight-garden:mech-lang", "axis": "mechanical", "status": "pass", "expected": "lang attribute set", "observed": "Line 2: <html lang=\"ko\">." },
+    { "criterionId": "concept-midnight-garden:mech-real-text", "axis": "mechanical", "status": "pass", "expected": "Real text content, no lorem ipsum", "observed": "All copy is real polite Korean: 모시는 글 greeting, 혼주 names (김영호·박정숙의 장남 민준 / 이상철·최미경의 장녀 서연), venue 더채플앳청담 3층 아너스홀 with address, transit lines, bank account rows." },
+    { "criterionId": "concept-midnight-garden:spec-hero", "axis": "spec-fidelity", "status": "pass", "expected": "Hero: couple photo + bride/groom names + wedding phrase ornament", "observed": "Hero section (lines 312-353): SVG couple-photo placeholder (moonlit garden with couple silhouettes, aria-label '김민준·이서연 커플 사진'), gold botanical ornament SVG, eyebrow 'Wedding Invitation', names '김민준 그리고 이서연', sub '저희 두 사람, 소중한 분들을 초대합니다'." },
+    { "criterionId": "concept-midnight-garden:spec-datetime", "axis": "spec-fidelity", "status": "pass", "expected": "예식 일시 block: 2026-10-24 Sat 1:30 PM with D-day countdown", "observed": "Gold card '예식 일시' (lines 356-367): '2026년 10월 24일 토요일' + '오후 1시 30분' + 4-unit D-day countdown (DAYS/HOURS/MIN/SEC). Static mockup values (413 days) as expected for a wireframe." },
+    { "criterionId": "concept-midnight-garden:spec-greeting", "axis": "spec-fidelity", "status": "pass", "expected": "Formal greeting + both sets of parents' names", "observed": "'모시는 글' card (lines 370-384): honorific greeting ('바쁘신 가운데 귀한 걸음 하시어…') plus parents rows '김영호 · 박정숙 의 장남 민준' and '이상철 · 최미경 의 장녀 서연'." },
+    { "criterionId": "concept-midnight-garden:spec-venue", "axis": "spec-fidelity", "status": "pass", "expected": "Venue name + address + map preview", "observed": "'예식장 안내' card (lines 387-415): 더채플앳청담 3층 아너스홀, 서울특별시 강남구 선릉로 757, inline SVG map preview with gold pin and labels, plus '지도 앱으로 보기' / '주소 복사' buttons." },
+    { "criterionId": "concept-midnight-garden:spec-directions", "axis": "spec-fidelity", "status": "pass", "expected": "Transit/bus/car directions + collapsible parking info", "observed": "'오시는 길' card (lines 418-433): three <details> accordions — 지하철 안내 (7호선/수인분당선), 버스 안내 (간선/지선 routes), 자차·주차 안내 (지하 1-4층, 2시간 무료, 주차 등록 안내)." },
+    { "criterionId": "concept-midnight-garden:spec-gallery", "axis": "spec-fidelity", "status": "pass", "expected": "4-6 couple photos in grid or carousel", "observed": "'우리의 순간들' card (lines 436-470): 5 inline-SVG photo placeholders in a 2-column grid with one full-width tile; each with descriptive aria-label." },
+    { "criterionId": "concept-midnight-garden:spec-rsvp", "axis": "spec-fidelity", "status": "pass", "expected": "RSVP card: attend/decline + companion count + meal choice + >=44pt CTA '참석 여부 전하기'", "observed": "Gold RSVP card (lines 473-501): 참석합니다/참석이 어렵습니다 toggle (aria-pressed), companion stepper (44x44 buttons), 식사함/식사 안 함 chips, and full-width '참석 여부 전하기' primary button with .btn min-height:44px." },
+    { "criterionId": "concept-midnight-garden:spec-accounts", "axis": "spec-fidelity", "status": "pass", "expected": "Collapsible groom/bride account cards + copy/transfer deep-link buttons", "observed": "'마음 전하실 곳' gold card (lines 504-533): 신랑측/신부측 <details> sections, each with two account rows (name, bank, number) and 복사 + 송금 mini buttons (min 44x44)." },
+    { "criterionId": "concept-midnight-garden:spec-footer", "axis": "spec-fidelity", "status": "pass", "expected": "Share (KakaoTalk/link copy) + service credit", "observed": "Footer (lines 536-548): '카카오톡 공유' and '링크 복사' buttons plus credit 'Made with 모바일 청첩장 빌더 · Midnight Garden Template'." },
+    { "criterionId": "concept-midnight-garden:spec-style-tile", "axis": "spec-fidelity", "status": "pass", "expected": "Style tile with palette, type scale, buttons in 4 states, card", "observed": "Style tile section (lines 556-625): 6 color swatches with token names+hex, 6-step type scale (24/20/17/15/13/12), primary and secondary buttons each in enabled/pressed/selected/disabled, gold card component demo, plus radius and shadow specimens." },
+    { "criterionId": "concept-midnight-garden:a11y-contrast", "axis": "accessibility", "status": "pass", "expected": "Body text contrast >= 4.5:1 computed from actual hex values", "observed": "Computed WCAG ratios: body #F2EDE3 on surface #1C2F28 = ~12.1:1; secondary #C9C2B2 on surface = ~8.0:1; gold headings #D4B36A on surface = ~7.0:1; smallest colored text (accent kicker #8FAE9B at 12px) = ~5.9:1; button label #12211C on gold #D4B36A = ~8.3:1. All exceed AA for their sizes." },
+    { "criterionId": "concept-midnight-garden:a11y-tap-targets", "axis": "accessibility", "status": "pass", "expected": "Interactive tap targets >= 44px", "observed": ".btn min-height:44px; stepper buttons 44x44; .chip min-height:44px; .mini-btn min-height/min-width 44px; accordion summary min-height:44px. All interactive elements meet 44px." },
+    { "criterionId": "concept-midnight-garden:aes-direction-coherence", "axis": "aesthetic", "status": "pass", "expected": "Coherent with dark-luxury evening-garden direction: deep green base, champagne gold accents, botanical line frames, large soft round cards, gold-border promotion of RSVP/account cards", "observed": "Deep green palette (#0C1713/#12211C/#1C2F28) with champagne gold #D4B36A and sage accent #8FAE9B; botanical line-art SVG ornaments in hero and footer; 12/16/24px radii with 24px on promoted cards; RSVP, date, and account cards carry .card-gold (gold border + inner highlight glow); photos sit on dark ground with ambient glow shadows so they read as luminous. Copy matches the brief's honorific examples ('소중한 분들을 초대합니다', '참석 의사 전달')." },
+    { "criterionId": "concept-midnight-garden:aes-hierarchy", "axis": "aesthetic", "status": "pass", "expected": "Readable visual hierarchy", "observed": "Clear three-level structure per card: letterspaced accent kicker (12px caps) -> serif gold title (20px) -> body (15px); date and names use serif display sizes; gold-border cards visibly elevate the practical blocks; single gold-gradient primary CTA stands out against outline secondaries." },
+    { "criterionId": "concept-midnight-garden:aes-distinct", "axis": "aesthetic", "status": "pass", "expected": "Does not drift into a generic look indistinguishable from the ivory/blush letterpress or white/coral editorial directions", "observed": "Dark green ground with gold-on-dark jewel treatment is the opposite value scheme from both sibling directions (ivory/blush formal, white/coral magazine); centered serif romanticism plus night-garden SVG art (moon, lanterns, silhouettes) is distinct from letterpress rules and from left-aligned bold editorial labels. No generic drift observed." },
+    { "criterionId": "concept-sunlit-editorial:mech-self-contained", "axis": "mechanical", "status": "pass", "expected": "No external URLs; fully self-contained HTML", "observed": "All CSS inline, hero/map/gallery rendered as inline SVG and CSS gradients; only system font stacks referenced (Pretendard/Nanum Myeongjo fall back to system serif/sans); no http(s) references anywhere in the file" },
+    { "criterionId": "concept-sunlit-editorial:mech-lang", "axis": "mechanical", "status": "pass", "expected": "lang attribute set", "observed": "<html lang=\"ko\"> at line 2" },
+    { "criterionId": "concept-sunlit-editorial:mech-real-text", "axis": "mechanical", "status": "pass", "expected": "Real text content, not lorem ipsum", "observed": "Real Korean copy throughout: greeting message, transport directions (7호선 강남구청역 2번 출구 도보 5분), parking details, account numbers, RSVP microcopy" },
+    { "criterionId": "concept-sunlit-editorial:spec-hero", "axis": "spec-fidelity", "status": "pass", "expected": "Hero: couple photo + names + wedding ornament", "observed": "340px full-bleed gradient photo placeholder with role=img aria-label, ornament '— WE ARE GETTING MARRIED —', bold left-aligned '김민준 & 이서연' with coral ampersand (lines 319-332)" },
+    { "criterionId": "concept-sunlit-editorial:spec-datetime-dday", "axis": "spec-fidelity", "status": "pass", "expected": "예식 일시 2026-10-24 토 오후 1:30 + D-day countdown", "observed": "'2026년 10월 24일 토요일' + '오후 1시 30분' plus 4-cell countdown (49 DAYS / 05 HOURS / 27 MIN / 40 SEC) and note '민준 ♥ 서연의 결혼식이 49일 남았습니다' (lines 335-346)" },
+    { "criterionId": "concept-sunlit-editorial:spec-greeting-parents", "axis": "spec-fidelity", "status": "pass", "expected": "Formal greeting + both sets of parents' names with 장남/장녀 phrasing", "observed": "모시는 글 section in serif (font-family var(--font-serif)) with formal greeting; parents block '아버지 김영호 · 어머니 박정숙의 장남 민준' and '아버지 이상철 · 어머니 최은영의 장녀 서연' (lines 349-362)" },
+    { "criterionId": "concept-sunlit-editorial:spec-venue-map", "axis": "spec-fidelity", "status": "pass", "expected": "Venue name + address + map preview", "observed": "'더채플앳청담 3층 아너스홀', full address '서울특별시 강남구 선릉로 757 (청담동)' + phone, 150px SVG map with streets/blocks/coral pin and '더채플앳청담' pin label, plus 지도 앱 열기/주소 복사 buttons (lines 365-388)" },
+    { "criterionId": "concept-sunlit-editorial:spec-directions-parking", "axis": "spec-fidelity", "status": "pass", "expected": "Subway/bus/car guidance + collapsible parking section", "observed": "Three t-rows (지하철/버스/자차) with concrete details; <details class=\"fold\"> '주차 안내 자세히 보기' containing 3 parking notes (lines 391-422)" },
+    { "criterionId": "concept-sunlit-editorial:spec-gallery", "axis": "spec-fidelity", "status": "pass", "expected": "4-6 couple photos in grid or carousel", "observed": "3-column grid of 6 gradient photo placeholders, each with role=img and descriptive aria-label (한강 산책, 프러포즈, etc.) (lines 425-436)" },
+    { "criterionId": "concept-sunlit-editorial:spec-rsvp", "axis": "spec-fidelity", "status": "pass", "expected": "RSVP card: attend/decline + headcount + meal + >=44pt '참석 여부 전하기' button", "observed": "참석/불참 choice buttons (min-height:44px), stepper 44×44px buttons with count, 3-way meal segment (식사함/식사 안 함/미정, min-height:44px), full-width primary CTA '참석 여부 전하기' (.btn min-height:44px) (lines 439-466)" },
+    { "criterionId": "concept-sunlit-editorial:spec-gift-accounts", "axis": "spec-fidelity", "status": "pass", "expected": "Groom/bride collapsible account cards + copy/transfer deep-link buttons", "observed": "Two <details class=\"fold\"> for 신랑측/신부측 계좌번호 with bank+number+account holder, per-line 복사 buttons, and '카카오페이로 마음 전하기' deep-link button (lines 469-494)" },
+    { "criterionId": "concept-sunlit-editorial:spec-footer-share", "axis": "spec-fidelity", "status": "pass", "expected": "KakaoTalk share / link copy + service credit", "observed": "Footer share-row with '카카오톡 공유' primary and '링크 복사' secondary buttons plus credit '모바일 청첩장 빌더로 제작되었습니다' (lines 497-503)" },
+    { "criterionId": "concept-sunlit-editorial:spec-style-tile", "axis": "spec-fidelity", "status": "pass", "expected": "Style tile with palette + type scale + buttons in 4 states + card", "observed": "5 color swatches with token names and hex codes; 7-row type scale (display 24/900 through caption 12, incl. serif row); primary and secondary buttons each in enabled/pressed/selected/disabled; demo card '예식 일시' with CTA; plus radius scale and shadow note (lines 511-564)" },
+    { "criterionId": "concept-sunlit-editorial:a11y-contrast", "axis": "accessibility", "status": "pass", "expected": "Body-text contrast >= 4.5:1 computed from actual hex values", "observed": "Body #1F1B18 on #FFFFFF = 17.1:1; secondary #4B443E on #FFFFFF/#FFF7F2 = 9.6:1; caption #6B625B = 6.0:1 — all pass. Note: white text on primary button #E8603C computes to 3.4:1, below AA for 15px bold text (a fixable nit, outside the stated body-text criterion)" },
+    { "criterionId": "concept-sunlit-editorial:a11y-tap-targets", "axis": "accessibility", "status": "pass", "expected": "Tap targets >= 44px", "observed": ".btn has min-height:44px/min-width:44px (btn-sm keeps min-height:44px), stepper buttons 44×44px, .choice and .seg buttons min-height:44px, details summary min-height:44px, .t-ico 44×44px" },
+    { "criterionId": "concept-sunlit-editorial:aes-direction-coherence", "axis": "aesthetic", "status": "pass", "expected": "Coherent with sunlit editorial magazine direction: white ground, coral-orange accents, left-aligned bold titles, full-bleed photo, clear scannable section labels, high density, serif for formal blocks", "observed": "Pure white #FFFFFF ground with coral #E8603C primary; magazine masthead kicker ('WEDDING DAY / VOL. 2026 / 10'); left-aligned 900-weight display names; 340px full-bleed hero; green chip section labels (예식 일시/오시는 길/참석 여부/마음 전하실 곳) making the page scan like a table of contents; dense 2px-rule-separated blocks; 모시는 글 and parents block deliberately switch to serif for generational balance, exactly as the direction specifies" },
+    { "criterionId": "concept-sunlit-editorial:aes-hierarchy", "axis": "aesthetic", "status": "pass", "expected": "Readable visual hierarchy", "observed": "Clear ladder: uppercase chip labels → 20px/800 section titles → 17px/800 key facts (venue, date) → 15px body → 12-13px captions; countdown numerals in 24px/900 coral; primary CTA visually dominant via solid coral full-width block" },
+    { "criterionId": "concept-sunlit-editorial:aes-distinct", "axis": "aesthetic", "status": "pass", "expected": "Does not drift into a generic look indistinguishable from the ivory/blush traditional or dark green-gold garden directions", "observed": "Flat shadow-less white editorial with 2px black rule lines, chip labels, and magazine masthead is clearly distinct from the ivory/blush centered letterpress direction (this one is left-aligned, high-density, sans-led) and from the dark green-navy/gold direction (no dark ground, no gold, no botanical frames); green #2E5E4E appears only as a small label/accent, not a ground" }
+  ],
+  "repairHistory": [
+    {
+      "attempt": 1,
+      "trigger": "concept-blush-letterpress: a11y-primary-button-contrast",
+      "change": "Darkened the primary button fill to a new --primary-btn token #A85B51 (4.84:1 vs the #FFFDFB label, also applied to the selected state) and deepened --primary-press to #9C5349 (5.52:1), leaving the original #C4756B --primary accent color untouched everywhere else so the blush letterpress direction is preserved.",
+      "result": "rechecked"
+    }
+  ],
+  "timing": {
+    "startedAt": "2026-09-05T15:37:39+09:00",
+    "finishedAt": "2026-09-05T15:44:56+09:00"
+  },
+  "rationaleSummary": "The three directions were chosen to span the PRD's dual-audience tension (young couple vs. 혼주 generation) along orthogonal axes: Blush Letterpress anchors the formal/traditional pole with a light warm paper idiom, Midnight Garden takes the romantic-luxury pole as the sole dark theme, and Sunlit Editorial covers the modern high-density magazine pole — so they differ on value scheme, density/alignment, and form language rather than being palette swaps. Each concept is delivered as a single combined 390px screen (full invitation flow: hero through RSVP, accounts, and share footer) plus an embedded style tile, since the invitation's one-page scroll is the representative surface where all PRD-mandated blocks and the token overlay can be judged together."
+}

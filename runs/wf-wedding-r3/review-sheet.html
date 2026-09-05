@@ -1,0 +1,138 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리뷰: 와이어프레임 · wf-wedding-r3</title>
+<style>
+  body{font:14px/1.5 -apple-system,system-ui,sans-serif;margin:0;background:#f6f5f2;color:#1f2328}
+  header{background:#1f2328;color:#fff;padding:16px 24px}
+  header code{background:#3a3f45;padding:1px 6px;border-radius:4px}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  h2{margin-top:32px;border-bottom:2px solid #d8d5cf;padding-bottom:6px}
+  table{border-collapse:collapse;width:100%;background:#fff}
+  td,th{border:1px solid #d8d5cf;padding:6px 10px;text-align:left;vertical-align:top}
+  .st-pass .status{color:#0a7a35;font-weight:600}
+  .st-fail .status{color:#c22525;font-weight:600}
+  .st-not-verified .status{color:#9a6700;font-weight:600}
+  .artifact{background:#fff;border:1px solid #d8d5cf;border-radius:8px;padding:16px;margin:16px 0}
+  .artifact iframe{width:100%;height:720px;border:1px solid #d8d5cf;border-radius:6px;background:#fff}
+  .rev{color:#57606a}
+  .notice{background:#fff8e5;border:1px solid #e6d9a8;border-radius:8px;padding:12px 16px}
+  .fb-label{display:block;margin-top:12px;font-weight:600}
+  textarea.fb{width:100%;box-sizing:border-box;min-height:64px;margin-top:6px;padding:8px;border:1px solid #d8d5cf;border-radius:6px;font:inherit}
+  #fb-submit{margin-top:12px;padding:10px 20px;border:0;border-radius:6px;background:#1f2328;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  #fb-status{margin-left:12px;font-weight:600}
+</style></head><body>
+<header>
+  <h1>와이어프레임 레인 리뷰 — 라운드 3</h1>
+  <p>run <code>wf-wedding-r3</code> · PRD <code>prd-wedding-invitation-v1</code> · 뷰포트 390×844 · 생성 2026-09-05T16:08:57+09:00 → 2026-09-05T16:15:26+09:00</p>
+</header>
+<main>
+<div class="notice">승인/수정 요청/거부는 <b>터미널 세션에서</b> 입력해주세요. 결정은 여기 표시된 리비전 해시에 그대로 바인딩되어 기록됩니다. 리뷰 축은 의도적으로 분리 보고되며, 단일 통합 점수는 없습니다.</div>
+<h2>화면 목록</h2><ul><li><b>[선형 위저드 + 분리형 하객 플로우] 1단계: 템플릿 선택</b> (wizard:w-template) — 위저드 첫 단계로 템플릿 갤러리에서 하나를 고른다 (mustHave: Template gallery).</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] 2단계: 기본 정보 입력</b> (wizard:w-info) — 신랑·신부 이름, 예식 일시, 예식장 정보를 폼으로 입력한다.</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] 3단계: 사진·인사말</b> (wizard:w-media) — 대표 사진과 갤러리 사진 업로드, 인사말 문구 작성 (mustHave: Invitation editor의 핵심 편집 단계).</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] 4단계: 하객 화면 미리보기</b> (wizard:w-preview) — 발행 전 하객이 보게 될 화면을 그대로 미리 본다.</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] 5단계: 발행 완료</b> (wizard:w-publish) — 발행 후 공유 링크를 복사·전송한다.</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] 하객 초대장 페이지</b> (wizard:w-guest) — 공유 링크로 열리는 로그인 없는 초대장. 인사말·일시·오시는 길을 스크롤로 읽는다 (mustHave: Guest invitation page).</li>
+<li><b>[선형 위저드 + 분리형 하객 플로우] RSVP 회신 폼</b> (wizard:w-rsvp) — 별도 화면에서 참석 여부·인원·식사 여부를 제출한다 (mustHave: RSVP form).</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 제작 허브 대시보드</b> (hub:h-dashboard) — 초대장 제작의 중심 화면. 각 섹션 카드로 이동하고 완성도를 확인하며 미리보기·발행을 실행한다 (mustHave: Invitation editor의 허브).</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 템플릿 갤러리</b> (hub:h-template) — 허브에서 진입해 템플릿을 고르고 언제든 교체한다 (mustHave: Template gallery).</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 기본 정보 편집</b> (hub:h-info) — 이름·일시·예식장을 편집하는 스포크 화면.</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 사진·인사말 편집</b> (hub:h-media) — 사진 업로드와 인사말 작성을 담당하는 스포크 화면.</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 미리보기·발행 시트</b> (hub:h-preview-publish) — 하객 화면 미리보기 위에 발행 액션을 얹은 화면. 발행 즉시 링크 공유 UI로 전환된다.</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 하객: 초대장 탭</b> (hub:h-guest-invite) — 하객 페이지의 기본 탭. 인사말·사진·일시를 보여준다 (mustHave: Guest invitation page).</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 하객: 오시는 길 탭</b> (hub:h-guest-way) — 지도·교통·주차 안내를 전담하는 탭.</li>
+<li><b>[허브 대시보드 + 탭형 하객 페이지] 하객: RSVP 탭</b> (hub:h-guest-rsvp) — 탭 안에서 참석 회신을 제출한다 (mustHave: RSVP form).</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] 시작: 템플릿 선택</b> (canvas:c-template) — 캔버스 진입 전 유일한 게이트. 템플릿을 고르면 바로 캔버스가 열린다 (mustHave: Template gallery).</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] 인라인 편집 캔버스</b> (canvas:c-canvas) — 하객 페이지와 동일한 레이아웃 위에서 각 섹션을 직접 탭해 편집. 편집 화면이 곧 미리보기다 (mustHave: Invitation editor; 플로우의 '미리보기' 단계는 상단 '하객 모드' 토글로 충족).</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] 섹션 편집 바텀시트</b> (canvas:c-edit-sheet) — 탭한 섹션에 맞는 편집 UI가 컨텍스트로 뜬다. 이름·일시 입력, 사진 업로드, 인사말 작성이 모두 이 시트의 변형이다.</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] 발행·공유 시트</b> (canvas:c-publish) — 캔버스 위에 뜨는 발행 확인 시트. 발행 후 링크 복사·공유까지 한 시트에서 처리한다.</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] 하객 원스크롤 페이지</b> (canvas:c-guest) — 앵커 내비게이션이 붙은 단일 스크롤 초대장. 인사말→일시→지도·교통→RSVP 순으로 이어진다 (mustHave: Guest invitation page).</li>
+<li><b>[단일 캔버스 인라인 편집 + 원스크롤 하객 페이지] RSVP 바텀시트</b> (canvas:c-rsvp-sheet) — 페이지를 떠나지 않고 시트 안에서 회신을 제출한다. 저사양 폰 대응으로 순수 폼 요소만 사용 (mustHave: RSVP form).</li></ul>
+
+<h2>산출물</h2>
+<section class="artifact">
+  <h3>wf-wizard <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>af8114e203dc984a</code> · <a href="wireframe-wizard.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-wizard.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-wizard">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-wizard" data-target="wf-wizard" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<section class="artifact">
+  <h3>wf-hub <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>195b7319eb18fae6</code> · <a href="wireframe-hub.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-hub.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-hub">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-hub" data-target="wf-hub" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<section class="artifact">
+  <h3>wf-canvas <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>75f2827a476614ce</code> · <a href="wireframe-canvas.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-canvas.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-canvas">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-canvas" data-target="wf-canvas" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<h2>품질 검사 (축별 분리)</h2>
+<table><tr><th>기준</th><th>축</th><th>상태</th><th>기대</th><th>관찰</th></tr>
+<tr class="st-pass"><td>wizard:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 7 variant screens (w-template, w-info, w-media, w-preview, w-publish, w-guest, w-rsvp) routable via hash</td><td>Browser-verified: setting #screen-&lt;id&gt; for each of the 7 ids activated the matching .screen div (exists/active/visible all true), with correct crumb text (e.g. '1단계: 템플릿 선택 · #screen-w-template') and frame caption updated by route() in the inline script.</td></tr>
+<tr class="st-pass"><td>wizard:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>Every variant edge clickable to an existing target screen</td><td>10 &lt;a href=&quot;#screen-*&quot;&gt; links and 16 onclick location.hash targets enumerated in-browser; zero dangling (badHrefs=[], badOnclick=[]). All 8 variant edges present: w-template→w-info (footer '다음 — 기본 정보 입력', line 269), w-info→w-media (307), w-media→w-preview (341), w-preview→w-media jump-link '수정하러 가기' (359), w-preview→w-publish '이대로 발행' (363), w-publish→w-guest '하객 화면 보기' (391), w-guest→w-rsvp '참석 여부 회신' (424), w-rsvp→w-guest '초대장으로 돌아가기' (466, 471).</td></tr>
+<tr class="st-pass"><td>wizard:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external assets (images, scripts, stylesheets, fonts fetched over network)</td><td>DOM query for img/script[src]/link[rel=stylesheet]/iframe/video/audio/source returned []. Only console error over local HTTP was the server's own /favicon.ico 404, not a page-referenced asset. All CSS/JS inline; placeholders are dashed .ph boxes.</td></tr>
+<tr class="st-pass"><td>wizard:mech-lang-h1-labels</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, an h1 per screen, and labels on form controls</td><td>html lang=&quot;ko&quot; (line 2). Each of the 7 screens has an h1 (verified in-browser: '템플릿을 선택해 주세요' … '참석 여부를 알려주세요'). Every input/select/textarea has a matching label[for] or aria-label (unlabeled list = []); RSVP radios use fieldset+legend, stepper buttons carry aria-label, share-link input has aria-label='공유 링크'.</td></tr>
+<tr class="st-pass"><td>wizard:mech-internal-banner</td><td>기계적 검사</td><td class="status">pass</td><td>Internal-use banner present</td><td>Sticky .review-banner with role=&quot;note&quot; at line 127: '내부 검토용 — 클라이언트 공유 금지', rendered at top of page (verified in DOM).</td></tr>
+<tr class="st-pass"><td>wizard:ux-flow-build</td><td>UX 과업 성공</td><td class="status">pass</td><td>coreFlow flow-build (choose template → enter names/date/venue → photos+greeting → preview guest view → publish and copy link) traceable by clicks</td><td>Click path: w-template (tpl-card select, selectTpl toggles aria-pressed) → '다음 — 기본 정보 입력' → w-info (신랑/신부 이름, 예식 날짜/시간, 예식장 검색) → '다음 — 사진·인사말' → w-media (대표 사진 업로드, 갤러리, 인사말 textarea) → '다음 — 미리보기' → w-preview (하객 화면 렌더 placeholder) → '이대로 발행' → w-publish ('링크 복사' shows copy toast, 카카오톡 공유, QR). All 5 PRD steps land on a distinct screen in order; each edge is a real click.</td></tr>
+<tr class="st-pass"><td>wizard:ux-flow-guest</td><td>UX 과업 성공</td><td class="status">pass</td><td>coreFlow flow-guest (open link → read greeting/date/venue+map → transport/parking → RSVP with headcount and meal → optional transfer deep link) traceable by clicks</td><td>Click path: w-publish '하객 화면 보기' (stands in for opening the share link; screen notes '공유 링크로 열린 페이지 · 로그인 불필요') → w-guest scroll: greeting, 예식 안내 date, 오시는 길 map placeholder, 교통 안내/주차 안내 &lt;details&gt;, '축의금 송금하기 (송금 앱 딥링크)' button → footer '참석 여부 회신' → w-rsvp (attend radios, 동반 인원 stepper, 식사 여부 select) → '회신 보내기' reveals confirmation with '초대장으로 돌아가기' link back to w-guest.</td></tr>
+<tr class="st-pass"><td>wizard:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD mustHaveScreens represented: Template gallery, Invitation editor, Guest invitation page, RSVP form</td><td>Template gallery = w-template (6-card tpl-grid with filter chips); Invitation editor = w-info + w-media (this variant splits the editor into wizard steps 2–3, consistent with its declared '선형 위저드' framing); Guest invitation page = w-guest; RSVP form = w-rsvp. All 7 variant screens present, no extras.</td></tr>
+<tr class="st-pass"><td>wizard:spec-flow-steps-and-constraints</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD flow steps and constraints reflected (Korean copy, guest page without login, RSVP works on low-end phones)</td><td>Every flow-build and flow-guest step maps to visible UI (see ux checks), including publish/copy-link, map, transport/parking guidance, headcount+meal RSVP, and transfer deep link. Constraints: all copy Korean; w-publish and w-guest state '로그인 없이 링크만으로 열람'; w-rsvp notes '저사양 폰에서도 동작하도록 가벼운 단일 폼으로 구성' and is a single lightweight form.</td></tr>
+<tr class="st-pass"><td>wizard:a11y-mechanical-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics: lang, headings, labeled controls, sensible ARIA</td><td>lang=ko; h1 per screen and h2 subsections; zero unlabeled form controls (browser-audited); tabs use role=tablist/tab/aria-selected/aria-controls; toggles use aria-pressed; progress bars have aria-label ('진행 단계 N/5') with decorative dots aria-hidden; stepper output has aria-live=polite; decorative arrows aria-hidden. Minor non-failing quirk: label for=&quot;hero-upload&quot;/&quot;gallery-add&quot; point at &lt;button&gt; elements rather than inputs.</td></tr>
+<tr class="st-pass"><td>wizard:aes-lowfi-discipline</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi discipline (no brand styling) with legible hierarchy and Korean copy throughout</td><td>Pure grayscale token palette (#222/#555/#888/#bbb/#ddd/#f4f4f4), dashed-border .ph placeholders labeled in Korean ('템플릿 썸네일', '지도 (플레이스홀더)'), system font stack, no brand colors/logos/photos. Hierarchy legible: 18px/800 h1, 14px/700 h2, 12px labels, 11px meta notes, primary vs ghost button distinction. All user-facing copy is Korean; only the placeholder share URL is Latin.</td></tr>
+<tr class="st-pass"><td>hub:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 8 variant screens reachable via hash router, exactly one visible at a time</td><td>Live browser test: navigating #screen-&lt;id&gt; for all 8 ids (h-dashboard, h-template, h-info, h-media, h-preview-publish, h-guest-invite, h-guest-way, h-guest-rsvp) each showed exactly that screen ('OK' for all 8); router screenIds array (line 481) matches variant list exactly</td></tr>
+<tr class="st-pass"><td>hub:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>Each of the 12 variant edges has a clickable element leading to an existing target</td><td>Link scan: all href=&quot;#...&quot; targets resolve (0 missing). Dashboard cards → template/info/media (lines 224-231); each editor has '허브로 돌아가기' / '저장하고 허브로 돌아가기' (255/289/316); dashboard 미리보기+발행하기 → preview-publish (234-235); preview warn links back to hub (330); 발행하기 click reveals '하객이 링크 열기' → guest-invite (verified live: 'guest link revealed'); guest tabbars link invite↔way↔rsvp on all three guest screens (385-389, 416-420, 466-470)</td></tr>
+<tr class="st-pass"><td>hub:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external scripts, styles, fonts, or images</td><td>Regex scan found zero http(s) src/href attributes and zero &lt;img&gt; tags; fonts are a system stack; only console error when served was the server's own favicon.ico 404 (not a page asset)</td></tr>
+<tr class="st-pass"><td>hub:mech-lang-h1-labels</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, per-screen h1, labeled form controls</td><td>Live check: document.documentElement.lang === 'ko'; every screen has an h1 in its topbar (all 8 returned Korean titles); zero unlabeled input/select/textarea (all have label[for]); stepper buttons carry aria-label (lines 439/441), RSVP segment uses role=group + aria-labelledby (432), tabbars and app-tabs have aria-label</td></tr>
+<tr class="st-pass"><td>hub:mech-internal-banner</td><td>기계적 검사</td><td class="status">pass</td><td>Internal-use banner present</td><td>Sticky .review-banner at line 134 reads '내부 검토용 — 클라이언트 공유 금지'; confirmed present in live DOM</td></tr>
+<tr class="st-pass"><td>hub:ux-flow-build</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-build (choose template → enter names/date/venue → photos/greeting → preview guest view → publish + copy link) traceable by clicks</td><td>Traced live: h-dashboard → '템플릿' card → h-template (tap thumb applies template, '적용 중' badge moves — verified) → '허브로 돌아가기' → '기본 정보' card → h-info (신랑/신부 names, date, time, venue search + map placeholder) → '저장하고 허브로 돌아가기' → '사진·인사말' card → h-media (대표 사진, gallery, 인사말 + random-phrase button) → save → '미리보기'/'발행하기' → h-preview-publish (live-render placeholder of guest tabs) → '발행하기' click reveals share link + '공유 링크 복사'/카카오톡/QR buttons (verified live)</td></tr>
+<tr class="st-pass"><td>hub:ux-flow-guest</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-guest (open link → greeting/date/venue with map → transport/parking → RSVP with headcount+meal → optional transfer deep link) traceable by clicks</td><td>Traced: h-preview-publish '하객이 링크 열기' → h-guest-invite (인사말, 예식 일시 with D-70, venue name, gallery, '축의금 송금하기 (앱으로 열기)' deep-link button) → tabbar '오시는 길' → h-guest-way (map placeholder, 주소 복사, 카카오맵/티맵, 대중교통 안내, 주차 안내) → tabbar 'RSVP' → h-guest-rsvp (참석/불참 toggle, headcount stepper, 식사 여부 select, submit shows '회신이 전달되었습니다 ✓ 참석 · 2명 · 식사함' — verified live incl. stepper increment). Note: the map itself sits on the 오시는 길 tab rather than beside date/venue on the invite tab — a reasonable tabbed split of step 2</td></tr>
+<tr class="st-pass"><td>hub:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>Template gallery, Invitation editor, Guest invitation page, RSVP form all represented</td><td>Template gallery = h-template (4 selectable thumbs); Invitation editor = h-dashboard hub with h-info + h-media section editors (hub-and-spoke variant of the editor); Guest invitation page = h-guest-invite (+ h-guest-way tab); RSVP form = h-guest-rsvp with working form</td></tr>
+<tr class="st-pass"><td>hub:spec-flow-steps</td><td>스펙 충실도</td><td class="status">pass</td><td>All PRD coreFlow steps have concrete UI</td><td>All 10 steps across both flows mapped (see ux traces); PRD constraints also honored: all copy Korean, guest page needs no login (direct link from publish sheet), RSVP is a plain low-fi form. Extras like completion gauge (3/4 완료) and incomplete-section warning on the publish sheet support the hub concept without contradicting the PRD</td></tr>
+<tr class="st-pass"><td>hub:a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical a11y basics: lang, headings, labels, aria on interactive widgets</td><td>lang=ko; one h1 per visible screen (hidden screens display:none so excluded from a11y tree); all form controls labeled (live check: 'unlabeled-controls: none'); aria-pressed on 참석/불참 toggle updates on click, aria-current on tabbars/app-tabs, aria-label on stepper buttons and navs, gauge has role=img aria-label '완성도 4분의 3', decorative handles/icons aria-hidden</td></tr>
+<tr class="st-pass"><td>hub:aes-lowfi-discipline</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi grayscale wireframe, no brand styling, legible hierarchy, Korean copy</td><td>Palette is entirely grayscale (#111–#f4f4f4 tokens, lines 8-12); placeholders are dashed-border .ph boxes labeled '자리표시자'; no brand colors, imagery, or decorative fonts (system font stack); clear hierarchy via topbar h1 → card h2 → 13px body/11-12px meta; all user-facing copy is Korean throughout including flowmap legend and edge labels</td></tr>
+<tr class="st-pass"><td>canvas:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 6 variant screens (c-template, c-canvas, c-edit-sheet, c-publish, c-guest, c-rsvp-sheet) reachable via routing</td><td>Hash router (go()/render(), lines 473-511) maps every id in SCREEN_NAMES to an existing #screen-&lt;id&gt; div; all 6 ids present in DOM and reachable from flow-map boxes (lines 139-210) and screen tab; unknown hashes fall back to c-template (line 495)</td></tr>
+<tr class="st-pass"><td>canvas:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>All 8 variant edges clickable to an existing target</td><td>template→canvas via 3x '이 템플릿으로 시작' go('c-canvas') (lines 241/252/263); canvas→edit-sheet via 5 .editable buttons (282-305); edit-sheet→canvas via '완료' (345) and dim tap (320); canvas→template via '템플릿 변경' (277); canvas→publish via '발행하기' (314); publish→guest via '하객 페이지 열기' href=#screen-c-guest (374, handled by hashchange render); guest→rsvp-sheet via '참석 여부 알리기' (417); rsvp-sheet→guest via rsvpDone() timeout go('c-guest') (480-484) plus dim tap (424). All go() targets match existing screen ids (grep cross-check: 6/6 ids exist)</td></tr>
+<tr class="st-pass"><td>canvas:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external scripts, images, fonts, or stylesheets</td><td>grep for src=, http hrefs, url(), @import, link rel returned 0 matches; only hrefs are internal #screen-c-guest anchors; system font stack only (line 11)</td></tr>
+<tr class="st-pass"><td>canvas:mech-lang-h1-labels</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, h1 per view, form labels present</td><td>html lang=&quot;ko&quot; (line 2); h1 in flow view (135) and every screen (224, 272, 325, 356, 391, 429); all text inputs/select/textarea have label for= (328-343, 443-451); stepper uses aria-labelledby (437); icon-only/dim buttons carry aria-label. Minor note: multiple h1 elements in the document, but only one is visible at a time via .screen display toggling</td></tr>
+<tr class="st-pass"><td>canvas:mech-internal-banner</td><td>기계적 검사</td><td class="status">pass</td><td>Persistent internal-use banner</td><td>Fixed banner '내부 검토용 — 클라이언트 공유 금지' with role=note, z-index 100, always visible (line 122)</td></tr>
+<tr class="st-pass"><td>canvas:ux-flow-build</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-build (choose template → enter names/date/venue → photos/greeting → preview guest view → publish and copy link) traceable by clicks</td><td>Path: c-template ('이 템플릿으로 시작') → c-canvas → tap 이름·일시 editable → c-edit-sheet (신랑/신부 이름, 예식 일시, 예식장 검색 inputs, lines 328-335; photo uploader + greeting variants shown 337-343) → '완료' → c-canvas → '하객 모드' toggle previews c-guest (line 275) → back → '발행하기' → c-publish with 발행 button, '링크 복사'/카카오톡/QR (365-373). Every step reachable via a named clickable element</td></tr>
+<tr class="st-pass"><td>canvas:ux-flow-guest</td><td>UX 과업 성공</td><td class="status">pass</td><td>flow-guest (open link → greeting/date/venue+map → transport/parking → RSVP with headcount and meal → optional transfer deep link) traceable by clicks</td><td>Path: c-publish '하객 페이지 열기' → c-guest one-scroll page: g-greet (photo + greeting, 389-393), g-when (date + 캘린더에 추가, 395-399), g-map (map ph, 주소 복사, 교통·주차 안내 fieldset, 401-410), '축의금 보내기 (송금 앱 열기)' deep-link stub (411) → g-rsvp '참석 여부 알리기' → c-rsvp-sheet with 참석/불참, headcount stepper, 식사 여부 select, name input → '회신 보내기' → confirmation message then auto-close back to c-guest (rsvpDone, 480-484)</td></tr>
+<tr class="st-pass"><td>canvas:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD mustHaveScreens: Template gallery, Invitation editor, Guest invitation page, RSVP form all represented</td><td>Template gallery = c-template (3 swipeable template cards with mini previews); Invitation editor = c-canvas inline canvas + c-edit-sheet bottom sheet; Guest invitation page = c-guest one-scroll page with anchor nav; RSVP form = c-rsvp-sheet (attendance, headcount, meal, name)</td></tr>
+<tr class="st-pass"><td>canvas:spec-flow-steps</td><td>스펙 충실도</td><td class="status">pass</td><td>All PRD coreFlow steps represented on screens</td><td>flow-build steps 1-5 and flow-guest steps 1-5 each have a concrete UI element (see ux-task evidence); PRD constraints also honored: all copy Korean, guest page has no login gate, publish gating note '이름·일시를 입력하면 발행할 수 있어요' (line 313) covers required-field validation</td></tr>
+<tr class="st-pass"><td>canvas:a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics: lang, labeled controls, roles, pressed/selected states</td><td>lang=ko; every input labeled via for=/aria-labelledby; sheets use role=dialog with aria-label (323, 354, 427); toggles use aria-pressed (274-275, 432-433); tabs use aria-selected; decorative elements aria-hidden (pencil icons, grip, arrows, mini previews); dim-close buttons have descriptive aria-labels; nav landmarks labeled (124, 382)</td></tr>
+<tr class="st-pass"><td>canvas:aesthetic-lofi-korean</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi discipline (grayscale, no brand styling), legible hierarchy, Korean copy throughout</td><td>Palette is entirely grayscale tokens (#222/#666/#999/#ccc, lines 8-10); image areas are hatched placeholders labeled in Korean (.ph, line 62); no brand colors/fonts/logos despite PRD brandHints (correct for wireframe stage); clear hierarchy via h1/h2/.muted sizing; all user-facing copy is Korean including flow-map labels, legend, and annotation notes</td></tr></table>
+<h2>자동 수리 이력 (투명성 공개)</h2>
+<p>자동 수리가 필요하지 않았습니다.</p>
+<h2>근거 요약</h2><p>3개 변형의 의도: (1) wizard — 선형 위저드 + 분리형 하객 플로우: 한 화면 한 작업의 5단계 위저드(템플릿→기본 정보→사진·인사말→미리보기→발행)로 디자인 경험 없는 커플에게 진행 명확성을 극대화하고, 하객 측은 원스크롤 초대장 + 별도 RSVP 폼으로 분리. (2) hub — 허브 대시보드 + 탭형 하객 페이지: 완성도 게이지가 있는 중앙 허브에서 섹션 카드(템플릿/기본 정보/사진·인사말)로 자유롭게 드나드는 비선형 편집, 하객 페이지는 초대장/오시는 길/RSVP 3탭 구조. (3) canvas — 단일 캔버스 인라인 편집 + 원스크롤 하객 페이지: 하객 페이지와 동일한 레이아웃 위에서 섹션을 직접 탭해 바텀시트로 편집하는 WYSIWYG 컨셉으로, 편집 화면이 곧 미리보기. AI 대표 구조 추천: recommendedVariantId=wizard — PRD의 flow-build 5단계(템플릿→정보→사진/인사말→미리보기→발행)가 위저드의 5화면과 1:1로 대응해 coreFlows 효율이 가장 높고, &quot;디자인 경험 없는 커플&quot;이라는 타겟에게 한 화면 한 작업 + 진행 도트가 첫 사용 명확성에서 확실히 우위다. 하객 측도 원스크롤 열람(인사말·일시·지도·교통/주차)+분리형 RSVP 폼이라 저사양 폰 제약과 &quot;로그인 없는 열람&quot; 흐름을 그대로 보여주며, 4단계 미리보기 화면이 하객 페이지 렌더를 게이트로 노출해 mustHaveScreens 4종(갤러리/에디터/하객 페이지/RSVP)을 모두 독립 화면으로 시연한다. canvas의 WYSIWYG는 컨셉은 참신하지만 와이어프레임상 편집 시트가 단일 범용 변형이라 대표 구조로는 검증이 얕고, hub는 비선형 진입과 하객 3탭 분할이 PRD의 순차적 스텝 정의 및 &quot;한 곳에서 확인&quot; 문제 정의와 어긋난다. 대상 규칙: 내부용 - 클라이언트 비노출, 디자이너는 대표 구조 선택만.</p>
+<h2>피드백 제출</h2>
+<label class="fb-label" for="fb-general">전체 코멘트</label>
+<textarea class="fb" id="fb-general" placeholder="레인 전체에 대한 피드백을 자유롭게 적어주세요."></textarea>
+<button id="fb-submit">피드백 제출</button><span id="fb-status"></span>
+<p class="rev">제출된 피드백은 이 run의 <code>feedback.json</code>에 리비전 해시와 함께 기록되어 Claude 세션이 다음 라운드에 반영합니다. 파일로 직접 열었다면(주소가 file://) 제출 시 클립보드에 복사되니 터미널에 붙여넣어 주세요.</p>
+<script>
+const REVISIONS = [{"artifactId":"wf-wizard","revisionHash":"af8114e203dc984a3629149626b5a95a3e2faf2b7755cfa0a03e40d8756f04dc"},{"artifactId":"wf-hub","revisionHash":"195b7319eb18fae6e0f6bde210488d0ee70ead8f6d393e6543c22819d8793c89"},{"artifactId":"wf-canvas","revisionHash":"75f2827a476614ced8a424497b005529373fa614c2746e887f38caea4256c298"}];
+document.getElementById('fb-submit').addEventListener('click', async () => {
+  const items = [...document.querySelectorAll('textarea.fb[data-target]')]
+    .map((t) => ({ target: t.dataset.target, text: t.value }))
+    .filter((i) => i.text.trim());
+  const general = document.getElementById('fb-general').value.trim();
+  const status = document.getElementById('fb-status');
+  if (!items.length && !general) { status.textContent = '작성된 피드백이 없습니다.'; return; }
+  const payload = { items, general, revisions: REVISIONS };
+  try {
+    const res = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('server rejected');
+    status.textContent = '제출 완료 — Claude 세션이 feedback.json에서 읽습니다.';
+  } catch {
+    const text = [...items.map((i) => '[' + i.target + '] ' + i.text), general ? '[전체] ' + general : ''].filter(Boolean).join('\n');
+    try { await navigator.clipboard.writeText(text); status.textContent = '서버가 없어 클립보드에 복사했습니다 — 터미널에 붙여넣어 주세요.'; }
+    catch { status.textContent = '전송 실패. 아래 내용을 직접 복사해 터미널에 붙여넣어 주세요:\n' + text; }
+  }
+});
+</script>
+</main></body></html>

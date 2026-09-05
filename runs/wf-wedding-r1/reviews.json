@@ -1,0 +1,18 @@
+[
+  {
+    "reviewId": "wf-wedding-r1-r1-1",
+    "laneId": "wireframe",
+    "runId": "wf-wedding-r1",
+    "round": 1,
+    "decision": "revise",
+    "decidedBy": "human",
+    "decidedAt": "2026-09-05T15:37:00+09:00",
+    "boundRevisions": [
+      {
+        "artifactId": "wireframe",
+        "revisionHash": "0fb5bdc4ca614eb24921f93b97129f148f4e05174e62ffb4cc6adf8e60f68041"
+      }
+    ],
+    "feedback": "모든 UI 텍스트와 콘텐츠를 한국어로 작성할 것 (한국 사용자 대상 서비스)"
+  }
+]
