@@ -183,13 +183,29 @@ if (stage === 'build') {
   const figmaFileName = (args && args.figmaFileName) || 'proto-to-figma'
   const rawFlow = args && args.flow
   const decisions = (args && args.decisions) || []
-  const concurrency = (args && args.concurrency) || 3
+  const concurrency = Math.max(1, Math.floor(Number(args && args.concurrency) || 3))
   if (!devUrl || !rawFlow) {
     throw new Error('stage=build 에는 args.devUrl, args.flow (stage=extract 반환값의 flow)가 필요합니다')
   }
 
   const flow = applyDecisions(rawFlow, decisions)
   log(`decisions 반영 후 화면 ${flow.screens.length}개, 전이 ${flow.edges.length}개`)
+
+  const droppedEdges = rawFlow.edges.length - flow.edges.length
+  if (droppedEdges > 0) log(`decisions 반영으로 전이 ${droppedEdges}개 제거됨`)
+
+  if (flow.entry && !flow.screens.some((s) => s.id === flow.entry)) {
+    flow.entry = flow.screens[0] ? flow.screens[0].id : flow.entry
+  }
+
+  if (flow.screens.length === 0) {
+    log('decisions 반영 후 남은 화면이 없습니다 — Figma 작업 없이 종료합니다.')
+    return {
+      stage: 'build', ok: false, phase: 'preflight', checks: null,
+      message: 'decisions를 반영한 뒤 남은 화면이 없습니다. drop/merge 결정을 확인하세요.',
+      nextStep: 'decisions를 확인하고 같은 args로 다시 실행하세요.',
+    }
+  }
 
   phase('Preflight')
   const preflight = await agent(
@@ -243,7 +259,7 @@ if (stage === 'build') {
             화면: screen,
           }),
           { schema: CAPTURE_SCHEMA, ...SUB_LOW, label: `capture ${screen.id}`, phase: 'Capture' },
-        ).catch(() => null),
+        ).catch((e) => ({ id: screen.id, figmaNodeId: '', ok: false, error: String((e && e.message) || e) })),
       ),
     )
     batchResults.forEach((r, j) => {
@@ -257,7 +273,6 @@ if (stage === 'build') {
   log(`캡처 완료: 성공 ${captureOk.length}, 실패 ${captureFailed.length}`)
   if (captureFailed.length) log(`캡처 실패 화면: ${captureFailed.map((r) => r.id).join(', ')}`)
 
-  // Connect, Report는 Task 6에서 이어서 작성
   const CONNECT_SCHEMA = {
     type: 'object',
     properties: {
@@ -275,21 +290,32 @@ if (stage === 'build') {
   }
 
   phase('Connect')
-  const captureOkMap = Object.fromEntries(captureOk.map((r) => [r.id, r.figmaNodeId]))
-  const connect = await agent(
-    withPrompt('03-connect.md', {
-      figmaFileKey,
-      '캡처 결과': captureOkMap,
-      edges: flow.edges,
-      entry: flow.entry,
-    }),
-    { schema: CONNECT_SCHEMA, ...SUB, label: 'connect', phase: 'Connect' },
+  const captureOkMap = Object.fromEntries(
+    captureOk.map((r) => [
+      r.id,
+      { figmaNodeId: r.figmaNodeId, name: (flow.screens.find((s) => s.id === r.id) || {}).name || '' },
+    ]),
   )
+  let connect = null
+  if (captureOk.length === 0) {
+    log('경고: 캡처 성공한 화면이 없어 Connect를 건너뜁니다.')
+  } else {
+    connect = await agent(
+      withPrompt('03-connect.md', {
+        figmaFileKey,
+        '캡처 결과': captureOkMap,
+        edges: flow.edges,
+        entry: flow.entry,
+      }),
+      { schema: CONNECT_SCHEMA, ...SUB, label: 'connect', phase: 'Connect' },
+    )
+  }
   const connected = connect ? connect.connected : 0
   const connectFailed = connect ? connect.failed : flow.edges.map((e) => ({ from: e.from, to: e.to, reason: 'Connect 에이전트 실패' }))
   log(`연결 완료: ${connected}개, 실패 ${connectFailed.length}개`)
 
   const unreachable = rawFlow.screens.filter((s) => !s.reachable).map((s) => s.id)
+  const unreachableScreens = rawFlow.screens.filter((s) => !s.reachable)
   const figmaUrl = preflight.figmaFileUrl || `https://figma.com/design/${figmaFileKey}`
 
   phase('Report')
@@ -298,12 +324,14 @@ if (stage === 'build') {
     withPrompt('04-report.md', {
       '캡처 결과': captureResults,
       '연결 결과': { connected, failed: connectFailed },
-      '도달 불가 화면': unreachable,
+      '도달 불가 화면': unreachableScreens,
+      '화면 목록': flow.screens,
       figmaUrl,
       '저장 경로': files.result,
     }),
     { schema: REPORT_SCHEMA, ...SUB_LOW, label: 'report', phase: 'Report' },
   )
+  const reportWritten = !!(report && report.ok)
 
   return {
     stage: 'build',
@@ -315,8 +343,8 @@ if (stage === 'build') {
     unreachable,
     figmaFileKey,
     figmaUrl,
-    files: [files.result],
-    reportWritten: !!(report && report.ok),
+    files: reportWritten ? [files.result] : [],
+    reportWritten,
   }
 }
 

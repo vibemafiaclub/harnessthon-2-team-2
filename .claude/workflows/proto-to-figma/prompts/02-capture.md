@@ -1,6 +1,6 @@
 # 화면 캡처
 
-`ToolSearch`로 `mcp__plugin_figma_figma__generate_figma_design`을 로드하라. 필요하면 Playwright MCP도 검색해 로드하라.
+`ToolSearch`로 "figma generate_figma_design" 키워드로 검색해 로드하라 (이 프로젝트 환경에 따라 도구 이름이 `mcp__figma__*` 또는 `mcp__plugin_figma_figma__*` 둘 중 하나로 나타난다). 필요하면 Playwright MCP도 "playwright browser_navigate" 같은 키워드로 검색해 로드하라 (`mcp__playwright__*` 또는 `mcp__plugin_playwright_playwright__*`).
 
 `입력 > 화면`(id, name, path, query) 하나를 Figma에 캡처한다.
 

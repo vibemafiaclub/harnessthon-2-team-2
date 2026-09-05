@@ -1,6 +1,6 @@
 # 환경 점검 (Preflight)
 
-`ToolSearch`로 다음 도구를 로드하라: `mcp__plugin_figma_figma__whoami`, `mcp__plugin_figma_figma__get_metadata`, `mcp__plugin_figma_figma__create_new_file`, `mcp__plugin_figma_figma__generate_figma_design`. 필요하면 Playwright MCP 도구도 검색해 로드하라 (`select:mcp__plugin_playwright_playwright__browser_navigate` 등).
+`ToolSearch`로 "figma whoami", "figma get_metadata", "figma create_new_file", "figma generate_figma_design" 등 필요한 키워드로 검색해 로드하라 (이 프로젝트 환경에 따라 도구 이름이 `mcp__figma__*` 또는 `mcp__plugin_figma_figma__*` 둘 중 하나로 나타난다). 필요하면 Playwright MCP 도구도 "playwright browser_navigate" 같은 키워드로 검색해 로드하라 (`mcp__playwright__*` 또는 `mcp__plugin_playwright_playwright__*`).
 
 캡처를 실제로 시작하기 전에, 이 환경에서 실행 가능한지 아래 순서로 확인한다. 하나라도 실패하면 그 이후 점검은 생략해도 된다.
 
