@@ -117,6 +117,7 @@ async function applyReuse({ state, stageId, planStage, approvedPrd, reuse, runDi
       state.stages.wireframe.representative = {
         variantId: laneOutput.aiRecommendation.recommendedVariantId,
         path,
+        sha256: sha256(await readFile(path)),
         actor: "ai_confirmed",
         reason: laneOutput.aiRecommendation.reason ?? null,
       };

@@ -6,9 +6,9 @@
  * wireframe manifest when the coordinator has no richer scope. It still
  * requires structure compatibility, because manifests do not encode blocks.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
-import { readJSON, sha, writeJSON } from './lib/io.mjs';
+import { localPath, readJSON, sha, writeJSON } from './lib/io.mjs';
 
 const systems = new Set(['shadcn', 'seed', 'wanted-montage']);
 const colorRoles = new Set(['primary', 'onPrimary', 'bg', 'surface', 'text', 'muted', 'border']);
@@ -25,6 +25,24 @@ function sourceRef(root, path, label) {
   const rel = relative(root, pinned.path);
   if (!rel || rel === '..' || rel.startsWith('../')) fail(`${label} escapes coordinator source root`);
   return { path: rel, sha256: pinned.sha256 };
+}
+function snapshotExternalLane(root, destination, manifestFile, selected, lane) {
+  const rel = relative(root, manifestFile.path);
+  if (rel !== '..' && !rel.startsWith('../')) return;
+  const snapshotDir = resolve(destination, 'input-sources', lane);
+  const artifactRelativePath = relative(dirname(manifestFile.path), selected.path);
+  localPath(dirname(manifestFile.path), artifactRelativePath);
+  const artifactPath = resolve(snapshotDir, artifactRelativePath);
+  const manifestPath = resolve(snapshotDir, 'lane-output.json');
+  if (artifactPath === manifestPath) fail(`${lane} artifact collides with its manifest`);
+  mkdirSync(dirname(artifactPath), { recursive: true });
+  localPath(root, relative(root, dirname(artifactPath)));
+  if (existsSync(artifactPath)) localPath(root, relative(root, artifactPath));
+  if (existsSync(manifestPath)) localPath(root, relative(root, manifestPath));
+  writeFileSync(artifactPath, readFileSync(selected.path));
+  writeFileSync(manifestPath, readFileSync(manifestFile.path));
+  selected.path = artifactPath;
+  manifestFile.path = manifestPath;
 }
 function artifact(manifest, manifestPath, id, label) {
   const found = (manifest.artifacts ?? []).find((item) => item.id === id || item.conceptId === id || item.id === `concept-${id}` || item.id === `wf-${id}`);
@@ -102,6 +120,8 @@ export function preparePostApprovalInput({ sourceRoot, outputDir, approvedPrdPat
   const requestedScope = scope ? requiredScope(scope) : scopeFromManifest(wireframe, wireframeId);
   const chosenSystem = system ?? (systems.has(conceptId) ? conceptId : null);
   if (!systems.has(chosenSystem)) fail(`system is required for concept "${conceptId}"; expected one of ${[...systems].join(', ')}`);
+  snapshotExternalLane(root, destination, wireframeFile, selectedWireframe, 'wireframe');
+  snapshotExternalLane(root, destination, conceptFile, selectedConcept, 'concept');
   const { brand, hints } = productBrand(approved);
   const productPrd = {
     id: approved.prdId, title: approved.title, domain: approved.domain, problem: approved.problem,

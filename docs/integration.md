@@ -21,7 +21,7 @@ PRD + materials
           │
           ▣ TOUCHPOINT 2 — concept review: the client picks one of three concepts
           │
-      └─ production-outputs ............ NOT IMPLEMENTED — routes as `blocked`
+      └─ post-approval-prototype ....... workflows/post-approval-product.mjs
 ```
 
 Research, wireframes and concept generation run with **no human gate**. Their
@@ -47,6 +47,7 @@ not become a third interruption.
 
 ```sh
 # 1. describe the inputs
+npm ci --prefix product  # browser dependency; installed Google Chrome is also required
 cat integration/examples/request.wedding-scheduler.json
 
 # 2. create the run; this prints the first real action

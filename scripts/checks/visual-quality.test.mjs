@@ -22,6 +22,7 @@ function fixture() {
   save(); return { dir, report, capture, output, save };
 }
 test('complete matching evidence passes and renders', () => { const f=fixture(); assertVisualRelease(f.dir,f.output); assert.ok(renderReviewSheet(f.dir)); });
+test('isolated Chromium capture receipts satisfy the same evidence contract', () => { const f=fixture(); f.capture.captureMethod='playwright-chromium'; f.save(); assertVisualRelease(f.dir,f.output); });
 for (const status of ['fail','not-verified','not-applicable']) test(`visual ${status} blocks release and approval`,()=>{ const f=fixture();f.report.checks[0].status=status;f.save();assert.throws(()=>renderReviewSheet(f.dir),/Visual quality blocked/);assert.throws(()=>recordReview(f.dir,{decision:'approved',decidedAt:'2026-09-05'}),/Visual quality blocked/); });
 test('legacy concepts without rendered proof are blocked',()=>{const f=fixture();delete f.output.visualQuality;assert.throws(()=>assertVisualRelease(f.dir,f.output),/reports required/);});
 test('missing and duplicate criteria cannot silently pass',()=>{const f=fixture();f.report.checks[0]=f.report.checks[1];f.save();assert.throws(()=>assertVisualRelease(f.dir,f.output),/duplicate/);});

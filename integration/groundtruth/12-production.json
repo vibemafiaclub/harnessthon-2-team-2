@@ -1,29 +1,27 @@
 {
   "stage": "production",
-  "workflow": "production-outputs",
+  "workflow": "post-approval-prototype",
   "actor": "ai_confirmed",
-  "status": "NOT IMPLEMENTED — no workflow script exists in this repo yet",
-  "purpose": "After concept approval: full frontend pages, component documentation/catalog, IA, user flow, and a browser prototype where feasible.",
+  "status": "IMPLEMENTED — native workflow with pinned coordinator inputs and real browser checks",
+  "purpose": "After concept approval: portable HTML product prototype and all-screen/state inspection board; no Figma publication.",
   "inputContract": {
     "required": [
-      "prdPath",
-      "runDir",
-      "conceptId"
+      "inputPath",
+      "outDir"
     ],
-    "notes": "This contract is the adapter's declared expectation. Until a real script is registered (`integrate register production-outputs --script <path>`) the stage routes as decision 'blocked' with unmetChecks ['adapter:unregistered'] — it is never reported as done."
+    "notes": "product/integration.mjs prepares a revision-pinned input from coordinator approvals before invoking the built-in native workflow."
   },
   "inputExample": {
-    "prdPath": "/abs/integration/runs/run-demo/approved-prd.json",
-    "runDir": "/abs/integration/runs/run-demo/production",
-    "conceptId": "shadcn"
+    "inputPath": "/abs/integration/runs/run-demo/production/input.json",
+    "outDir": "/abs/integration/runs/run-demo/production/output"
   },
   "outputContract": {
     "required": [
-      "summary"
+      "stage", "status", "inputPath", "outDir", "humanFinalInspection", "figma"
     ],
-    "notes": "Contract will be pinned when the real workflow lands; the ground-truth test asserts only that this stage stays blocked while unregistered."
+    "notes": "The coordinator records completion only with a matching ready-for-review handoff and browser evidence. This is not human approval."
   },
-  "outputExample": null,
+  "outputExample": {"stage":"post-approval-prototype","status":"ready-for-review","inputPath":"/abs/input.json","outDir":"/abs/output","humanFinalInspection":true,"figma":false},
   "handoff": {
     "to": null,
     "via": "End of the currently implemented pipeline."

@@ -19,7 +19,7 @@ export function assertVisualReport(runDir, artifact, viewport, reportPath) {
   if (report.schemaVersion !== 1 || report.artifactId !== artifact.id || report.revisionHash !== artifact.revisionHash) reject('report revision/identity mismatch');
   if (hash(readFileSync(runFile(runDir, artifact.path))) !== artifact.revisionHash) reject('HTML changed after evaluation');
   const capture = JSON.parse(readFileSync(runFile(runDir, report.capturePath), 'utf8'));
-  if (capture.captureMethod !== 'aside-browser' || capture.revisionHash !== artifact.revisionHash || capture.artifactPath !== artifact.path) reject('capture not bound to HTML');
+  if (!['aside-browser', 'playwright-chromium'].includes(capture.captureMethod) || capture.revisionHash !== artifact.revisionHash || capture.artifactPath !== artifact.path) reject('capture not bound to HTML');
   if (capture.viewport?.width !== viewport.width || capture.viewport?.height !== viewport.height) reject('wrong capture viewport');
   const bytes = readFileSync(runFile(runDir, capture.screenshotPath));
   if (bytes.length < 24 || bytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' || bytes.toString('ascii', 12, 16) !== 'IHDR') reject('missing PNG evidence');

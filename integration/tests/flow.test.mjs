@@ -2,12 +2,31 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { sha256 } from "../../research/lib/canonical.mjs";
 import { advance } from "../lib/next.mjs";
 import { buildRoutePlan } from "../lib/routing.mjs";
 import { loadRun, recordStageOutput, recordApproval, recordAnswers, recordClientPreferences } from "../lib/runstate.mjs";
 import { baseState, assessmentFixture, assessedMaterial, acquiredMaterial, registryFixture, approvedPrdFixture, makeRunDir, tempDir, NOW } from "./fixtures.mjs";
 
 const REPO_ROOT = "/fixture-root";
+
+test("reused wireframe representatives retain their exact artifact revision", async () => {
+  const state = baseState();
+  const runDir = await tempDir();
+  const path = join(runDir, "wireframe-hub.html");
+  await writeFile(path, "<main>approved structure</main>");
+  for (const stage of Object.values(state.stages)) stage.status = "done";
+  state.stages.wireframe.status = "pending";
+  await advance({ repoRoot: REPO_ROOT, runDir, context: {
+    state, assessment: {}, nowIso: NOW,
+    plan: { pendingQuestions: [], stages: [{ id: "wireframe", decision: "reuse", rationale: "verified fixture" }] },
+    reuse: { wireframe: {
+      candidate: join(runDir, "lane-output.json"), evidence: [],
+      laneOutput: { aiRecommendation: { recommendedVariantId: "hub" } }
+    } }
+  } });
+  assert.equal(state.stages.wireframe.representative.sha256, sha256(await readFile(path)));
+});
 
 async function makeContext({ state, materials = [], assessmentMaterials = [], approvedPrd = null, reuse = {}, registry = registryFixture() }) {
   const assessment = assessmentFixture({ materials: assessmentMaterials });

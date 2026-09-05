@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test, { afterEach } from 'node:test';
+import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +36,22 @@ function writeEvidence(root, name, evidence) {
 
 afterEach(() => {
   while (temporaryDirectories.length) rmSync(temporaryDirectories.pop(), { recursive: true, force: true });
+});
+
+test('validate CLI routes an invalid supplied spec to normalization without accepting broken input pins', () => {
+  const { inputPath, root } = fixture();
+  const specPath = join(root, 'invalid-spec.json');
+  writeJSON(specPath, {});
+  const invoke = () => spawnSync(process.execPath, [join(productRoot, 'cli.mjs'), 'validate', '--input', inputPath, '--spec', specPath], { encoding: 'utf8' });
+  let result = invoke();
+  assert.equal(result.status, 2);
+  assert.equal(JSON.parse(result.stdout).status, 'invalid-spec');
+  const input = readJSON(inputPath);
+  input.prd.sha256 = '0'.repeat(64);
+  writeJSON(inputPath, input);
+  result = invoke();
+  assert.equal(result.status, 1);
+  assert.equal(JSON.parse(result.stderr).status, 'blocked');
 });
 
 test('accepts an explicitly authorized scenario without fabricating or requiring review receipts', () => {

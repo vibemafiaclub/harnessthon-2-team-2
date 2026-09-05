@@ -9,7 +9,11 @@ try {
   let result;
   if(command==='validate') {
     const context=validateInput(resolve(get('--input'))),spec=get('--spec')?readJSON(get('--spec')):context.spec;
-    result={status:'input-valid',inputHash:context.inputHash,normalizationRequired:!spec,checks:spec?validateSpec(spec,context):[]};
+    let checks=[];
+    // Valid pinned inputs with an invalid spec must reach normalization, not stop the workflow.
+    try { if(spec) checks=validateSpec(spec,context); }
+    catch(error) { checks=[{id:'spec-schema',status:'fail',observed:error.message}]; }
+    result={status:'input-valid',inputHash:context.inputHash,normalizationRequired:!spec,checks};
     if(result.checks.some(c=>c.status==='fail')) result.status='invalid-spec';
   } else if(command==='run') result=await runProduct({inputPath:resolve(get('--input')),outDir:resolve(get('--out')),specPath:get('--spec'),stopAfterGenerate:argv.includes('--generate-only')});
   else if(command==='status') result=inspectRun(resolve(get('--out')));

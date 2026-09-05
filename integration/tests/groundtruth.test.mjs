@@ -193,8 +193,8 @@ test("handoff: concept approval binds to a real artifact revision of the concept
   assert.equal(approval.actor, "human_approved");
 });
 
-test("the unimplemented production stage stays blocked instead of claiming completion", () => {
+test("production uses the built-in workflow while legacy registrations remain optional", () => {
   assert.equal(registry["production-outputs"].status, "unregistered");
-  assert.ok(truth.production.status.startsWith("NOT IMPLEMENTED"));
-  assert.equal(buildInvocation(registry, "production-outputs", truth.production.inputExample).ok, false);
+  assert.equal(registry[truth.production.workflow].status, "available");
+  assert.equal(buildInvocation(registry, truth.production.workflow, truth.production.inputExample).ok, true);
 });
