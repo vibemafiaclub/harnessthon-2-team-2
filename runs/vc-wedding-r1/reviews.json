@@ -1,0 +1,26 @@
+[
+  {
+    "reviewId": "vc-wedding-r1-r1-1",
+    "laneId": "visual-concept",
+    "runId": "vc-wedding-r1",
+    "round": 1,
+    "decision": "revise",
+    "decidedBy": "human",
+    "decidedAt": "2026-09-05T15:37:00+09:00",
+    "boundRevisions": [
+      {
+        "artifactId": "concept-concept-blush-serif",
+        "revisionHash": "43b9f725f03e2fd2e55a8b90c1e407242c48d476e23a684b97703e07ac0bec53"
+      },
+      {
+        "artifactId": "concept-concept-midnight-garden",
+        "revisionHash": "5c185e7fa34daf10af524b235ff8af42230bdcdc7dec9b9c296d323ff06e1dfb"
+      },
+      {
+        "artifactId": "concept-concept-sunlit-editorial",
+        "revisionHash": "5dc4a30bb9fac0d02c448c2b28f7f63dc0dc687f60bb7ff8f3b6c0541648789c"
+      }
+    ],
+    "feedback": "모든 UI 텍스트와 콘텐츠를 한국어로 작성할 것 (한국 사용자 대상 서비스)"
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "id": "prd-petcare-booking-v1",
+  "title": "Neighborhood pet-sitter booking",
+  "domain": "petcare-booking",
+  "sampleInput": true,
+  "problem": "Pet owners struggle to find trustworthy nearby sitters for short trips; sitters need a schedule and clear service scope to avoid disputes.",
+  "targetUsers": [
+    "Pet owners planning 1-3 day trips",
+    "Verified neighborhood sitters managing requests"
+  ],
+  "background": "SAMPLE INPUT for lane-workflow testing, chosen as a deliberately different domain from the wedding sample to prove reusability. Marketplace-style browsing plus a booking/request flow with structured service scope.",
+  "coreFlows": [
+    {
+      "id": "flow-find",
+      "name": "Find and book a sitter",
+      "steps": [
+        "Browse nearby sitters filtered by pet type and dates",
+        "Open a sitter profile with reviews and service scope",
+        "Request booking with pet details and dates",
+        "Chat to confirm details",
+        "Pay and receive booking confirmation"
+      ]
+    },
+    {
+      "id": "flow-sitter",
+      "name": "Sitter handles a request",
+      "steps": [
+        "Receive request notification",
+        "Review pet details and requested dates",
+        "Accept or propose changes",
+        "Complete visit and log a care report",
+        "Get paid"
+      ]
+    }
+  ],
+  "mustHaveScreens": [
+    "Sitter list with filters",
+    "Sitter profile",
+    "Booking request form",
+    "Booking status / care report"
+  ],
+  "brandHints": [
+    "friendly",
+    "reliable",
+    "calm - reduce owner anxiety"
+  ],
+  "constraints": [
+    "All user-facing copy must be written in Korean (service targets Korean users)",
+    "Care report must support photos",
+    "Booking states must be unambiguous (requested/accepted/in-progress/done)"
+  ]
+}

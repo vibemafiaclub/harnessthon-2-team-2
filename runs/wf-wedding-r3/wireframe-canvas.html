@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>단일 캔버스 와이어프레임 — 모바일 청첩장</title>
+<style>
+  :root{
+    --ink:#222; --mid:#666; --line:#999; --faint:#ccc; --bg:#f2f2f2; --paper:#fff;
+  }
+  *{box-sizing:border-box; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-size:14px;}
+
+  /* ---- persistent banner ---- */
+  .banner{position:fixed; top:0; left:0; right:0; z-index:100; background:#333; color:#eee;
+    text-align:center; font-size:11px; padding:4px 8px; letter-spacing:.02em;}
+
+  /* ---- top tab bar ---- */
+  .tabbar{position:fixed; top:22px; left:0; right:0; z-index:99; display:flex; gap:8px;
+    background:#e5e5e5; border-bottom:1px solid var(--line); padding:8px 12px; align-items:center;}
+  .tabbar button{font-size:14px; padding:6px 16px; border:1px solid var(--line); background:#fafafa;
+    cursor:pointer; border-radius:4px; color:var(--ink);}
+  .tabbar button[aria-selected="true"]{background:#555; color:#fff; border-color:#555;}
+  .tabbar .backbtn{margin-left:auto; background:#fff;}
+  .doc-title{font-size:12px; color:var(--mid); margin-left:4px;}
+
+  main{padding:80px 12px 40px;}
+
+  /* ---- flow map ---- */
+  #view-flow{max-width:860px; margin:0 auto;}
+  .flow-note{font-size:12px; color:var(--mid); margin:0 0 14px;}
+  .flow-grid{display:flex; flex-direction:column; gap:0; align-items:stretch;}
+  .fbox{display:block; width:100%; text-align:left; background:var(--paper); border:2px solid var(--ink);
+    border-radius:6px; padding:12px 14px; cursor:pointer; font-size:14px;}
+  .fbox:hover{background:#eee;}
+  .fbox .fid{font-size:11px; color:var(--mid); display:block;}
+  .fbox .fname{font-weight:700; font-size:15px;}
+  .fbox .fdesc{font-size:12px; color:var(--mid); margin-top:4px; display:block;}
+  .edge{display:flex; align-items:center; gap:8px; padding:4px 0 4px 24px;}
+  .edge .arrow{font-size:18px; color:var(--ink); line-height:1;}
+  .edge button{border:1px dashed var(--line); background:#fafafa; font-size:12px; padding:3px 10px;
+    border-radius:12px; cursor:pointer; color:var(--ink);}
+  .edge button:hover{background:#ddd;}
+  .edge .edir{font-size:11px; color:var(--mid);}
+  .sidebranch{border-left:2px dashed var(--faint); margin-left:24px; padding-left:16px; margin-top:6px; margin-bottom:10px;}
+  .legend{font-size:11px; color:var(--mid); margin-top:16px; border-top:1px solid var(--faint); padding-top:8px;}
+
+  /* ---- device frame ---- */
+  #view-screens{display:flex; flex-direction:column; align-items:center;}
+  .frame{width:390px; height:844px; background:var(--paper); border:2px solid var(--ink); border-radius:24px;
+    overflow:hidden; position:relative; display:flex; flex-direction:column;}
+  .screen{display:none; flex:1 1 auto; flex-direction:column; overflow:hidden; height:100%;}
+  .screen.active{display:flex;}
+  .scroll{flex:1 1 auto; overflow-y:auto;}
+  .screen-label{font-size:12px; color:var(--mid); margin:10px 0 6px; text-align:center;}
+
+  /* generic low-fi pieces */
+  h1{font-size:17px; margin:0; font-weight:700;}
+  h2{font-size:14px; margin:0 0 8px; font-weight:700;}
+  .appbar{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line); background:#fafafa;}
+  .appbar .nav{border:1px solid var(--line); background:#fff; border-radius:4px; padding:4px 8px; font-size:12px; cursor:pointer;}
+  .ph{background:repeating-linear-gradient(45deg,#e8e8e8,#e8e8e8 8px,#ddd 8px,#ddd 16px);
+    border:1px solid var(--faint); display:flex; align-items:center; justify-content:center;
+    color:var(--mid); font-size:12px;}
+  .btn{display:block; width:100%; padding:12px; font-size:15px; border:2px solid var(--ink); background:#fff;
+    border-radius:6px; cursor:pointer; text-align:center; color:var(--ink); text-decoration:none;}
+  .btn.primary{background:#444; color:#fff;}
+  .btn.small{padding:8px; font-size:13px; border-width:1px;}
+  .btn:disabled{border-color:var(--faint); color:var(--faint); background:#f7f7f7; cursor:not-allowed;}
+  .row{display:flex; gap:8px;}
+  .row .btn{flex:1;}
+  .sec{padding:14px 16px; border-bottom:1px dashed var(--faint);}
+  .muted{color:var(--mid); font-size:12px;}
+  label{display:block; font-size:12px; color:var(--mid); margin:10px 0 4px;}
+  input[type=text],input[type=number],textarea,select{width:100%; padding:9px; border:1px solid var(--line);
+    border-radius:4px; font-size:14px; background:#fff; color:var(--ink);}
+  fieldset{border:1px solid var(--faint); border-radius:4px; margin:10px 0; padding:8px 10px;}
+  legend{font-size:12px; color:var(--mid); padding:0 4px;}
+
+  /* editable canvas section */
+  .editable{border:2px dashed var(--line); border-radius:6px; margin:10px 12px; padding:12px; position:relative;
+    background:#fff; cursor:pointer; text-align:left; width:calc(100% - 24px); font-size:14px; color:var(--ink);}
+  .editable:hover{background:#f0f0f0;}
+  .editable .pencil{position:absolute; top:6px; right:8px; font-size:13px; border:1px solid var(--line);
+    border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:#fafafa;}
+
+  /* bottom sheet screens */
+  .dim{flex:1 1 auto; background:#c9c9c9; display:flex; align-items:flex-start; justify-content:center;
+    padding-top:24px; cursor:pointer; border:0; width:100%;}
+  .dim span{font-size:12px; color:#555; background:#e2e2e2; border:1px dashed var(--line); padding:4px 10px; border-radius:12px;}
+  .sheet{background:var(--paper); border-top:2px solid var(--ink); border-radius:16px 16px 0 0;
+    padding:12px 16px 20px; max-height:72%; overflow-y:auto;}
+  .grip{width:40px; height:4px; background:var(--faint); border-radius:2px; margin:0 auto 10px;}
+
+  /* sticky anchors on guest page */
+  .anchors{position:sticky; top:0; display:flex; gap:4px; background:#fafafa; border-bottom:1px solid var(--line);
+    padding:6px 8px; z-index:5;}
+  .anchors a{flex:1; text-align:center; font-size:12px; color:var(--ink); text-decoration:none;
+    border:1px solid var(--faint); border-radius:12px; padding:5px 2px; background:#fff;}
+  .anchors a:hover{background:#eee;}
+
+  /* template swiper */
+  .swiper{display:flex; gap:12px; overflow-x:auto; padding:4px 16px 12px;}
+  .tcard{flex:0 0 240px; border:2px solid var(--ink); border-radius:10px; background:#fff; padding:10px;}
+  .tcard .mini{height:300px; margin-bottom:8px; display:flex; flex-direction:column; gap:4px; padding:8px;
+    border:1px solid var(--faint); background:#fafafa;}
+  .mini .m{background:#ddd; border:1px solid var(--faint);}
+  .stepper{display:flex; align-items:center; gap:10px;}
+  .stepper button{width:40px; height:40px; font-size:18px; border:1px solid var(--line); background:#fff; border-radius:4px; cursor:pointer;}
+  .stepper output{min-width:32px; text-align:center; font-size:16px;}
+  .bigchoice{display:flex; gap:10px; margin:8px 0;}
+  .bigchoice button{flex:1; padding:20px 8px; font-size:16px; border:2px solid var(--line); background:#fff; border-radius:8px; cursor:pointer;}
+  .bigchoice button[aria-pressed="true"]{border-color:var(--ink); background:#e6e6e6; font-weight:700;}
+  .footer-fixed{border-top:1px solid var(--line); padding:10px 12px; background:#fafafa;}
+  .toggle{display:flex; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .toggle button{border:0; background:#fff; font-size:11px; padding:4px 8px; cursor:pointer; color:var(--ink);}
+  .toggle button[aria-pressed="true"]{background:#555; color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="banner" role="note">내부 검토용 — 클라이언트 공유 금지</div>
+
+<nav class="tabbar" aria-label="와이어프레임 보기 전환">
+  <button id="tab-flow" aria-selected="true" onclick="location.hash='#flow'">플로맵</button>
+  <button id="tab-screens" aria-selected="false" onclick="go('c-template')">화면</button>
+  <span class="doc-title">모바일 청첩장 · 변형 C: 단일 캔버스 인라인 편집</span>
+  <button class="backbtn" onclick="history.back()" aria-label="이전 화면으로">← 뒤로</button>
+</nav>
+
+<main>
+
+<!-- =============== 플로맵 =============== -->
+<section id="view-flow" hidden>
+  <h1 style="font-size:18px; margin:0 0 4px;">플로맵 — 단일 캔버스 인라인 편집 + 원스크롤 하객 페이지</h1>
+  <p class="flow-note">상자를 누르면 해당 화면으로 이동합니다. 화살표 라벨을 눌러도 도착 화면으로 이동합니다.</p>
+
+  <div class="flow-grid">
+    <button class="fbox" onclick="go('c-template')">
+      <span class="fid">c-template</span>
+      <span class="fname">시작: 템플릿 선택</span>
+      <span class="fdesc">캔버스 진입 전 유일한 게이트 — 템플릿 가로 스와이프</span>
+    </button>
+
+    <div class="edge">
+      <span class="arrow" aria-hidden="true">↓</span>
+      <button onclick="go('c-canvas')">'이 템플릿으로 시작'</button>
+      <span class="edir">→ c-canvas</span>
+    </div>
+
+    <button class="fbox" onclick="go('c-canvas')">
+      <span class="fid">c-canvas</span>
+      <span class="fname">인라인 편집 캔버스</span>
+      <span class="fdesc">편집 화면 = 미리보기. 섹션 탭으로 편집, 하단 '발행하기'</span>
+    </button>
+
+    <div class="sidebranch">
+      <div class="edge">
+        <span class="arrow" aria-hidden="true">⇄</span>
+        <button onclick="go('c-edit-sheet')">섹션 탭 (편집 시트 오픈)</button>
+        <span class="edir">→ c-edit-sheet</span>
+      </div>
+      <div class="edge">
+        <span class="arrow" aria-hidden="true">⇠</span>
+        <button onclick="go('c-canvas')">'완료' (시트 닫기, 실시간 반영)</button>
+        <span class="edir">c-edit-sheet → c-canvas</span>
+      </div>
+      <div class="edge">
+        <span class="arrow" aria-hidden="true">⇠</span>
+        <button onclick="go('c-template')">상단 '템플릿 변경'</button>
+        <span class="edir">c-canvas → c-template</span>
+      </div>
+    </div>
+
+    <div class="edge">
+      <span class="arrow" aria-hidden="true">↓</span>
+      <button onclick="go('c-publish')">'발행하기' (하객 모드 토글로 미리보기 확인 후)</button>
+      <span class="edir">→ c-publish</span>
+    </div>
+
+    <button class="fbox" onclick="go('c-publish')">
+      <span class="fid">c-publish</span>
+      <span class="fname">발행·공유 시트</span>
+      <span class="fdesc">발행 확인 → 링크 복사 / 카카오톡 공유 / QR</span>
+    </button>
+
+    <div class="edge">
+      <span class="arrow" aria-hidden="true">↓</span>
+      <button onclick="go('c-guest')">'하객 페이지 열기' / 하객이 공유 링크 열기</button>
+      <span class="edir">→ c-guest</span>
+    </div>
+
+    <button class="fbox" onclick="go('c-guest')">
+      <span class="fid">c-guest</span>
+      <span class="fname">하객 원스크롤 페이지</span>
+      <span class="fdesc">앵커 내비 + 인사말→일시→오시는 길→RSVP</span>
+    </button>
+
+    <div class="sidebranch">
+      <div class="edge">
+        <span class="arrow" aria-hidden="true">⇄</span>
+        <button onclick="go('c-rsvp-sheet')">RSVP 섹션 '참석 여부 알리기'</button>
+        <span class="edir">→ c-rsvp-sheet</span>
+      </div>
+      <div class="edge">
+        <span class="arrow" aria-hidden="true">⇠</span>
+        <button onclick="go('c-guest')">회신 완료 후 시트 닫힘</button>
+        <span class="edir">c-rsvp-sheet → c-guest</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="legend">범례: 실선 상자 = 화면 · ⇄/⇠ = 시트 열림/닫힘 왕복 엣지 · 모든 엣지 라벨은 클릭 시 도착 화면으로 라우팅</p>
+</section>
+
+<!-- =============== 화면 =============== -->
+<section id="view-screens" hidden>
+  <p class="screen-label" id="screen-label"></p>
+  <div class="frame">
+
+    <!-- c-template -->
+    <div class="screen" id="screen-c-template">
+      <header class="appbar">
+        <h1>템플릿 선택</h1>
+      </header>
+      <div class="scroll">
+        <div class="sec" style="border-bottom:0;">
+          <p class="muted" style="margin:4px 0 10px;">마음에 드는 템플릿을 고르면 바로 편집 캔버스가 열립니다. 좌우로 넘겨보세요.</p>
+        </div>
+        <div class="swiper" aria-label="템플릿 카드 목록">
+          <div class="tcard">
+            <div class="mini" aria-hidden="true">
+              <div class="m" style="height:90px;"></div>
+              <div class="m" style="height:20px; width:70%;"></div>
+              <div class="m" style="height:40px;"></div>
+              <div class="m" style="height:60px;"></div>
+              <div class="m" style="height:30px;"></div>
+            </div>
+            <h2>템플릿 A — 클래식</h2>
+            <p class="muted" style="margin:0 0 8px;">페이지 축소 프리뷰 (실제 섹션 구성 동일)</p>
+            <button class="btn primary" onclick="go('c-canvas')">이 템플릿으로 시작</button>
+          </div>
+          <div class="tcard">
+            <div class="mini" aria-hidden="true">
+              <div class="m" style="height:120px;"></div>
+              <div class="m" style="height:20px; width:50%;"></div>
+              <div class="m" style="height:50px;"></div>
+              <div class="m" style="height:40px;"></div>
+            </div>
+            <h2>템플릿 B — 심플</h2>
+            <p class="muted" style="margin:0 0 8px;">페이지 축소 프리뷰</p>
+            <button class="btn primary" onclick="go('c-canvas')">이 템플릿으로 시작</button>
+          </div>
+          <div class="tcard">
+            <div class="mini" aria-hidden="true">
+              <div class="m" style="height:70px;"></div>
+              <div class="m" style="height:70px;"></div>
+              <div class="m" style="height:20px; width:60%;"></div>
+              <div class="m" style="height:60px;"></div>
+            </div>
+            <h2>템플릿 C — 포토 중심</h2>
+            <p class="muted" style="margin:0 0 8px;">페이지 축소 프리뷰</p>
+            <button class="btn primary" onclick="go('c-canvas')">이 템플릿으로 시작</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- c-canvas -->
+    <div class="screen" id="screen-c-canvas">
+      <header class="appbar">
+        <h1 style="flex:1;">내 청첩장 (편집 중)</h1>
+        <div class="toggle" role="group" aria-label="보기 모드">
+          <button aria-pressed="true">편집</button>
+          <button aria-pressed="false" onclick="go('c-guest')">하객 모드</button>
+        </div>
+        <button class="nav" onclick="go('c-template')">템플릿 변경</button>
+      </header>
+      <div class="scroll">
+        <p class="muted" style="margin:10px 12px 0;">점선 영역을 누르면 편집 시트가 열립니다. 이 화면이 곧 하객이 보게 될 페이지입니다.</p>
+
+        <button class="editable" onclick="go('c-edit-sheet')" aria-label="대표 사진 섹션 편집">
+          <span class="pencil" aria-hidden="true">✎</span>
+          <span class="ph" style="height:180px;">대표 사진 (탭하여 업로드)</span>
+        </button>
+
+        <button class="editable" onclick="go('c-edit-sheet')" aria-label="인사말 섹션 편집">
+          <span class="pencil" aria-hidden="true">✎</span>
+          <strong>인사말</strong>
+          <p class="muted" style="margin:6px 0 0;">저희 두 사람이 사랑으로 하나 되는 날, 소중한 분들을 모십니다. (탭하여 작성)</p>
+        </button>
+
+        <button class="editable" onclick="go('c-edit-sheet')" aria-label="이름과 일시 섹션 편집">
+          <span class="pencil" aria-hidden="true">✎</span>
+          <strong>김철수 · 이영희</strong>
+          <p class="muted" style="margin:6px 0 0;">2026년 10월 24일 (토) 오후 1시 · 그랜드홀 3층 (탭하여 수정)</p>
+        </button>
+
+        <button class="editable" onclick="go('c-edit-sheet')" aria-label="지도와 교통 안내 섹션 편집">
+          <span class="pencil" aria-hidden="true">✎</span>
+          <span class="ph" style="height:110px;">지도 영역</span>
+          <p class="muted" style="margin:6px 0 0;">예식장 검색 · 교통/주차 안내 입력 (탭하여 수정)</p>
+        </button>
+
+        <button class="editable" onclick="go('c-edit-sheet')" aria-label="RSVP 안내 섹션 편집">
+          <span class="pencil" aria-hidden="true">✎</span>
+          <strong>RSVP 안내</strong>
+          <p class="muted" style="margin:6px 0 0;">참석 여부 회신 요청 문구 (탭하여 수정)</p>
+        </button>
+        <div style="height:8px;"></div>
+      </div>
+      <div class="footer-fixed">
+        <p class="muted" style="margin:0 0 6px;">필수 섹션 미입력 시 비활성 — 예: "이름·일시를 입력하면 발행할 수 있어요"</p>
+        <button class="btn primary" onclick="go('c-publish')">발행하기</button>
+      </div>
+    </div>
+
+    <!-- c-edit-sheet -->
+    <div class="screen" id="screen-c-edit-sheet">
+      <button class="dim" onclick="go('c-canvas')" aria-label="시트 밖 캔버스 영역 (누르면 닫기)">
+        <span>▲ 캔버스 실시간 반영 영역 — 입력 즉시 위 페이지에 반영</span>
+      </button>
+      <div class="sheet" role="dialog" aria-label="섹션 편집 시트">
+        <div class="grip" aria-hidden="true"></div>
+        <h1>섹션 편집 — 이름·일시</h1>
+        <p class="muted" style="margin:4px 0 0;">탭한 섹션에 따라 내용이 바뀌는 시트입니다. (사진 업로더 / 인사말 텍스트 / 예식장 검색 변형 포함)</p>
+
+        <label for="e-groom">신랑 이름</label>
+        <input type="text" id="e-groom" value="김철수">
+        <label for="e-bride">신부 이름</label>
+        <input type="text" id="e-bride" value="이영희">
+        <label for="e-date">예식 일시</label>
+        <input type="text" id="e-date" value="2026-10-24 13:00">
+        <label for="e-venue">예식장 검색</label>
+        <input type="text" id="e-venue" placeholder="예식장 이름으로 검색">
+
+        <fieldset>
+          <legend>다른 섹션의 시트 변형 (참고)</legend>
+          <label for="e-photo">대표 사진 업로드</label>
+          <input type="text" id="e-photo" placeholder="[사진 업로더 자리표시]" disabled>
+          <label for="e-greet">인사말</label>
+          <textarea id="e-greet" rows="2" placeholder="인사말을 작성하세요" disabled></textarea>
+        </fieldset>
+
+        <button class="btn primary" onclick="go('c-canvas')">완료</button>
+      </div>
+    </div>
+
+    <!-- c-publish -->
+    <div class="screen" id="screen-c-publish">
+      <button class="dim" onclick="go('c-canvas')" aria-label="시트 밖 캔버스 영역 (누르면 닫기)">
+        <span>▲ 캔버스 배경 (완성된 페이지)</span>
+      </button>
+      <div class="sheet" role="dialog" aria-label="발행 및 공유 시트">
+        <div class="grip" aria-hidden="true"></div>
+        <h1>발행하기</h1>
+
+        <fieldset>
+          <legend>최종 확인</legend>
+          <p style="margin:4px 0;">김철수 · 이영희</p>
+          <p class="muted" style="margin:4px 0;">2026년 10월 24일 (토) 오후 1시</p>
+          <p class="muted" style="margin:4px 0;">그랜드홀 3층 웨딩홀</p>
+        </fieldset>
+
+        <button class="btn primary" style="margin:8px 0 12px;">발행</button>
+
+        <fieldset>
+          <legend>발행 후 공유</legend>
+          <div class="row" style="margin-bottom:8px;">
+            <button class="btn small">링크 복사</button>
+            <button class="btn small">카카오톡 공유</button>
+            <button class="btn small">QR 보기</button>
+          </div>
+          <a href="#screen-c-guest" class="btn small">하객 페이지 열기</a>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- c-guest -->
+    <div class="screen" id="screen-c-guest">
+      <div class="scroll" id="guest-scroll">
+        <nav class="anchors" aria-label="페이지 내 이동">
+          <a href="#screen-c-guest" onclick="jump('g-greet');return false;">인사말</a>
+          <a href="#screen-c-guest" onclick="jump('g-when');return false;">일시</a>
+          <a href="#screen-c-guest" onclick="jump('g-map');return false;">오시는 길</a>
+          <a href="#screen-c-guest" onclick="jump('g-rsvp');return false;">RSVP</a>
+        </nav>
+
+        <div class="sec" id="g-greet">
+          <div class="ph" style="height:200px; margin-bottom:12px;">대표 사진</div>
+          <h1 style="text-align:center;">김철수 · 이영희, 결혼합니다</h1>
+          <p class="muted" style="text-align:center;">저희 두 사람이 사랑으로 하나 되는 날, 귀한 걸음으로 축복해 주시면 감사하겠습니다.</p>
+        </div>
+
+        <div class="sec" id="g-when">
+          <h2>일시</h2>
+          <p style="margin:4px 0;">2026년 10월 24일 (토) 오후 1시</p>
+          <button class="btn small" style="margin-top:8px;">캘린더에 추가</button>
+        </div>
+
+        <div class="sec" id="g-map">
+          <h2>오시는 길</h2>
+          <div class="ph" style="height:130px; margin:8px 0;">지도</div>
+          <p class="muted" style="margin:4px 0;">서울시 ○○구 ○○로 123 · 그랜드홀 3층</p>
+          <button class="btn small" style="margin:8px 0;">주소 복사</button>
+          <fieldset>
+            <legend>교통·주차 안내</legend>
+            <p class="muted" style="margin:4px 0;">지하철 2호선 ○○역 3번 출구 도보 5분</p>
+            <p class="muted" style="margin:4px 0;">건물 지하 주차 2시간 무료</p>
+          </fieldset>
+          <button class="btn small">축의금 보내기 (송금 앱 열기)</button>
+        </div>
+
+        <div class="sec" id="g-rsvp" style="border-bottom:0; padding-bottom:28px;">
+          <h2>RSVP</h2>
+          <p class="muted" style="margin:4px 0 10px;">참석 여부를 알려주시면 준비에 큰 도움이 됩니다.</p>
+          <button class="btn primary" onclick="go('c-rsvp-sheet')">참석 여부 알리기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- c-rsvp-sheet -->
+    <div class="screen" id="screen-c-rsvp-sheet">
+      <button class="dim" onclick="go('c-guest')" aria-label="시트 밖 하객 페이지 영역 (누르면 닫기)">
+        <span>▲ 하객 페이지 (뒤 배경)</span>
+      </button>
+      <div class="sheet" role="dialog" aria-label="참석 여부 회신 시트">
+        <div class="grip" aria-hidden="true"></div>
+        <h1>참석 여부 알리기</h1>
+
+        <div class="bigchoice" role="group" aria-label="참석 여부">
+          <button aria-pressed="true">참석</button>
+          <button aria-pressed="false">불참</button>
+        </div>
+
+        <label id="lbl-count">인원</label>
+        <div class="stepper" aria-labelledby="lbl-count">
+          <button aria-label="인원 줄이기">−</button>
+          <output>2</output>
+          <button aria-label="인원 늘리기">+</button>
+        </div>
+
+        <label for="r-meal">식사 여부</label>
+        <select id="r-meal">
+          <option>식사함</option>
+          <option>식사 안 함</option>
+          <option>미정</option>
+        </select>
+
+        <label for="r-name">이름</label>
+        <input type="text" id="r-name" placeholder="회신하시는 분 성함">
+
+        <button class="btn primary" style="margin-top:14px;" onclick="rsvpDone()">회신 보내기</button>
+        <p class="muted" id="rsvp-done-msg" hidden style="text-align:center; margin-top:10px;">회신이 전송되었습니다. 잠시 후 닫힙니다…</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<script>
+  var SCREEN_NAMES = {
+    'c-template':'시작: 템플릿 선택',
+    'c-canvas':'인라인 편집 캔버스',
+    'c-edit-sheet':'섹션 편집 바텀시트',
+    'c-publish':'발행·공유 시트',
+    'c-guest':'하객 원스크롤 페이지',
+    'c-rsvp-sheet':'RSVP 바텀시트'
+  };
+
+  function go(id){ location.hash = '#screen-' + id; }
+
+  function jump(anchorId){
+    var el = document.getElementById(anchorId);
+    if(el){ el.scrollIntoView({block:'start'}); }
+  }
+
+  function rsvpDone(){
+    var msg = document.getElementById('rsvp-done-msg');
+    msg.hidden = false;
+    setTimeout(function(){ msg.hidden = true; go('c-guest'); }, 1200);
+  }
+
+  function render(){
+    var h = location.hash || '#flow';
+    var flow = document.getElementById('view-flow');
+    var screens = document.getElementById('view-screens');
+    var tabFlow = document.getElementById('tab-flow');
+    var tabScreens = document.getElementById('tab-screens');
+
+    if(h.indexOf('#screen-') === 0){
+      var id = h.slice('#screen-'.length);
+      if(!SCREEN_NAMES[id]){ id = 'c-template'; }
+      flow.hidden = true; screens.hidden = false;
+      tabFlow.setAttribute('aria-selected','false');
+      tabScreens.setAttribute('aria-selected','true');
+      var all = document.querySelectorAll('.screen');
+      for(var i=0;i<all.length;i++){ all[i].classList.remove('active'); }
+      document.getElementById('screen-' + id).classList.add('active');
+      document.getElementById('screen-label').textContent = id + ' · ' + SCREEN_NAMES[id];
+    } else {
+      flow.hidden = false; screens.hidden = true;
+      tabFlow.setAttribute('aria-selected','true');
+      tabScreens.setAttribute('aria-selected','false');
+    }
+  }
+
+  window.addEventListener('hashchange', render);
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리뷰: 와이어프레임 · wf-petcare-r1</title>
+<style>
+  body{font:14px/1.5 -apple-system,system-ui,sans-serif;margin:0;background:#f6f5f2;color:#1f2328}
+  header{background:#1f2328;color:#fff;padding:16px 24px}
+  header code{background:#3a3f45;padding:1px 6px;border-radius:4px}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  h2{margin-top:32px;border-bottom:2px solid #d8d5cf;padding-bottom:6px}
+  table{border-collapse:collapse;width:100%;background:#fff}
+  td,th{border:1px solid #d8d5cf;padding:6px 10px;text-align:left;vertical-align:top}
+  .st-pass .status{color:#0a7a35;font-weight:600}
+  .st-fail .status{color:#c22525;font-weight:600}
+  .st-not-verified .status{color:#9a6700;font-weight:600}
+  .artifact{background:#fff;border:1px solid #d8d5cf;border-radius:8px;padding:16px;margin:16px 0}
+  .artifact iframe{width:100%;height:720px;border:1px solid #d8d5cf;border-radius:6px;background:#fff}
+  .rev{color:#57606a}
+  .notice{background:#fff8e5;border:1px solid #e6d9a8;border-radius:8px;padding:12px 16px}
+  .fb-label{display:block;margin-top:12px;font-weight:600}
+  textarea.fb{width:100%;box-sizing:border-box;min-height:64px;margin-top:6px;padding:8px;border:1px solid #d8d5cf;border-radius:6px;font:inherit}
+  #fb-submit{margin-top:12px;padding:10px 20px;border:0;border-radius:6px;background:#1f2328;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  #fb-status{margin-left:12px;font-weight:600}
+</style></head><body>
+<header>
+  <h1>와이어프레임 레인 리뷰 — 라운드 1</h1>
+  <p>run <code>wf-petcare-r1</code> · PRD <code>prd-petcare-booking-v1</code> · 뷰포트 390×844 · 생성 2026-09-05T16:31:58+09:00 → 2026-09-05T16:40:36+09:00</p>
+</header>
+<main>
+<div class="notice">승인/수정 요청/거부는 <b>터미널 세션에서</b> 입력해주세요. 결정은 여기 표시된 리비전 해시에 그대로 바인딩되어 기록됩니다. 리뷰 축은 의도적으로 분리 보고되며, 단일 통합 점수는 없습니다.</div>
+<h2>화면 목록</h2><ul><li><b>[Hub-and-spoke with role-split tabs] 홈 허브 (탭 루트)</b> (hub:home-hub) — Entry hub with bottom tabs and owner/sitter role switch; surfaces active booking state cards so status is unambiguous at a glance.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 시터 목록 + 필터</b> (hub:sitter-list) — Browse nearby sitters filtered by pet type and dates (mustHave: sitter list with filters).</li>
+<li><b>[Hub-and-spoke with role-split tabs] 시터 프로필</b> (hub:sitter-profile) — Full sitter profile with reviews and structured service scope (mustHave: sitter profile).</li>
+<li><b>[Hub-and-spoke with role-split tabs] 예약 요청 폼</b> (hub:request-form) — Single-page booking request with pet details and dates (mustHave: booking request form).</li>
+<li><b>[Hub-and-spoke with role-split tabs] 채팅</b> (hub:chat) — Owner-sitter chat to confirm details before payment; also carries request notifications for the sitter.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 결제</b> (hub:payment) — Pay and receive booking confirmation.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 예약 현황 / 케어 리포트</b> (hub:booking-status) — Owner view of booking lifecycle and the sitter's care report (mustHave: booking status / care report).</li>
+<li><b>[Hub-and-spoke with role-split tabs] 시터 요청함</b> (hub:sitter-inbox) — Sitter's request queue after notification; entry point of flow-sitter.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 요청 상세 (시터)</b> (hub:request-detail) — Sitter reviews pet details and requested dates, then accepts or proposes changes.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 케어 리포트 작성</b> (hub:care-report-compose) — Sitter completes the visit and logs a care report with photos.</li>
+<li><b>[Hub-and-spoke with role-split tabs] 정산 내역</b> (hub:earnings) — Sitter payout status closing flow-sitter (get paid).</li>
+<li><b>[Linear wizard funnel] 검색 조건 입력</b> (wizard:search-intent) — Funnel entry: capture pet type and dates before showing any sitters, so the list is pre-filtered (covers 'browse filtered' step).</li>
+<li><b>[Linear wizard funnel] 시터 검색 결과</b> (wizard:results) — Filtered sitter list (mustHave: sitter list with filters); filters editable via summary chip, not a separate hub.</li>
+<li><b>[Linear wizard funnel] 시터 프로필</b> (wizard:profile) — Review sitter, reviews, and service scope; single CTA continues the funnel (mustHave: sitter profile).</li>
+<li><b>[Linear wizard funnel] 요청 1/3 — 반려동물 정보</b> (wizard:wizard-pet) — First wizard step of the booking request form: pet details.</li>
+<li><b>[Linear wizard funnel] 요청 2/3 — 날짜·서비스 범위</b> (wizard:wizard-scope) — Second wizard step: dates and structured service scope to prevent disputes.</li>
+<li><b>[Linear wizard funnel] 요청 3/3 — 확인 및 전송</b> (wizard:wizard-review) — Review and submit the booking request (completes mustHave: booking request form).</li>
+<li><b>[Linear wizard funnel] 조율 채팅 (게이트)</b> (wizard:confirm-chat) — Mandatory chat gate where details are confirmed; payment unlocks only when sitter has accepted.</li>
+<li><b>[Linear wizard funnel] 결제 및 확정</b> (wizard:pay-confirm) — Pay and receive confirmation; funnel exit.</li>
+<li><b>[Linear wizard funnel] 예약 현황 / 케어 리포트</b> (wizard:status-report) — Post-funnel living document: unambiguous state stepper plus care report with photos (mustHave: booking status / care report).</li>
+<li><b>[Linear wizard funnel] 시터 파이프라인 1 — 새 요청</b> (wizard:sitter-request) — Notification lands here: full pet details and requested dates for review.</li>
+<li><b>[Linear wizard funnel] 시터 파이프라인 2 — 수락/변경 제안</b> (wizard:sitter-decision) — Single decision screen: accept as-is or counter-propose dates/scope.</li>
+<li><b>[Linear wizard funnel] 시터 파이프라인 3 — 방문 진행</b> (wizard:sitter-visit) — Active-visit checklist that ends by logging the care report with photos.</li>
+<li><b>[Linear wizard funnel] 시터 파이프라인 4 — 정산</b> (wizard:sitter-payout) — Payout confirmation closing the sitter flow (get paid).</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 탐색 스크롤 (앵커 섹션)</b> (thread:discover-scroll) — Single-scroll discovery page: filter section, map section, sitter list section reachable via anchor chips (mustHave: sitter list with filters).</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 시터 프로필 (바텀시트)</b> (thread:profile-sheet) — Sitter profile as an overlay sheet over discovery — reviews and service scope without leaving context (mustHave: sitter profile).</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 예약 요청 시트</b> (thread:request-sheet) — Booking request composer as a second-stage sheet; submitting spawns the booking thread (mustHave: booking request form).</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 예약 스레드 (통합 타임라인)</b> (thread:booking-thread) — The single shared surface for chat, negotiation, payment trigger, unambiguous state changes, and the care report — owner and sitter see role-appropriate action chips on the same thread (covers chat/confirm/pay steps and sitter's notify/review/accept/report/get-paid steps; mustHave: booking status / care report lives here).</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 결제 시트</b> (thread:pay-sheet) — Payment as a modal sheet over the thread; success posts a confirmation event back into the thread.</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 케어 리포트 작성 시트 (시터)</b> (thread:report-composer-sheet) — Sitter logs the visit — photos plus activities — posted as a rich event into the thread; final submission marks 완료 and triggers payout.</li>
+<li><b>[Single-scroll discovery + booking-as-thread] 스레드 목록</b> (thread:threads-index) — Minimal index of active booking threads for both roles; where sitter request notifications land.</li></ul>
+
+<h2>산출물</h2>
+<section class="artifact">
+  <h3>wf-hub <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>358c557998a7ead9</code> · <a href="wireframe-hub.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-hub.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-hub">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-hub" data-target="wf-hub" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<section class="artifact">
+  <h3>wf-wizard <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>474a9f6bcf5a8c33</code> · <a href="wireframe-wizard.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-wizard.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-wizard">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-wizard" data-target="wf-wizard" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<section class="artifact">
+  <h3>wf-thread <code>clickable-wireframe</code></h3>
+  <p class="rev">리비전 <code>3a4e2d1ffd3ad7fd</code> · <a href="wireframe-thread.html" target="_blank">open full page</a></p>
+  <iframe src="wireframe-thread.html" loading="lazy"></iframe>
+  <label class="fb-label" for="fb-wf-thread">이 산출물에 대한 피드백</label>
+  <textarea class="fb" id="fb-wf-thread" data-target="wf-thread" placeholder="예: 상단 인사말이 너무 길어요. RSVP 버튼을 더 위로."></textarea>
+</section>
+<h2>품질 검사 (축별 분리)</h2>
+<table><tr><th>기준</th><th>축</th><th>상태</th><th>기대</th><th>관찰</th></tr>
+<tr class="st-pass"><td>hub:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 11 variant screens reachable via routing</td><td>Runtime test: go('screen-&lt;id&gt;') rendered every screen (home-hub, sitter-list, sitter-profile, request-form, chat, payment, booking-status, sitter-inbox, request-detail, care-report-compose, earnings) visible with its h1; hash routing #screen-id with SCREEN_TITLES guard covers all 11.</td></tr>
+<tr class="st-pass"><td>hub:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>All 13 variant edges clickable to existing targets</td><td>13 .edgebtn buttons match variant edges 1:1 by label and target (e.g. '탐색 탭 선택'→sitter-list, '완료 처리 → 정산 확인'→earnings); every onclick go() target exists. In-screen equivalents also present: tabbar 탐색 (home→list), sitter cards (list→profile), 예약 요청하기 CTA (profile→form), 요청 보내기 (form→chat), 조건 확정·결제 (chat→payment), 결제하기 (payment→status), role-aware 예약 탭 via reserveTarget() (home→status/inbox), inbox cards→detail, 수락하기/변경 제안→chat, 방문 완료 처리→care-report, 리포트 전송→status, 완료 처리·정산→earnings.</td></tr>
+<tr class="st-pass"><td>hub:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external scripts, styles, fonts, or images</td><td>Runtime query for script[src]/link[href]/img[src] returned empty; system font stack only; placeholders are CSS repeating-gradient .ph divs. Sole console error is the browser's own /favicon.ico 404, not a page-referenced asset.</td></tr>
+<tr class="st-pass"><td>hub:mech-lang-h1-labels</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, h1 per screen, labels on form controls</td><td>html lang=&quot;ko&quot; (line 2); each of 11 screens has an h1 (홈, 시터 찾기, 시터 프로필, 예약 요청, 채팅, 결제, 예약 현황, 요청함, 요청 상세, 케어 리포트 작성, 정산 내역); runtime audit found 0 unlabeled inputs/selects/textareas (all have label[for], incl. radios/checkboxes) and 0 nameless buttons (back button has aria-label).</td></tr>
+<tr class="st-pass"><td>hub:mech-internal-banner</td><td>기계적 검사</td><td class="status">pass</td><td>Internal-use banner present</td><td>Sticky #review-banner at line 101: '내부 검토용 — 클라이언트 공유 금지'.</td></tr>
+<tr class="st-pass"><td>hub:ux-flow-find</td><td>UX 과업 성공</td><td class="status">pass</td><td>'Find and book a sitter' traceable by clicks end to end</td><td>Path: home-hub → tabbar 탐색 → sitter-list (filters: 반려동물 종류/날짜/거리) → 시터 카드 → sitter-profile (리뷰 128 + 서비스 범위) → '예약 요청하기' → request-form (반려동물 선택 + 시작/종료일 + 요청사항) → '요청 보내기' → chat (조율 대화 + 고정 요약 카드) → '조건 확정 · 결제 진행하기' → payment → '85,000원 결제하기' → booking-status (확정/현황). All 5 PRD steps covered by real click targets.</td></tr>
+<tr class="st-pass"><td>hub:ux-flow-sitter</td><td>UX 과업 성공</td><td class="status">pass</td><td>'Sitter handles a request' traceable by clicks end to end</td><td>Path: home-hub 알림 카드 '새 예약 요청' (badge 1) → sitter-inbox → 요청 카드 (최OO 보호자 · 초코) → request-detail (펫 특이사항 + 요청 기간 검토) → '수락하기' 또는 '변경 제안하기' → chat; then request-detail '방문 완료 처리 · 케어 리포트 작성' → care-report-compose → '리포트 전송' → booking-status, and '완료 처리 · 정산 확인하기' → earnings (Get paid). All 5 steps clickable. Minor note: care-report entry lives on request-detail under a '돌봄중 요청' section rather than a state-gated view, acceptable at wireframe fidelity.</td></tr>
+<tr class="st-pass"><td>hub:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>4 mustHaveScreens represented</td><td>Sitter list with filters (screen-sitter-list: pet-type/date/distance selects + 목록/지도 toggle); Sitter profile (reviews, service scope checklist, availability calendar); Booking request form (pet, dates, notes, 예상 금액); Booking status / care report (screen-booking-status: 4-step stepper + care report cards with photo placeholders + visit timeline).</td></tr>
+<tr class="st-pass"><td>hub:spec-constraints</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD constraints honored: Korean copy, care report photos, unambiguous booking states</td><td>All UI copy Korean; care-report-compose has input type=file multiple + photo slots and booking-status shows photo placeholders per report; booking states rendered as explicit 4-step stepper 요청됨/수락됨/돌봄중/완료 on home-hub and booking-status, plus '현재 상태: 돌봄중' chip and status chips in chat/inbox.</td></tr>
+<tr class="st-pass"><td>hub:a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics: lang, headings, labels, control semantics</td><td>lang=ko; per-screen h1; 0 unlabeled form controls and 0 nameless buttons (runtime audit); aria-pressed on role/segment toggles, aria-current=page on active tab, aria-label on back button/tabbar/nav groups, fieldset+legend for payment methods and activities, aria-hidden on decorative SVG. Minor: viewtabs use role=tab without tabpanel/keyboard arrow support, and disabled review CTA uses both disabled and aria-disabled — cosmetic at this fidelity.</td></tr>
+<tr class="st-pass"><td>hub:aes-lofi-discipline</td><td>미적 판단</td><td class="status">pass</td><td>Lo-fi discipline (no brand styling) with legible hierarchy; Korean copy throughout</td><td>Strict grayscale token palette (#222/#666/#bbb/#e8e8e8/#f4f4f4), hatched-gradient photo placeholders labeled '사진', system font stack, no brand colors/logos/imagery; hierarchy legible via .sec section headers, bold CTAs (solid vs outlined .cta/.cta.sub), chips and steppers; all copy Korean including flow-map legend and edge labels.</td></tr>
+<tr class="st-pass"><td>wizard:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 13 variant screens exist and are routable</td><td>All 13 section[data-screen] blocks present (search-intent through sitter-payout), each reachable via #screen-&lt;id&gt; hash routing; flow map has a data-go box for every screen; unknown hashes fall back to #flow</td></tr>
+<tr class="st-pass"><td>wizard:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>Every variant edge has a clickable element targeting an existing screen</td><td>All 13 edges present as data-go buttons inside their source screens (e.g. wizard-review '요청 보내기'→confirm-chat, sitter-decision '변경 제안 보내고 채팅으로 조율'→confirm-chat and '그대로 수락'→sitter-visit, sitter-visit dual exits to status-report and sitter-payout); every data-go value matches an existing section id</td></tr>
+<tr class="st-pass"><td>wizard:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external images, fonts, scripts, or stylesheets</td><td>grep for https?://, src=, url(), @import, &lt;img&gt;, &lt;link&gt; returned zero matches; all CSS/JS inline, placeholders are styled divs</td></tr>
+<tr class="st-pass"><td>wizard:mech-lang-h1-labels-banner</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, per-screen h1, form labels, internal-use banner</td><td>html lang=&quot;ko&quot; (line 2); every screen section has an &lt;h1&gt;; every input/select/textarea is wrapped in a &lt;label&gt; (label.fld / label.chk); banner '내부 검토용 — 클라이언트 공유 금지' with role=note at line 105</td></tr>
+<tr class="st-pass"><td>wizard:ux-flow-find</td><td>UX 과업 성공</td><td class="status">pass</td><td>coreFlow 'Find and book a sitter' traceable by clicks</td><td>Path: search-intent [시터 찾기] → results (filter chip + sort) [카드] → profile (reviews, scope, rates) [이 시터에게 요청하기] → wizard-pet [다음] → wizard-scope [다음] → wizard-review [요청 보내기] → confirm-chat (chat + accept-gated pay) [결제하러 가기] → pay-confirm [114,000원 결제하기] → status-report with booking number PB-20260912-031; covers all 5 PRD steps including chat-to-confirm and pay-then-confirmation</td></tr>
+<tr class="st-pass"><td>wizard:ux-flow-sitter</td><td>UX 과업 성공</td><td class="status">pass</td><td>coreFlow 'Sitter handles a request' traceable by clicks</td><td>Path: sitter-request (push-notification framing, response timer, pet details/dates) [검토 시작] → sitter-decision (그대로 수락 / 변경 제안 with preview) [그대로 수락] → sitter-visit (checklist + care report memo + photos, cross-edge to status-report) [방문 완료 처리] → sitter-payout (102,600원 settlement, deposit date); covers all 5 PRD steps</td></tr>
+<tr class="st-pass"><td>wizard:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>mustHaveScreens: sitter list with filters, sitter profile, booking request form, booking status / care report</td><td>results = list with filter chip (강아지 · 9.12~9.14 · 연남동) and sort select; profile = reviews/ratings, service scope, rate table; wizard-pet/scope/review = 3-step booking request form with progress bars; status-report = 4-state stepper plus care report cards with photo slots</td></tr>
+<tr class="st-pass"><td>wizard:spec-flow-steps-constraints</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD flow steps and constraints represented (Korean copy, photo-capable care report, unambiguous booking states)</td><td>All copy Korean; care report includes photo placeholders (사진1-3) and + 사진 촬영 button; booking states rendered explicitly as 요청됨/수락됨/돌봄중/완료 stepper and system messages in chat ('예약 상태: 요청됨' / '수락됨 — 결제가 열렸어요'); payment gated on acceptance per flow</td></tr>
+<tr class="st-pass"><td>wizard:a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics: labels, alt semantics, landmarks, state indication</td><td>nav aria-label='보기 전환', aria-current='page' on active tab, back button aria-label, progress bars and stepper carry role=img with Korean aria-labels, radio groups share name attributes, all form controls label-wrapped; arrows marked aria-hidden</td></tr>
+<tr class="st-pass"><td>wizard:aes-lofi-korean</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi grayscale discipline, no brand styling, legible hierarchy, Korean copy throughout</td><td>Palette entirely gray (#222/#666/#bbb/#f2f2f2), dashed-border placeholder atoms for images/maps, system font stack, no logos or brand colors; clear hierarchy via h1 + purpose line + cards/fieldsets; all user-facing copy in Korean including sitter-lane screens</td></tr>
+<tr class="st-pass"><td>thread:mech-screens-routable</td><td>기계적 검사</td><td class="status">pass</td><td>All 7 variant screens exist and are routable</td><td>All 7 ids (discover-scroll, profile-sheet, request-sheet, booking-thread, pay-sheet, report-composer-sheet, threads-index) exist as #screen-&lt;id&gt; divs, appear in the SCREENS router array (line 596), and are linked from both the flowmap SVG boxes (lines 213-247) and the screen-picker nav (lines 254-262).</td></tr>
+<tr class="st-pass"><td>thread:mech-edges-clickable</td><td>기계적 검사</td><td class="status">pass</td><td>Every variant edge has a clickable element targeting an existing screen</td><td>All 9 edges verified: discover→profile (3 sitter cards + 3 map pins, lines 296-320), profile→request (예약 요청 CTA line 365), request→thread (요청 보내기 line 401), threads-index→thread (3 thread rows lines 566-587), thread→pay (결제하기 chip line 448), pay→thread (90,000원 결제하기 line 511), thread→report (방문 완료→리포트 작성 line 468), report→thread (리포트 게시 line 551), thread→discover (완료 후 다시 탐색 line 475). All go() targets are in SCREENS.</td></tr>
+<tr class="st-pass"><td>thread:mech-no-external-assets</td><td>기계적 검사</td><td class="status">pass</td><td>No external scripts, styles, fonts, or images</td><td>Zero external references: no &lt;link&gt;, &lt;img&gt;, &lt;script src&gt;, or http(s) URLs in the file; all CSS/JS inline, fonts are a system stack, images are dashed .ph placeholder divs.</td></tr>
+<tr class="st-pass"><td>thread:mech-lang-h1-labels-banner</td><td>기계적 검사</td><td class="status">pass</td><td>lang attribute, h1 per screen, form labels, internal-use banner</td><td>html lang=&quot;ko&quot; (line 2); every screen has an h1 (appbar or sheet); all inputs/selects/textareas have &lt;label for&gt; including a visually-hidden label for the chat composer (line 480); banner &quot;내부 검토용 — 클라이언트 공유 금지&quot; with role=note at line 159.</td></tr>
+<tr class="st-pass"><td>thread:ux-flow-find</td><td>UX 과업 성공</td><td class="status">pass</td><td>Owner core flow (browse→profile→request→chat→pay→confirm) traceable by clicks</td><td>Path: #screen-discover-scroll (필터: 반려동물 종류 + 시작/종료일, 지도, 시터 목록) → click sitter card → #screen-profile-sheet (리뷰 3건 + 서비스 범위 + 요금) → 예약 요청 CTA → #screen-request-sheet (펫 선택, 날짜, 범위, 메모) → 요청 보내기 → #screen-booking-thread (시터/보호자 채팅 메시지) → 결제하기 칩 → #screen-pay-sheet → 결제하기 → back to thread showing 결제 완료·예약 확정 sysev (line 451).</td></tr>
+<tr class="st-pass"><td>thread:ux-flow-sitter</td><td>UX 과업 성공</td><td class="status">pass</td><td>Sitter core flow (notification→review→accept→report→get paid) traceable by clicks</td><td>Path: #screen-threads-index (시터 role filter, 알림 dot + &quot;새 예약 요청이 도착했어요&quot; + 요청됨 badge) → click thread row → #screen-booking-thread (요청 evcard with 반려동물/날짜/범위/메모, 수락/변경 제안 칩 lines 440-441) → 방문 완료→리포트 작성 칩 → #screen-report-composer-sheet (사진, 체크리스트, 최종 완료 토글) → 리포트 게시 → thread showing 완료 상태 + &quot;정산 완료 · 81,000원 입금 예정&quot; (line 472).</td></tr>
+<tr class="st-pass"><td>thread:spec-must-have-screens</td><td>스펙 충실도</td><td class="status">pass</td><td>All 4 mustHaveScreens represented</td><td>Sitter list with filters = discover-scroll (filter section + 3-sitter list); Sitter profile = profile-sheet (rating, reviews, service scope, pricing); Booking request form = request-sheet (pet, dates, scope, memo); Booking status / care report = booking-thread (4-step stepper 요청됨/수락됨/돌봄중/완료 + care report evcard with 3-photo grid, lines 455-464).</td></tr>
+<tr class="st-pass"><td>thread:spec-constraints</td><td>스펙 충실도</td><td class="status">pass</td><td>PRD constraints honored: Korean copy, photo-capable care report, unambiguous booking states</td><td>All user-facing copy is Korean; care report composer has a photo-grid with ＋추가 button (lines 529-533) and the posted report shows 3 photo placeholders; booking states shown as an explicit 4-state stepper plus state-mini badge and per-thread badges (요청됨/돌봄중/완료).</td></tr>
+<tr class="st-pass"><td>thread:a11y-basics</td><td>접근성</td><td class="status">pass</td><td>Mechanical accessibility basics: labels, aria attributes, semantic controls</td><td>All interactive elements are real &lt;button&gt;/&lt;a&gt;; icon-only buttons have aria-label (back, close, pins, photo add); radios/checkboxes paired with labels; role=tablist/tab with aria-selected, aria-current on picker, aria-pressed on role filter, role=group/note landmarks. Minor note: 8 h1 elements in one document (one per hidden tab-panel screen), acceptable for a wireframe.</td></tr>
+<tr class="st-pass"><td>thread:aes-lofi-korean</td><td>미적 판단</td><td class="status">pass</td><td>Low-fi discipline (no brand styling), legible hierarchy, Korean copy throughout</td><td>Pure grayscale palette (#222-#f4f4f4), dashed-border placeholders explicitly labeled 플레이스홀더, no brand colors/logos/imagery; clear hierarchy via appbar h1, section h2s, fieldset legends, chips and steppers; every string including hints and role-tags is Korean.</td></tr></table>
+<h2>자동 수리 이력 (투명성 공개)</h2>
+<ol><li><b>#1</b> wizard: mech-screen-isolation → Added a `section[data-screen][hidden]{display:none !important;}` rule immediately after the existing `display:contents` rule (line 99) so the hidden attribute again wins and only the routed screen renders inside the device frame. (rechecked)</li></ol>
+<h2>근거 요약</h2><p>Three structurally distinct clickable wireframes for prd-petcare-booking-v1, round 1 (390x844). Variant intents: hub ('Hub-and-spoke with role-split tabs') organizes the app around a tab-root home with an owner/sitter role switch, spreading the flows across spokes so status is glanceable from the hub; wizard ('Linear wizard funnel') commits to a strictly linear owner funnel (search intent → results → profile → 3-step request wizard → chat gate → pay → status/report) plus a 4-stage sitter pipeline, one primary CTA per screen; thread ('Single-scroll discovery + booking-as-thread') collapses discovery into one anchored scroll with sheet overlays and makes a single booking thread the shared surface for chat, state changes, payment, and the care report. AI representative recommendation: recommendedVariantId 'wizard' — the wizard maps 1:1 onto both PRD coreFlows (owner funnel reproduces flow-find's five steps exactly; the sitter pipeline mirrors flow-sitter), giving the best task efficiency and zero-ambiguity for first-time users via one primary CTA plus progress per screen; the scope checklist and read-only review step prevent disputes, and the payment button locked behind the '수락됨' system event makes the requested/accepted/in-progress/done states visibly unambiguous, while hub dilutes the flows across tab spokes with a hidden role switch and thread interleaves owner and sitter action chips in one stream with low-discoverability inline actions — riskier as the representative structure for a calm, anxiety-reducing first-time experience. Audience rule: 내부용 - 클라이언트 비노출, 디자이너는 대표 구조 선택만.</p>
+<h2>피드백 제출</h2>
+<label class="fb-label" for="fb-general">전체 코멘트</label>
+<textarea class="fb" id="fb-general" placeholder="레인 전체에 대한 피드백을 자유롭게 적어주세요."></textarea>
+<button id="fb-submit">피드백 제출</button><span id="fb-status"></span>
+<p class="rev">제출된 피드백은 이 run의 <code>feedback.json</code>에 리비전 해시와 함께 기록되어 Claude 세션이 다음 라운드에 반영합니다. 파일로 직접 열었다면(주소가 file://) 제출 시 클립보드에 복사되니 터미널에 붙여넣어 주세요.</p>
+<script>
+const REVISIONS = [{"artifactId":"wf-hub","revisionHash":"358c557998a7ead94b312fedeec250c71c02c45d4c00cdd9c31b8355be8f0629"},{"artifactId":"wf-wizard","revisionHash":"474a9f6bcf5a8c3356a020bcc9b9f52a97498140993c0565423769a9e57948db"},{"artifactId":"wf-thread","revisionHash":"3a4e2d1ffd3ad7fdb312fd21af8698fdc4ec1a5ce25f57b3cb0f2335ca204afc"}];
+document.getElementById('fb-submit').addEventListener('click', async () => {
+  const items = [...document.querySelectorAll('textarea.fb[data-target]')]
+    .map((t) => ({ target: t.dataset.target, text: t.value }))
+    .filter((i) => i.text.trim());
+  const general = document.getElementById('fb-general').value.trim();
+  const status = document.getElementById('fb-status');
+  if (!items.length && !general) { status.textContent = '작성된 피드백이 없습니다.'; return; }
+  const payload = { items, general, revisions: REVISIONS };
+  try {
+    const res = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('server rejected');
+    status.textContent = '제출 완료 — Claude 세션이 feedback.json에서 읽습니다.';
+  } catch {
+    const text = [...items.map((i) => '[' + i.target + '] ' + i.text), general ? '[전체] ' + general : ''].filter(Boolean).join('\n');
+    try { await navigator.clipboard.writeText(text); status.textContent = '서버가 없어 클립보드에 복사했습니다 — 터미널에 붙여넣어 주세요.'; }
+    catch { status.textContent = '전송 실패. 아래 내용을 직접 복사해 터미널에 붙여넣어 주세요:\n' + text; }
+  }
+});
+</script>
+</main></body></html>

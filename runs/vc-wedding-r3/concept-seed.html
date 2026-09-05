@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>컨셉 2 — SEED (당근)</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --surface:#f8f9fa;
+    --surface-basement:#f2f3f6;
+    --text:#212124;
+    --text-muted:#868b94;
+    --text-soft:#6b7280;
+    --primary:#ff6f0f;
+    --primary-pressed:#e85d00;
+    --primary-fg:#ffffff;
+    --accent:#ffede0;
+    --border:#e9ecef;
+    --r-sm:8px; --r-md:10px; --r-lg:12px; --r-chip:9999px;
+    --font:'Pretendard',-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:#eceef1; color:var(--text); font-family:var(--font);
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;}
+  button{font:inherit; color:inherit; cursor:pointer;}
+
+  .stage{max-width:960px; margin:0 auto; padding:32px 16px 80px;
+    display:flex; flex-direction:column; gap:40px; align-items:center;}
+  .section-label{font-size:13px; font-weight:700; color:var(--text-muted);
+    letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; text-align:center;}
+  .section{width:100%; display:flex; flex-direction:column; align-items:center;}
+
+  /* ===== device frame ===== */
+  .device{width:390px; height:844px; background:var(--bg);
+    border:1px solid #d7dade; border-radius:28px; overflow:hidden;
+    display:flex; flex-direction:column; box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .scr-body{flex:1 1 auto; overflow-y:auto; padding:0 0 16px;
+    display:flex; flex-direction:column;}
+  .pad{padding:0 20px; display:flex; flex-direction:column; gap:14px;}
+
+  .notice{font-size:12px; color:var(--text-muted); text-align:center;
+    background:var(--surface-basement); padding:9px 16px;}
+  .hero{height:230px; background:var(--surface-basement);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; color:var(--text-muted); font-size:13px;}
+  .hero .heart{width:56px; height:56px; border-radius:50%;
+    background:var(--accent); color:var(--primary);
+    display:flex; align-items:center; justify-content:center; font-size:24px;}
+
+  h1.title{font-size:22px; font-weight:700; text-align:center;
+    letter-spacing:-.02em; margin-top:20px;}
+  .greeting{text-align:center; color:var(--text-soft); font-size:15px; line-height:1.7;}
+
+  .divider{border:none; border-top:8px solid var(--surface-basement); margin:18px 0 4px;}
+  h2.sec{font-size:17px; font-weight:700; letter-spacing:-.01em; margin-top:6px;}
+  .info-card{background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-lg); padding:16px;
+    font-size:15px; line-height:1.7;}
+  .info-card strong{font-weight:700;}
+  .info-card .sub{color:var(--text-soft); font-size:14px;}
+
+  .btn{display:flex; align-items:center; justify-content:center; gap:6px;
+    width:100%; min-height:48px; border-radius:var(--r-md);
+    font-size:15px; font-weight:700; text-align:center; text-decoration:none;
+    border:1px solid transparent; transition:background .1s;}
+  .btn-primary{background:var(--primary); color:var(--primary-fg);}
+  .btn-primary:active{background:var(--primary-pressed);}
+  .btn-secondary{background:var(--bg); color:var(--text);
+    border-color:var(--border); font-weight:600;}
+  .btn-secondary:active{background:var(--surface-basement);}
+
+  .map-ph{height:160px; background:var(--surface-basement);
+    border-radius:var(--r-lg); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:4px;
+    color:var(--text-muted); font-size:13px;}
+  .map-ph .pin{width:36px; height:36px; border-radius:50%;
+    background:var(--accent); color:var(--primary);
+    display:flex; align-items:center; justify-content:center; font-size:17px;}
+
+  details{border:1px solid var(--border); border-radius:var(--r-lg);
+    background:var(--bg); overflow:hidden;}
+  details summary{padding:14px 16px; font-size:15px; font-weight:600;
+    cursor:pointer; list-style:none; display:flex; justify-content:space-between;
+    align-items:center; min-height:48px;}
+  details summary::after{content:"⌄"; color:var(--text-muted); font-size:14px;
+    transition:transform .15s;}
+  details[open] summary::after{transform:rotate(180deg);}
+  details summary:active{background:var(--surface-basement);}
+  details .d-body{padding:0 16px 14px; font-size:14px; color:var(--text-soft); line-height:1.7;}
+
+  .gift-note{font-size:13px; color:var(--text-muted); text-align:center;}
+
+  .scr-footer{flex:0 0 auto; background:var(--bg);
+    border-top:1px solid var(--border); padding:12px 20px 20px;}
+
+  /* ===== style tile ===== */
+  .tile{width:100%; max-width:760px; background:var(--bg);
+    border:1px solid var(--border); border-radius:16px; padding:28px;
+    display:flex; flex-direction:column; gap:28px;}
+  .tile h3{font-size:14px; font-weight:700; color:var(--text-muted);
+    letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px;}
+  .swatches{display:flex; flex-wrap:wrap; gap:12px;}
+  .swatch{width:118px;}
+  .swatch .chip{height:56px; border-radius:var(--r-md); border:1px solid var(--border);}
+  .swatch .name{font-size:12px; font-weight:600; margin-top:6px;}
+  .swatch .hex{font-size:11px; color:var(--text-muted); font-family:ui-monospace,monospace;}
+
+  .type-row{display:flex; flex-direction:column; gap:10px;}
+  .type-row .t{display:flex; align-items:baseline; gap:14px;}
+  .type-row .t small{flex:0 0 150px; font-size:11px; color:var(--text-muted);
+    font-family:ui-monospace,monospace;}
+  .t-title1{font-size:22px; font-weight:700; letter-spacing:-.02em;}
+  .t-title2{font-size:17px; font-weight:700;}
+  .t-body{font-size:15px;}
+  .t-caption{font-size:13px; color:var(--text-muted);}
+  .t-label{font-size:12px; color:var(--text-muted);}
+
+  .btn-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;}
+  .btn-cell{display:flex; flex-direction:column; gap:6px; align-items:stretch;}
+  .btn-cell small{font-size:11px; color:var(--text-muted); text-align:center;}
+  .demo-btn{min-height:48px; border-radius:var(--r-md); font-size:15px;
+    font-weight:700; border:1px solid transparent;
+    display:flex; align-items:center; justify-content:center;}
+  .p-enabled{background:var(--primary); color:var(--primary-fg);}
+  .p-pressed{background:var(--primary-pressed); color:var(--primary-fg);}
+  .p-selected{background:var(--accent); color:var(--primary); border-color:var(--primary);}
+  .p-disabled{background:var(--primary); color:var(--primary-fg); opacity:.4; cursor:not-allowed;}
+  .s-enabled{background:var(--bg); color:var(--text); border-color:var(--border); font-weight:600;}
+  .s-pressed{background:var(--surface-basement); color:var(--text); border-color:var(--border); font-weight:600;}
+  .s-selected{background:var(--accent); color:var(--primary); border-color:var(--primary); font-weight:700;}
+  .s-disabled{background:var(--bg); color:var(--text); border-color:var(--border); font-weight:600; opacity:.4; cursor:not-allowed;}
+
+  .sample-card{max-width:340px; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-lg); padding:16px; display:flex; flex-direction:column; gap:8px;}
+  .sample-card .card-tag{align-self:flex-start; background:var(--accent); color:var(--primary);
+    font-size:12px; font-weight:700; border-radius:var(--r-chip); padding:4px 12px;}
+  .sample-card h4{font-size:16px; font-weight:700;}
+  .sample-card p{font-size:14px; color:var(--text-muted); line-height:1.6;}
+
+  .radius-row{display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end;}
+  .radius-box{width:88px; height:64px; background:var(--surface-basement);
+    border:1px solid var(--border); display:flex; align-items:flex-end;
+    justify-content:center; padding-bottom:6px;
+    font-size:11px; color:var(--text-muted); font-family:ui-monospace,monospace;}
+  .shadow-note{font-size:13px; color:var(--text-muted); max-width:420px; line-height:1.6;}
+
+  .tile-caption{font-size:13px; color:var(--text-muted); border-top:1px solid var(--border);
+    padding-top:16px; text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- ============ 1. 대표 화면 ============ -->
+  <section class="section" aria-labelledby="label-screen">
+    <p class="section-label" id="label-screen">대표 화면 — 하객 초대장 페이지 (390×844)</p>
+    <div class="device">
+      <div class="scr-body">
+        <p class="notice">공유 링크로 열린 페이지 · 로그인 불필요</p>
+
+        <div class="hero" role="img" aria-label="대표 사진 자리">
+          <span class="heart" aria-hidden="true">♥</span>
+          <span>대표 사진 히어로</span>
+        </div>
+
+        <div class="pad" style="margin-top:0;">
+          <h1 class="title">민준 ♥ 서연, 결혼합니다</h1>
+          <p class="greeting">저희 두 사람이 사랑과 믿음으로<br>한 가정을 이루게 되었습니다.<br>귀한 걸음으로 축복해 주세요.</p>
+
+          <hr class="divider">
+
+          <h2 class="sec">예식 안내</h2>
+          <div class="info-card">
+            <strong>2026년 10월 24일 (토) 오후 1시</strong><br>
+            <span class="sub">OO웨딩홀 3층 그랜드홀</span>
+          </div>
+          <button class="btn btn-secondary" type="button">📅 내 캘린더에 추가</button>
+
+          <h2 class="sec">오시는 길</h2>
+          <div class="map-ph" role="img" aria-label="지도 자리">
+            <span class="pin" aria-hidden="true">📍</span>
+            <span>지도 (플레이스홀더)</span>
+          </div>
+          <button class="btn btn-secondary" type="button">주소 복사 — 서울시 OO구 OO로 123</button>
+
+          <details>
+            <summary>교통 안내</summary>
+            <div class="d-body">지하철 2호선 OO역 3번 출구 도보 5분 · 버스 123, 456번 OO정류장 하차</div>
+          </details>
+          <details>
+            <summary>주차 안내</summary>
+            <div class="d-body">건물 지하 1~3층 주차 가능 · 2시간 무료 (안내데스크 등록)</div>
+          </details>
+
+          <hr class="divider">
+
+          <h2 class="sec">마음 전하실 곳</h2>
+          <button class="btn btn-primary" type="button">💸 축의금 송금하기</button>
+          <p class="gift-note">송금 앱으로 바로 연결됩니다</p>
+        </div>
+      </div>
+      <div class="scr-footer">
+        <button class="btn btn-primary" type="button">참석 여부 회신</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 스타일 타일 ============ -->
+  <section class="section" aria-labelledby="label-tile">
+    <p class="section-label" id="label-tile">스타일 타일 — SEED (당근)</p>
+    <div class="tile">
+
+      <div>
+        <h3>팔레트</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#ffffff;"></div><div class="name">bg-layer-default</div><div class="hex">#ffffff</div></div>
+          <div class="swatch"><div class="chip" style="background:#f8f9fa;"></div><div class="name">bg-layer-fill</div><div class="hex">#f8f9fa</div></div>
+          <div class="swatch"><div class="chip" style="background:#f2f3f6;"></div><div class="name">bg-layer-basement</div><div class="hex">#f2f3f6</div></div>
+          <div class="swatch"><div class="chip" style="background:#212124;"></div><div class="name">fg-neutral</div><div class="hex">#212124</div></div>
+          <div class="swatch"><div class="chip" style="background:#868b94;"></div><div class="name">fg-neutral-subtle</div><div class="hex">#868b94</div></div>
+          <div class="swatch"><div class="chip" style="background:#ff6f0f;"></div><div class="name">bg-brand-solid (carrot)</div><div class="hex">#ff6f0f</div></div>
+          <div class="swatch"><div class="chip" style="background:#e85d00;"></div><div class="name">brand-pressed</div><div class="hex">#e85d00</div></div>
+          <div class="swatch"><div class="chip" style="background:#ffede0;"></div><div class="name">bg-brand-weak</div><div class="hex">#ffede0</div></div>
+          <div class="swatch"><div class="chip" style="background:#e9ecef;"></div><div class="name">stroke-neutral</div><div class="hex">#e9ecef</div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>타입 스케일 — Pretendard 계열</h3>
+        <div class="type-row">
+          <div class="t"><small>title-1 · 22 / 700</small><span class="t-title1">민준 ♥ 서연, 결혼합니다</span></div>
+          <div class="t"><small>title-3 · 17 / 700</small><span class="t-title2">예식 안내</span></div>
+          <div class="t"><small>body · 15 / 400</small><span class="t-body">저희 두 사람이 사랑과 믿음으로 한 가정을 이루게 되었습니다.</span></div>
+          <div class="t"><small>caption-1 · 13 / 400</small><span class="t-caption">2026년 10월 24일 (토) 오후 1시 · OO웨딩홀</span></div>
+          <div class="t"><small>label-2 · 12 / 400</small><span class="t-label">공유 링크로 열린 페이지 · 로그인 불필요</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>버튼 상태 — Primary (carrot solid)</h3>
+        <div class="btn-grid">
+          <div class="btn-cell"><button class="demo-btn p-enabled" type="button">참석 여부 회신</button><small>enabled</small></div>
+          <div class="btn-cell"><button class="demo-btn p-pressed" type="button">참석 여부 회신</button><small>pressed</small></div>
+          <div class="btn-cell"><button class="demo-btn p-selected" type="button">참석합니다</button><small>selected</small></div>
+          <div class="btn-cell"><button class="demo-btn p-disabled" type="button" disabled>참석 여부 회신</button><small>disabled (40%)</small></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>버튼 상태 — Secondary (neutral outline)</h3>
+        <div class="btn-grid">
+          <div class="btn-cell"><button class="demo-btn s-enabled" type="button">내 캘린더에 추가</button><small>enabled</small></div>
+          <div class="btn-cell"><button class="demo-btn s-pressed" type="button">내 캘린더에 추가</button><small>pressed</small></div>
+          <div class="btn-cell"><button class="demo-btn s-selected" type="button">식사 예정</button><small>selected</small></div>
+          <div class="btn-cell"><button class="demo-btn s-disabled" type="button" disabled>내 캘린더에 추가</button><small>disabled (40%)</small></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>카드</h3>
+        <div class="sample-card">
+          <span class="card-tag">예식 안내</span>
+          <h4>2026년 10월 24일 (토) 오후 1시</h4>
+          <p>OO웨딩홀 3층 그랜드홀 · 서울시 OO구 OO로 123<br>지하철 2호선 OO역 3번 출구 도보 5분</p>
+        </div>
+      </div>
+
+      <div>
+        <h3>라운드 &amp; 그림자</h3>
+        <div class="radius-row">
+          <div class="radius-box" style="border-radius:8px;">sm 8px</div>
+          <div class="radius-box" style="border-radius:10px;">md 10px</div>
+          <div class="radius-box" style="border-radius:12px;">lg 12px</div>
+          <div class="radius-box" style="border-radius:9999px; width:120px; height:44px; align-items:center; padding:0;">chip full</div>
+        </div>
+        <p class="shadow-note" style="margin-top:12px;">그림자는 사실상 0 — 면 분리는 bg-layer 배경 톤 차이와 stroke(#e9ecef) 헤어라인으로. 하단 고정 CTA 바에만 얇은 상단 보더.</p>
+      </div>
+
+      <p class="tile-caption">SEED Design System (당근) — seed-design.io foundations: color · typography · radius 기반 적용</p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

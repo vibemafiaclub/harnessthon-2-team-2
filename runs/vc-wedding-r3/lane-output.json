@@ -1,0 +1,319 @@
+{
+  "laneId": "visual-concept",
+  "runId": "vc-wedding-r3",
+  "prdId": "prd-wedding-invitation-v1",
+  "round": 3,
+  "viewport": { "width": 390, "height": 844 },
+  "artifacts": [
+    {
+      "id": "concept-shadcn",
+      "type": "combined-concept",
+      "path": "concept-shadcn.html",
+      "revisionHash": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7",
+      "conceptId": "shadcn"
+    },
+    {
+      "id": "concept-seed",
+      "type": "combined-concept",
+      "path": "concept-seed.html",
+      "revisionHash": "42c866240cdf2efe5a94bd7adbce078b626b1163725ea051ee4dad9ef80c4367",
+      "conceptId": "seed"
+    },
+    {
+      "id": "concept-wanted-montage",
+      "type": "combined-concept",
+      "path": "concept-wanted-montage.html",
+      "revisionHash": "2dc116415adc91a2c85e4ebfb9067fa819da29ec7e141119f2df98b125a29781",
+      "conceptId": "wanted-montage"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "shadcn",
+      "name": "shadcn/ui",
+      "direction": "shadcn/ui 공식 시스템 적용 (구조 고정)",
+      "differentiation": "디자인 시스템 자체가 차별점: Neutral zinc/slate palette with CSS custom properties, subtle borders, rounded-md (0.375-0.5rem), Inter-like sans stack, quiet shadows, muted-foreground secondary text, clear focus rings.",
+      "tokenOverlay": {
+        "bg": "#fafafa",
+        "surface": "#ffffff",
+        "text": "#09090b",
+        "textMuted": "#71717a",
+        "primary": "#18181b",
+        "primaryForeground": "#fafafa",
+        "accent": "#f4f4f5",
+        "border": "#e4e4e7",
+        "focusRing": "#18181b",
+        "radius": { "sm": "0.375rem", "md": "0.5rem", "lg": "0.625rem", "chip": "9999px" },
+        "fontStack": "'Inter', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",
+        "shadow": "quiet — shadow-sm(0 1px 2px rgba(0,0,0,.05))만 카드/CTA에 사용, hover에도 확대하지 않음"
+      }
+    },
+    {
+      "id": "seed",
+      "name": "SEED (Daangn)",
+      "direction": "SEED (Daangn) 공식 시스템 적용 (구조 고정)",
+      "differentiation": "디자인 시스템 자체가 차별점: Daangn SEED foundations: warm functional palette with semantic fg/bg/stroke roles, friendly rounded shapes, mobile-first density, clear pressed/disabled states, Pretendard-like Korean type.",
+      "tokenOverlay": {
+        "bg": "#ffffff",
+        "surface": "#f8f9fa",
+        "surfaceBasement": "#f2f3f6",
+        "text": "#212124",
+        "textMuted": "#868b94",
+        "primary": "#ff6f0f",
+        "primaryPressed": "#e85d00",
+        "primaryForeground": "#ffffff",
+        "accent": "#ffede0",
+        "border": "#e9ecef",
+        "radius": { "sm": "8px", "md": "10px", "lg": "12px", "chip": "9999px" },
+        "fontStack": "'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",
+        "shadow": "none-to-minimal — 그림자 대신 배경 톤 레이어(bg-layer)로 면을 구분, 하단 고정 CTA 바에만 얇은 상단 보더"
+      }
+    },
+    {
+      "id": "wanted-montage",
+      "name": "Wanted Montage (web)",
+      "direction": "Wanted Montage (web) 공식 시스템 적용 (구조 고정)",
+      "differentiation": "디자인 시스템 자체가 차별점: Wanted Montage web design system (@wanteddev/wds): professional product feel, confident primary color usage, structured spacing, crisp typography hierarchy, businesslike restraint.",
+      "tokenOverlay": {
+        "bg": "#ffffff",
+        "surface": "#f7f8f9",
+        "text": "#171717",
+        "textMuted": "#767676",
+        "primary": "#3366ff",
+        "primaryPressed": "#2952cc",
+        "primaryForeground": "#ffffff",
+        "accent": "#eef3ff",
+        "border": "#e8ebed",
+        "radius": { "sm": "6px", "md": "8px", "lg": "10px", "chip": "9999px" },
+        "fontStack": "'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif",
+        "shadow": "crisp-and-restrained — 카드에는 보더만, 고정 하단 CTA 바에 0 -2px 8px rgba(0,0,0,.06) 정도의 얕은 분리 그림자"
+      }
+    }
+  ],
+  "qualityChecks": [
+    {
+      "criterionId": "shadcn:mech-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Single self-contained HTML file, no external scripts/stylesheets/images",
+      "observed": "All CSS inline in one <style> block; no <script>, <link>, @import, or external URLs; placeholders are CSS gradients. Font stack names Inter/Pretendard with system fallbacks but loads nothing externally."
+    },
+    {
+      "criterionId": "shadcn:mech-lang-ko",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "<html lang=\"ko\">",
+      "observed": "Line 2: <html lang=\"ko\">."
+    },
+    {
+      "criterionId": "shadcn:mech-korean-text",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Real Korean copy, no lorem/placeholder gibberish",
+      "observed": "Full Korean copy throughout: '민준 ♥ 서연, 결혼합니다', greeting 3 lines, '예식 안내', '오시는 길', '마음 전하실 곳', accordion bodies with transit/parking details, dates and addresses."
+    },
+    {
+      "criterionId": "shadcn:spec-structure-w-guest",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Same section order and all 12 content blocks as wireframe-wizard.html screen w-guest",
+      "observed": "Exact order match (concept lines 125-150 vs wireframe lines 397-425): meta note '공유 링크로 열린 페이지 · 로그인 불필요' → 220px hero '대표 사진' → title '민준 ♥ 서연, 결혼합니다' → 3-line centered greeting → divider → 예식 안내 (일시·장소 + '내 캘린더에 추가' outline button) → 오시는 길 (150px map placeholder + '주소 복사 — 서울시 OO구 OO로 123') → details/summary 교통 안내 → details/summary 주차 안내 → divider → 마음 전하실 곳 ('축의금 송금하기' button) → fixed footer (.scr-footer flex:none outside scroll area) with '참석 여부 회신' primary CTA. No blocks added, removed, or reordered; ghost buttons rendered as shadcn outline variant, a style-only substitution."
+    },
+    {
+      "criterionId": "shadcn:spec-style-tile",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile complete: palette + type scale + buttons in 4 states + card + source caption",
+      "observed": "Palette: 8 labeled swatches with hex + zinc token names. Type scale: 5 rows (Display 22/600 → Caption 11). Buttons: primary enabled/pressed/focus-ring/disabled and outline enabled/pressed/selected/disabled (8 cells). Sample card with header/body/actions. Radius & shadow row. Caption cites 'System: shadcn/ui — 공식 소스 https://ui.shadcn.com/docs' (line 222)."
+    },
+    {
+      "criterionId": "shadcn:a11y-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body-text contrast >= 4.5:1 computed from actual hex values",
+      "observed": "Primary text #09090b on #ffffff = 19.3:1. Muted text #71717a: on #ffffff card = 4.83:1, on #fafafa page bg = 4.63:1 — both pass WCAG AA for the 13-14px body sizes used. Primary button #fafafa on #18181b ≈ 17:1."
+    },
+    {
+      "criterionId": "shadcn:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Interactive tap targets >= 44px",
+      "observed": ".btn has min-height:44px (line 58) covering all buttons and the footer CTA; details summary has min-height:44px (line 69). Focus-visible 2px ring defined on both."
+    },
+    {
+      "criterionId": "shadcn:aes-shadcn-fidelity",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Faithful to shadcn/ui character: zinc palette via CSS custom properties, subtle 1px borders, rounded-md 0.375-0.5rem, Inter-like sans, quiet shadows, muted-foreground, clear focus rings",
+      "observed": "CSS custom properties use exact shadcn zinc default hexes (#09090b zinc-950 foreground, #18181b zinc-900 primary, #71717a zinc-500 muted-foreground, #e4e4e7 zinc-200 border, #f4f4f5 accent, #fafafa background); radii 0.375/0.5/0.625rem; shadow-sm 0 1px 2px rgba(0,0,0,.05); Inter-first stack; 2px focus ring with offset; hover states use zinc-800/accent, matching shadcn button variants."
+    },
+    {
+      "criterionId": "shadcn:aes-distinct",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Visually distinct from the other two concept systems",
+      "observed": "concept-seed.html uses Karrot-style orange (#ff6f0f primary, #ffede0 accent); concept-wanted-montage.html uses blue (#3366ff). This concept is the only achromatic zinc-neutral one — clearly separable."
+    },
+    {
+      "criterionId": "shadcn:aes-hierarchy",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent visual hierarchy",
+      "observed": "Clear type ladder (22px display → 15px section headings with negative tracking → 13px muted body → 11px captions); structure carried by 1px borders and dividers, single dark primary CTA isolated in a bordered fixed footer; consistent 14px gap rhythm in scroll body."
+    },
+    {
+      "criterionId": "seed:mechanical-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Single self-contained HTML file with no external resource references",
+      "observed": "No <link>, <script src>, @import, or external image URLs in the file; 'Pretendard' appears only as a font-family name with -apple-system/Apple SD Gothic Neo/Noto Sans KR fallbacks (no webfont load)."
+    },
+    {
+      "criterionId": "seed:mechanical-lang-ko",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "lang=\"ko\" on the html element",
+      "observed": "Line 2: <html lang=\"ko\">."
+    },
+    {
+      "criterionId": "seed:mechanical-korean-text",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Real Korean copy, no lorem/placeholder gibberish",
+      "observed": "Genuine Korean throughout: '민준 ♥ 서연, 결혼합니다', 3-line greeting, '예식 안내', '오시는 길', '교통 안내', '주차 안내', '마음 전하실 곳', '참석 여부 회신', dates/addresses in Korean."
+    },
+    {
+      "criterionId": "seed:spec-structure-match",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Same section order and 12 content blocks as wireframe-wizard.html screen w-guest: notice, hero, title, 3-line greeting, divider, 예식 안내 + calendar ghost button, 오시는 길 map + 주소 복사 ghost button, 교통 details, 주차 details, divider, 축의금 button, fixed footer 참석 여부 회신 CTA",
+      "observed": "All 12 blocks present in exact wireframe order (lines 161-206): .notice meta note, hero placeholder, centered h1 title, 3-line centered greeting, hr.divider, 예식 안내 section with date/venue + '내 캘린더에 추가' outline (ghost-equivalent) button, 오시는 길 with map placeholder + '주소 복사' button, two details/summary accordions (교통/주차), second hr.divider, '축의금 송금하기' button, fixed .scr-footer with '참석 여부 회신' primary CTA. Style-only deltas: hero 230px vs 220px, map 160px vs 150px, '(송금 앱 딥링크)' rendered as caption '송금 앱으로 바로 연결됩니다' below the button instead of inside the label — no block added, removed, or reordered."
+    },
+    {
+      "criterionId": "seed:spec-style-tile-complete",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile with palette, type scale, buttons in 4 states, card sample, and source caption",
+      "observed": "Tile contains 9 hex-labeled palette swatches, 5-step Pretendard type scale (22/17/15/13/12), primary buttons in enabled/pressed/selected/disabled and secondary buttons in the same 4 states, a sample card, radius & shadow spec row, and source caption 'SEED Design System (당근) — seed-design.io foundations' (lines 213-282)."
+    },
+    {
+      "criterionId": "seed:a11y-body-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body text contrast >= 4.5:1 computed from actual hex values",
+      "observed": "Primary body #212124 on #ffffff = 16.1:1; soft body/greeting #6b7280 on #ffffff = 4.8:1 and on card #f8f9fa = 4.6:1 — all pass. Muted #868b94 (3.4:1 on white) is confined to 11-13px captions/labels/hex annotations, not body copy."
+    },
+    {
+      "criterionId": "seed:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Interactive tap targets >= 44px",
+      "observed": ".btn and .demo-btn have min-height:48px; details summary has min-height:48px with 14px padding; footer CTA uses .btn (48px). All interactive elements are full-width or >=118px wide."
+    },
+    {
+      "criterionId": "seed:aesthetic-seed-fidelity",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Faithful to Daangn SEED official character: warm functional palette with semantic fg/bg/stroke roles, friendly rounded shapes, mobile-first density, clear pressed/disabled states, Pretendard-like Korean type",
+      "observed": "Carrot #ff6f0f with darker pressed #e85d00 and weak tint #ffede0; token names mirror SEED semantics (bg-layer-default/fill/basement, fg-neutral, fg-neutral-subtle, bg-brand-solid, stroke-neutral); 8/10/12px radii + full chip; shadows near zero with hairline strokes per SEED convention (explicitly documented in tile); 390x844 mobile frame; pressed (:active) and 40%-opacity disabled states defined; Pretendard-first Korean stack."
+    },
+    {
+      "criterionId": "seed:aesthetic-distinct",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Visually distinct from the other two concept systems",
+      "observed": "SEED concept is warm carrot orange on white with soft-rounded flat surfaces; concept-shadcn.html is zinc/near-black (--primary:#18181b, --bg:#fafafa, 14px base, shadow-driven); concept-wanted-montage.html is Wanted blue (--primary:#3366ff, accent bar headings). Three clearly separate identities."
+    },
+    {
+      "criterionId": "seed:aesthetic-hierarchy",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent visual hierarchy",
+      "observed": "Clear scale 22px/700 title > 17px/700 section heads > 15px body > 13px captions; thick 8px basement-tone dividers segment sections as in Daangn feed; single orange primary CTA reserved for 송금/회신 actions while utility actions use neutral outline buttons; fixed footer isolates the main CTA."
+    },
+    {
+      "criterionId": "wanted-montage:mechanical-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "No external scripts/stylesheets/images; single-file HTML",
+      "observed": "grep for http/@import/<script src returns 0 matches; all CSS inline, placeholders are inline SVG; font stack is local ('Pretendard' with system fallbacks, no webfont load)"
+    },
+    {
+      "criterionId": "wanted-montage:mechanical-lang-ko",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "<html lang=\"ko\">",
+      "observed": "Line 2: <html lang=\"ko\">"
+    },
+    {
+      "criterionId": "wanted-montage:mechanical-korean-text",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Real Korean copy, no lorem/placeholder gibberish",
+      "observed": "Genuine Korean throughout: greeting text, 예식 안내 (2026년 10월 24일 (토) 오후 1시, OO웨딩홀 3층 그랜드홀), 교통/주차 안내 details bodies, style-tile labels"
+    },
+    {
+      "criterionId": "wanted-montage:spec-structure-w-guest",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Same 12-block order as wireframe w-guest: meta note, 220px hero, title, 3-line greeting, divider, 예식 안내 + calendar ghost, 오시는 길 map 150px + 주소 복사 ghost, 교통 details, 주차 details, divider, 축의금 button, fixed footer primary CTA",
+      "observed": "All 12 blocks present in identical order (lines 168-229): meta-note; .ph height:220px hero; g-title '민준 ♥ 서연, 결혼합니다'; 3-line centered greeting; hr.divider; 예식 안내 with 일시/장소 info-card + '내 캘린더에 추가' btn-outline; 오시는 길 with .ph height:150px map + '주소 복사' btn-outline; details 교통 안내; details 주차 안내; hr.divider; 마음 전하실 곳 '축의금 송금하기 (송금 앱 딥링크)' button; scr-footer with btn-primary '참석 여부 회신'. No blocks added/removed/reordered; 일시·장소 text restyled into a label-value card but content identical — style-only drift"
+    },
+    {
+      "criterionId": "wanted-montage:spec-style-tile-complete",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile with palette, type scale, buttons in 4 states, card sample, source caption",
+      "observed": "Palette: 8 swatches with hex (lines 240-259); type scale 4 rows Pretendard 20/15/14/12 (261-269); Primary+Secondary button lanes each with enabled/pressed/selected/disabled (272-289); card sample (291-298); radius/shadow row; tile-caption citing @wanteddev/wds, montage.wanted.co.kr, github.com/wanteddev/montage-web (line 311)"
+    },
+    {
+      "criterionId": "wanted-montage:a11y-body-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body-text contrast >= 4.5:1 computed from actual hex",
+      "observed": "Body #171717 on #ffffff = 15.4:1. Muted #767676 on #ffffff = 4.55:1 (used at 12px captions, passes AA normal text). Primary button #ffffff on #3366ff = 4.68:1 at 14px/600. Outline button #3366ff on #ffffff = 4.68:1. All >= 4.5:1"
+    },
+    {
+      "criterionId": "wanted-montage:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Interactive targets >= 44px",
+      "observed": ".btn min-height:48px (all screen buttons + footer CTA); details summary min-height:48px; style-tile .sample-btn min-height:44px min-width:104px. No sub-44px interactive elements"
+    },
+    {
+      "criterionId": "wanted-montage:aesthetic-system-fidelity",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Faithful to Wanted Montage web character: confident primary blue, structured spacing, crisp hierarchy, businesslike restraint",
+      "observed": "Wanted blue #3366ff primary with pressed #2952cc and tint #eef3ff; Pretendard stack; -.01em letter-spacing on headings; 6/8/10px radii; flat borders #e8ebed with single subtle bottom-bar shadow; label-value info-card and blue text affordance ('펼치기/접기') on accordions — reads as a restrained product system, no decorative flourish"
+    },
+    {
+      "criterionId": "wanted-montage:aesthetic-distinct",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Visually distinct from the other two concepts",
+      "observed": "concept-seed uses orange #ff6f0f primary, concept-shadcn uses zinc #18181b near-black on #fafafa; this concept's #3366ff blue product style is clearly separate from both"
+    },
+    {
+      "criterionId": "wanted-montage:aesthetic-hierarchy",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent visual hierarchy",
+      "observed": "Clear scale: title 20/700 > section heading 15/600 > body 14/400 > caption 12 muted; sections separated by dividers; single primary CTA isolated in fixed footer while in-body actions are outline/neutral — one focal action per screen"
+    }
+  ],
+  "repairHistory": [
+    {
+      "attempt": 1,
+      "trigger": "seed: a11y-contrast",
+      "change": "Added a --text-soft:#6b7280 token (4.83:1 on white) and switched the three failing body-copy rules (.greeting, .info-card .sub, details .d-body) from --text-muted to it, leaving --text-muted #868b94 in place for small captions/labels.",
+      "result": "rechecked"
+    }
+  ],
+  "timing": {
+    "startedAt": "2026-09-05T16:31:45+09:00",
+    "finishedAt": "2026-09-05T16:37:05+09:00",
+    "budgetNote": "Generation took ~5m20s, well within the 15-minute lane target; no overrun."
+  },
+  "rationaleSummary": "Structure is FIXED to runs/wf-wedding-r3/wireframe-wizard.html (하객 초대장 페이지, screen w-guest): all three concepts render the identical 12-block section order, so the differences between concept-shadcn, concept-seed, and concept-wanted-montage are pure design-system style (palette, radius, type, shadow, button language). Clients compare style only; any structural feedback routes back to the wireframe stage rather than being absorbed here."
+}

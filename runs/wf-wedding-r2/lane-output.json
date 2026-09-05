@@ -1,0 +1,131 @@
+{
+  "laneId": "wireframe",
+  "runId": "wf-wedding-r2",
+  "prdId": "prd-wedding-invitation-v1",
+  "round": 2,
+  "viewport": { "width": 390, "height": 844 },
+  "artifacts": [
+    {
+      "id": "wireframe",
+      "type": "clickable-wireframe",
+      "path": "wireframe.html",
+      "revisionHash": "ecfd48399ceb691ce11f6e9fe7de17aa978e2bc9fc7023b08732c14c5d4c0c7c"
+    }
+  ],
+  "screens": [
+    {
+      "id": "template-gallery",
+      "name": "템플릿 갤러리",
+      "purpose": "커플이 청첩장 디자인 템플릿을 둘러보고 하나를 선택해 제작을 시작하는 진입 화면 (mustHave: Template gallery, flow-build 1단계)",
+      "reachedFrom": []
+    },
+    {
+      "id": "invitation-editor",
+      "name": "청첩장 편집",
+      "purpose": "신랑·신부 이름, 예식 일시, 예식장, 사진, 인사말을 입력해 청첩장을 완성하는 화면 (mustHave: Invitation editor, flow-build 2~3단계 병합)",
+      "reachedFrom": ["template-gallery", "publish-share"]
+    },
+    {
+      "id": "guest-preview",
+      "name": "게스트 화면 미리보기",
+      "purpose": "게시 전에 하객에게 보일 모습을 그대로 확인하는 화면 (flow-build 4단계)",
+      "reachedFrom": ["invitation-editor"]
+    },
+    {
+      "id": "publish-share",
+      "name": "게시 완료·링크 공유",
+      "purpose": "청첩장을 게시하고 공유 링크를 복사해 하객에게 전달하는 화면 (flow-build 5단계)",
+      "reachedFrom": ["guest-preview"]
+    },
+    {
+      "id": "guest-invitation",
+      "name": "하객용 청첩장",
+      "purpose": "하객이 로그인 없이 공유 링크로 열어 인사말·일시·오시는 길·교통/주차 안내를 보는 화면 (mustHave: Guest invitation page, flow-guest 1~3단계 병합)",
+      "reachedFrom": ["publish-share", "rsvp-form"]
+    },
+    {
+      "id": "rsvp-form",
+      "name": "참석 여부 회신",
+      "purpose": "하객이 참석 여부, 인원수, 식사 선택을 제출하는 화면 (mustHave: RSVP form, flow-guest 4단계, 저사양 폰 대응 경량 폼)",
+      "reachedFrom": ["guest-invitation"]
+    }
+  ],
+  "qualityChecks": [
+    {
+      "criterionId": "mech-screens-exist",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "All 6 plan screens exist as routable sections",
+      "observed": "All 6 sections present with ids screen-template-gallery, screen-invitation-editor, screen-guest-preview, screen-publish-share, screen-guest-invitation, screen-rsvp-form; the hash router (route()/showScreen()) activates each, and SCREENS array lists exactly these 6."
+    },
+    {
+      "criterionId": "mech-edges-clickable",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Every plan edge has a working clickable route to an existing screen",
+      "observed": "All 8 plan edges have data-go handlers with correct Korean button copy: template-gallery->invitation-editor (4x '이 템플릿 선택'), invitation-editor->guest-preview ('미리보기'), guest-preview->invitation-editor ('편집으로 돌아가기'), guest-preview->publish-share ('게시하기'), publish-share->invitation-editor ('계속 수정하기' link-btn), publish-share->guest-invitation ('게시된 청첩장 보기'), guest-invitation->rsvp-form ('참석 여부 전하기'), rsvp-form->guest-invitation ('청첩장으로 돌아가기'). Each target is in SCREENS; click sets location.hash and hashchange routes it. Flow-map SVG boxes also link to all 6 screens via href=#screen-*."
+    },
+    {
+      "criterionId": "mech-no-external-assets",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "No external asset URLs (scripts, styles, images, fonts)",
+      "observed": "No external src/href/link/@import anywhere; all CSS and JS inline, images are dashed .ph placeholder divs. The only http string is 'https://example.invite/minjun-seoyeon' as inert text in the readonly share-link input value, not a loaded asset."
+    },
+    {
+      "criterionId": "mech-lang-h1",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "lang attribute on html; one h1 per screen",
+      "observed": "<html lang=\"ko\"> present; each of the 6 screen sections contains exactly one h1 (e.g. '청첩장 템플릿 고르기', '참석 여부 회신', guest page uses '민준 ♥ 서연')."
+    },
+    {
+      "criterionId": "mech-inputs-labeled",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Every input/textarea/select associated with a label",
+      "observed": "All 13 form controls labeled: 9 via label[for] matching ids (groom-name, bride-name, wedding-date, wedding-time, venue, greeting, rsvp-name, companions), share-url via aria-label='공유 링크 주소', 4 radios wrapped in <label> inside fieldsets with legends ('참석 여부', '식사 여부')."
+    },
+    {
+      "criterionId": "ux-flow-build",
+      "axis": "ux-task",
+      "status": "pass",
+      "expected": "flow-build (choose template → enter details → photos/greeting → preview → publish/copy link) completable by clicking",
+      "observed": "Traced: 화면 tab → screen-template-gallery → '이 템플릿 선택' → screen-invitation-editor (신랑/신부 이름, 예식 날짜/시간, 예식장 inputs; '＋ 사진 추가' button + preview placeholder; 인사말 textarea) → '미리보기' → screen-guest-preview (guest-view card) → '게시하기' → screen-publish-share showing share URL input + '링크 복사' button and 카카오톡/문자 share options. Every step is a real clickable transition."
+    },
+    {
+      "criterionId": "ux-flow-guest",
+      "axis": "ux-task",
+      "status": "pass",
+      "expected": "flow-guest (open link → greeting/date/venue+map → transport/parking → RSVP with headcount+meal → optional transfer) completable by clicking",
+      "observed": "Traced: screen-guest-invitation (인사말 card, 예식 안내 date/venue, 오시는 길 map placeholder, 교통·주차 안내 card with 지하철/셔틀/주차 rows; '축하 마음 전하기 (송금 앱으로 이동)' button covers the optional transfer step) → '참석 여부 전하기' → screen-rsvp-form (성함, 참석 여부 radios, 동행 인원 number = headcount, 식사 여부 radios) → '제출하기' submit swaps form for #rsvp-done thank-you via JS → '청첩장으로 돌아가기' returns to guest invitation. Also matches constraint '로그인 없이 열람' noted on the guest page."
+    },
+    {
+      "criterionId": "spec-must-have-screens",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "mustHaveScreens (Template gallery, Invitation editor, Guest invitation page, RSVP form) and all coreFlow steps represented",
+      "observed": "All 4 mustHaveScreens present, plus guest-preview and publish-share covering the 'Preview the guest view' and 'Publish and copy the share link' flow steps. Every step of both coreFlows maps to visible UI (see ux checks); all copy is Korean per constraint 1."
+    },
+    {
+      "criterionId": "aesthetic-lowfi",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Low-fi discipline (no brand styling leaked) and legible hierarchy",
+      "observed": "Pure grayscale palette (#e5e5e5 bg, #444 primary buttons, dashed #999 placeholders) — brandHints ('warm, celebratory') deliberately deferred, noted in copy as '시각 디자인은 별도 단계에서 진행'. Hierarchy legible: 18px h1 + 11px purpose line + 13px h2 sections, primary vs secondary buttons distinguished by fill weight only."
+    },
+    {
+      "criterionId": "a11y-basics",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Mechanical accessibility basics (lang, per-screen h1, labeled inputs)",
+      "observed": "All mechanical a11y checks above pass; additionally tabs use role=tablist/tab with aria-selected, flow SVG has role=img with aria-label, SVG screen links and back button carry aria-labels, decorative '＋' is aria-hidden."
+    }
+  ],
+  "repairHistory": [],
+  "timing": {
+    "startedAt": "2026-09-05T15:37:39+09:00",
+    "finishedAt": "2026-09-05T15:41:47+09:00"
+  },
+  "rationaleSummary": "The prototype keeps the PRD's two core flows as two disjoint clickable loops (builder: template-gallery → editor → preview → publish; guest: invitation → RSVP), merging PRD steps that share one surface (editor absorbs details+photos+greeting; guest page absorbs greeting/venue/transport) to stay at 6 screens. A hash-based router with one section per screen keeps every edge a real navigable link, including a flow-map overview whose SVG boxes deep-link to each screen. Low-fi grayscale styling and dashed placeholders deliberately defer brand direction to the visual-concept lane."
+}

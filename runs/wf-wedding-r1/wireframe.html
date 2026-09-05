@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Invitation Wireframe</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f2f2f2;
+    color: #222;
+  }
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #e0e0e0;
+    border-bottom: 2px solid #999;
+  }
+  .tabs button {
+    font-size: 14px;
+    padding: 8px 20px;
+    border: 2px solid #666;
+    background: #fff;
+    cursor: pointer;
+  }
+  .tabs button[aria-selected="true"] {
+    background: #444;
+    color: #fff;
+  }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ---------- Flow map ---------- */
+  #flow-map { padding: 24px; overflow-x: auto; }
+  .flow-canvas {
+    position: relative;
+    width: 900px;
+    height: 540px;
+    margin: 0 auto;
+  }
+  .flow-canvas svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .flow-node {
+    position: absolute;
+    width: 200px;
+    height: 72px;
+    border: 2px solid #444;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .flow-node small { display: block; font-weight: 400; color: #777; font-size: 11px; margin-top: 2px; }
+  .flow-node:hover { background: #ddd; }
+  .edge-label {
+    font-size: 11px;
+    fill: #333;
+  }
+  .edge-line { stroke: #555; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+  .flow-hint { text-align: center; color: #666; font-size: 13px; margin: 0 0 8px; }
+
+  /* ---------- Screens ---------- */
+  #screens { padding: 24px; }
+  .device-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .device {
+    width: 390px;
+    height: 844px;
+    border: 3px solid #333;
+    border-radius: 24px;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .device-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 2px solid #999;
+    background: #eee;
+    flex: 0 0 auto;
+  }
+  .device-bar .back-btn {
+    border: 1px solid #666;
+    background: #fff;
+    padding: 4px 10px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .device-bar .bar-title { font-size: 12px; color: #666; }
+  .screen { display: none; flex: 1 1 auto; overflow-y: auto; padding: 16px; }
+  .screen.active { display: block; }
+  .screen h1 { font-size: 18px; margin: 0 0 12px; }
+  .ph {
+    background: repeating-linear-gradient(45deg, #ddd, #ddd 8px, #eee 8px, #eee 16px);
+    border: 1px dashed #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+  }
+  .card { border: 2px solid #999; padding: 10px; margin-bottom: 12px; background: #fafafa; }
+  .tag { display: inline-block; border: 1px solid #888; padding: 1px 8px; font-size: 11px; color: #555; margin-right: 4px; background: #eee; }
+  button.cta, a.cta {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 15px;
+    border: 2px solid #444;
+    background: #ccc;
+    cursor: pointer;
+    text-align: center;
+    color: #111;
+    text-decoration: none;
+  }
+  button.cta.secondary, a.cta.secondary { background: #fff; border-style: dashed; }
+  label { display: block; font-size: 13px; margin: 12px 0 4px; font-weight: 600; }
+  input[type="text"], input[type="date"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #888;
+    font-size: 14px;
+    background: #fff;
+  }
+  fieldset { border: 1px solid #999; margin: 12px 0; padding: 8px 12px; }
+  legend { font-size: 13px; font-weight: 600; }
+  .radio-row { font-size: 14px; margin: 6px 0; font-weight: 400; display: block; }
+  .stepper { display: flex; align-items: center; gap: 12px; }
+  .stepper button { width: 40px; height: 40px; font-size: 18px; border: 2px solid #666; background: #eee; cursor: pointer; }
+  .stepper output { font-size: 16px; min-width: 32px; text-align: center; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .note { font-size: 11px; color: #777; margin-top: 4px; }
+  .toast {
+    border: 2px solid #444;
+    background: #ddd;
+    padding: 10px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .share-row { display: flex; gap: 6px; margin-top: 8px; }
+  .share-row input { flex: 1; }
+  .share-row button { border: 2px solid #444; background: #ccc; padding: 8px 12px; cursor: pointer; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<nav class="tabs" aria-label="Wireframe views">
+  <button id="tab-flow" aria-selected="true" onclick="showFlow()">Flow map</button>
+  <button id="tab-screens" aria-selected="false" onclick="go('template-gallery')">Screens</button>
+</nav>
+
+<!-- ============ FLOW MAP VIEW ============ -->
+<section id="flow-map" class="view active" aria-label="Flow map">
+  <p class="flow-hint">Mobile wedding invitation builder &mdash; click any box to open that screen</p>
+  <div class="flow-canvas">
+    <svg aria-hidden="true">
+      <defs>
+        <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="#555"></path>
+        </marker>
+      </defs>
+      <!-- template-gallery -> invitation-editor -->
+      <line class="edge-line" x1="240" y1="76" x2="336" y2="76"></line>
+      <text class="edge-label" x="244" y="66">Choose a template</text>
+      <!-- invitation-editor -> guest-preview -->
+      <line class="edge-line" x1="540" y1="62" x2="636" y2="62"></line>
+      <text class="edge-label" x="530" y="52">Preview the guest view</text>
+      <!-- guest-preview -> invitation-editor -->
+      <line class="edge-line" x1="636" y1="96" x2="540" y2="96"></line>
+      <text class="edge-label" x="552" y="112">Back to edit</text>
+      <!-- guest-preview -> publish-share -->
+      <line class="edge-line" x1="740" y1="112" x2="740" y2="296"></line>
+      <text class="edge-label" x="748" y="204">Publish</text>
+      <!-- publish-share -> guest-invitation -->
+      <line class="edge-line" x1="636" y1="332" x2="540" y2="332"></line>
+      <text class="edge-label" x="500" y="322" text-anchor="middle">Open shared link (guest entry)</text>
+      <!-- guest-invitation -> rsvp-form -->
+      <line class="edge-line" x1="336" y1="318" x2="240" y2="318"></line>
+      <text class="edge-label" x="288" y="308" text-anchor="middle">Tap RSVP</text>
+      <!-- rsvp-form -> guest-invitation -->
+      <line class="edge-line" x1="240" y1="352" x2="336" y2="352"></line>
+      <text class="edge-label" x="288" y="376" text-anchor="middle">Submit RSVP</text>
+      <text class="edge-label" x="288" y="390" text-anchor="middle">(returns with confirmation)</text>
+    </svg>
+
+    <button class="flow-node" style="left:40px; top:40px;" onclick="go('template-gallery')">
+      1. Template Gallery
+      <small>Browse and pick a template</small>
+    </button>
+    <button class="flow-node" style="left:340px; top:40px;" onclick="go('invitation-editor')">
+      2. Invitation Editor
+      <small>Names, date, venue, photos</small>
+    </button>
+    <button class="flow-node" style="left:640px; top:40px;" onclick="go('guest-preview')">
+      3. Guest View Preview
+      <small>See exactly what guests see</small>
+    </button>
+    <button class="flow-node" style="left:640px; top:296px;" onclick="go('publish-share')">
+      4. Publish &amp; Share
+      <small>Copy the shareable link</small>
+    </button>
+    <button class="flow-node" style="left:340px; top:296px;" onclick="go('guest-invitation')">
+      5. Guest Invitation Page
+      <small>No login &mdash; greeting, map, RSVP</small>
+    </button>
+    <button class="flow-node" style="left:40px; top:296px;" onclick="go('rsvp-form')">
+      6. RSVP Form
+      <small>Headcount + meal preference</small>
+    </button>
+  </div>
+</section>
+
+<!-- ============ SCREENS VIEW ============ -->
+<section id="screens" class="view" aria-label="Screens">
+  <div class="device-wrap">
+    <div class="device">
+      <div class="device-bar">
+        <button class="back-btn" onclick="goBack()" aria-label="Go back">&#8592; Back</button>
+        <span class="bar-title" id="bar-title">Screen</span>
+      </div>
+
+      <!-- Screen: Template Gallery -->
+      <div class="screen" id="screen-template-gallery" data-title="Template Gallery" data-back="flow">
+        <h1>Template Gallery</h1>
+        <p class="note">Pick a template to start building your invitation.</p>
+
+        <div class="card">
+          <div class="ph" style="height:120px;">Template thumbnail</div>
+          <p style="margin:8px 0 4px; font-size:14px;"><strong>Blossom</strong></p>
+          <span class="tag">warm</span><span class="tag">classic</span>
+          <button class="cta" onclick="go('invitation-editor')">Use this template</button>
+        </div>
+
+        <div class="card">
+          <div class="ph" style="height:120px;">Template thumbnail</div>
+          <p style="margin:8px 0 4px; font-size:14px;"><strong>Serif Classic</strong></p>
+          <span class="tag">classic</span><span class="tag">trustworthy</span>
+          <button class="cta" onclick="go('invitation-editor')">Use this template</button>
+        </div>
+
+        <div class="card">
+          <div class="ph" style="height:120px;">Template thumbnail</div>
+          <p style="margin:8px 0 4px; font-size:14px;"><strong>Minimal Line</strong></p>
+          <span class="tag">modern</span>
+          <button class="cta" onclick="go('invitation-editor')">Use this template</button>
+        </div>
+      </div>
+
+      <!-- Screen: Invitation Editor -->
+      <div class="screen" id="screen-invitation-editor" data-title="Invitation Editor" data-back="template-gallery">
+        <h1>Invitation Editor</h1>
+        <p class="note">Enter your details &mdash; changes appear on the chosen template.</p>
+
+        <label for="ed-names">Couple names</label>
+        <input type="text" id="ed-names" placeholder="e.g. Jiyoon &amp; Minho">
+
+        <label for="ed-date">Wedding date</label>
+        <input type="date" id="ed-date">
+
+        <label for="ed-venue">Venue name</label>
+        <input type="text" id="ed-venue" placeholder="e.g. The Garden Hall">
+
+        <label for="ed-address">Venue address</label>
+        <input type="text" id="ed-address" placeholder="Street address">
+
+        <fieldset>
+          <legend>Photos</legend>
+          <div class="grid2">
+            <button type="button" class="ph" style="height:90px; width:100%; cursor:pointer;">+ Add photo</button>
+            <button type="button" class="ph" style="height:90px; width:100%; cursor:pointer;">+ Add photo</button>
+          </div>
+        </fieldset>
+
+        <label for="ed-greeting">Greeting message</label>
+        <textarea id="ed-greeting" rows="4" placeholder="Write a short greeting for your guests..."></textarea>
+
+        <button class="cta" onclick="go('guest-preview')">Preview the guest view</button>
+      </div>
+
+      <!-- Screen: Guest View Preview -->
+      <div class="screen" id="screen-guest-preview" data-title="Guest View Preview" data-back="invitation-editor">
+        <h1>Guest View Preview</h1>
+        <p class="note">This is exactly what guests will see when they open your link.</p>
+
+        <div class="card" style="padding:6px;">
+          <div class="ph" style="height:160px;">Hero photo</div>
+          <div style="padding:10px; text-align:center;">
+            <div class="ph" style="height:22px; margin-bottom:6px;">Couple names</div>
+            <div class="ph" style="height:16px; margin-bottom:6px;">Wedding date</div>
+            <div class="ph" style="height:48px; margin-bottom:6px;">Greeting message</div>
+            <div class="ph" style="height:80px;">Venue + map</div>
+          </div>
+        </div>
+
+        <button class="cta secondary" onclick="go('invitation-editor')">Back to edit</button>
+        <button class="cta" onclick="go('publish-share')">Publish</button>
+      </div>
+
+      <!-- Screen: Publish and Share -->
+      <div class="screen" id="screen-publish-share" data-title="Publish and Share" data-back="guest-preview">
+        <h1>Publish and Share</h1>
+
+        <div class="toast" role="status">&#10003; Your invitation is live!</div>
+
+        <label for="share-link">Share link</label>
+        <div class="share-row">
+          <input type="text" id="share-link" value="https://invite.example/jiyoon-minho" readonly>
+          <button type="button" onclick="this.textContent='Copied!'">Copy link</button>
+        </div>
+        <p class="note">Send this link to your guests &mdash; no login needed to open it.</p>
+
+        <a class="cta" href="#screen-guest-invitation">Open guest page</a>
+      </div>
+
+      <!-- Screen: Guest Invitation Page -->
+      <div class="screen" id="screen-guest-invitation" data-title="Guest Invitation Page" data-back="publish-share">
+        <div class="toast" role="status" id="rsvp-confirm" hidden>&#10003; RSVP received. Thank you!</div>
+
+        <div class="ph" style="height:180px; margin-bottom:12px;">Hero photo</div>
+        <h1 style="text-align:center;">Jiyoon &amp; Minho</h1>
+        <p style="text-align:center; font-size:14px; margin:4px 0;">Saturday, May 16, 2026 &middot; 1:00 PM</p>
+        <div class="ph" style="height:56px; margin:12px 0;">Greeting message</div>
+
+        <div class="card">
+          <p style="margin:0 0 6px; font-size:14px;"><strong>Venue</strong> &mdash; The Garden Hall</p>
+          <div class="ph" style="height:120px;">Map embed</div>
+        </div>
+
+        <div class="card">
+          <p style="margin:0 0 6px; font-size:14px;"><strong>Getting there &amp; parking</strong></p>
+          <div class="ph" style="height:40px; margin-bottom:6px;">Subway / bus guidance</div>
+          <div class="ph" style="height:40px;">Parking guidance</div>
+        </div>
+
+        <button class="cta" onclick="go('rsvp-form')">RSVP</button>
+        <button class="cta secondary" type="button">Send congratulatory transfer</button>
+        <p class="note" style="text-align:center;">Opens your banking app via deep link</p>
+      </div>
+
+      <!-- Screen: RSVP Form -->
+      <div class="screen" id="screen-rsvp-form" data-title="RSVP Form" data-back="guest-invitation">
+        <h1>RSVP</h1>
+        <p class="note">Quick form &mdash; works on any phone.</p>
+
+        <fieldset>
+          <legend>Will you attend?</legend>
+          <label class="radio-row"><input type="radio" name="attending" checked> Yes, I&#39;ll be there</label>
+          <label class="radio-row"><input type="radio" name="attending"> Sorry, I can&#39;t make it</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Headcount</legend>
+          <div class="stepper">
+            <button type="button" onclick="step(-1)" aria-label="Decrease headcount">&minus;</button>
+            <output id="headcount" aria-live="polite">1</output>
+            <button type="button" onclick="step(1)" aria-label="Increase headcount">+</button>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Meal preference</legend>
+          <label class="radio-row"><input type="radio" name="meal" checked> Standard</label>
+          <label class="radio-row"><input type="radio" name="meal"> Vegetarian</label>
+          <label class="radio-row"><input type="radio" name="meal"> Child meal</label>
+        </fieldset>
+
+        <button class="cta" onclick="submitRsvp()">Submit RSVP</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  var SCREENS = ['template-gallery','invitation-editor','guest-preview','publish-share','guest-invitation','rsvp-form'];
+
+  function showFlow() {
+    location.hash = '#flow';
+  }
+  function go(id) {
+    location.hash = '#screen-' + id;
+  }
+  function goBack() {
+    var active = document.querySelector('.screen.active');
+    var back = active ? active.getAttribute('data-back') : 'flow';
+    if (back === 'flow') { showFlow(); } else { go(back); }
+  }
+  function render() {
+    var hash = location.hash || '#flow';
+    var isScreen = hash.indexOf('#screen-') === 0;
+    var id = isScreen ? hash.slice(8) : null;
+    if (isScreen && SCREENS.indexOf(id) === -1) { isScreen = false; }
+
+    document.getElementById('flow-map').classList.toggle('active', !isScreen);
+    document.getElementById('screens').classList.toggle('active', isScreen);
+    document.getElementById('tab-flow').setAttribute('aria-selected', String(!isScreen));
+    document.getElementById('tab-screens').setAttribute('aria-selected', String(isScreen));
+
+    var screens = document.querySelectorAll('.screen');
+    for (var i = 0; i < screens.length; i++) {
+      var el = screens[i];
+      var on = isScreen && el.id === 'screen-' + id;
+      el.classList.toggle('active', on);
+      if (on) {
+        document.getElementById('bar-title').textContent = el.getAttribute('data-title');
+        el.scrollTop = 0;
+      }
+    }
+  }
+  function step(delta) {
+    var out = document.getElementById('headcount');
+    var n = parseInt(out.textContent, 10) + delta;
+    if (n < 1) n = 1;
+    if (n > 10) n = 10;
+    out.textContent = n;
+  }
+  function submitRsvp() {
+    document.getElementById('rsvp-confirm').hidden = false;
+    go('guest-invitation');
+  }
+  window.addEventListener('hashchange', render);
+  render();
+</script>
+</body>
+</html>

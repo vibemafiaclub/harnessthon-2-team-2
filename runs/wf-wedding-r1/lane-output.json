@@ -1,0 +1,180 @@
+{
+  "laneId": "wireframe",
+  "runId": "wf-wedding-r1",
+  "prdId": "prd-wedding-invitation-v1",
+  "round": 1,
+  "viewport": { "width": 390, "height": 844 },
+  "artifacts": [
+    {
+      "id": "wireframe",
+      "type": "clickable-wireframe",
+      "path": "wireframe.html",
+      "revisionHash": "0fb5bdc4ca614eb24921f93b97129f148f4e05174e62ffb4cc6adf8e60f68041"
+    }
+  ],
+  "screens": [
+    {
+      "id": "template-gallery",
+      "name": "Template Gallery",
+      "purpose": "Couple browses and selects an invitation template to start building.",
+      "reachedFrom": []
+    },
+    {
+      "id": "invitation-editor",
+      "name": "Invitation Editor",
+      "purpose": "Couple enters names, date, venue, photos, and greeting message onto the chosen template.",
+      "reachedFrom": ["template-gallery", "guest-preview"]
+    },
+    {
+      "id": "guest-preview",
+      "name": "Guest View Preview",
+      "purpose": "Couple previews exactly what guests will see before publishing.",
+      "reachedFrom": ["invitation-editor"]
+    },
+    {
+      "id": "publish-share",
+      "name": "Publish and Share",
+      "purpose": "Confirms the invitation is live and lets the couple copy the shareable link.",
+      "reachedFrom": ["guest-preview"]
+    },
+    {
+      "id": "guest-invitation",
+      "name": "Guest Invitation Page",
+      "purpose": "Guest opens the shared link (no login) and reads greeting, date, venue with map, and transport/parking guidance.",
+      "reachedFrom": ["publish-share", "rsvp-form"]
+    },
+    {
+      "id": "rsvp-form",
+      "name": "RSVP Form",
+      "purpose": "Guest submits attendance with headcount and meal preference; lightweight for low-end phones.",
+      "reachedFrom": ["guest-invitation"]
+    }
+  ],
+  "qualityChecks": [
+    {
+      "criterionId": "mech-screens-routable",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "All 6 plan screens exist as routable sections",
+      "observed": "div ids screen-template-gallery/-invitation-editor/-guest-preview/-publish-share/-guest-invitation/-rsvp-form all present (lines 238-356); SCREENS array (line 390) lists all 6 ids and render() routes #screen-<id> hashes to them"
+    },
+    {
+      "criterionId": "mech-edge-gallery-editor",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Choose a template routes template-gallery -> invitation-editor",
+      "observed": "Three 'Use this template' buttons with onclick go('invitation-editor') (lines 246, 253, 260)"
+    },
+    {
+      "criterionId": "mech-edge-editor-preview",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Preview the guest view routes invitation-editor -> guest-preview",
+      "observed": "CTA 'Preview the guest view' onclick go('guest-preview') (line 292)"
+    },
+    {
+      "criterionId": "mech-edge-preview-editor",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Back to edit routes guest-preview -> invitation-editor",
+      "observed": "CTA 'Back to edit' onclick go('invitation-editor') (line 310); device-bar back button also targets data-back='invitation-editor'"
+    },
+    {
+      "criterionId": "mech-edge-preview-publish",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Publish routes guest-preview -> publish-share",
+      "observed": "CTA 'Publish' onclick go('publish-share') (line 311)"
+    },
+    {
+      "criterionId": "mech-edge-publish-guest",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Open shared link routes publish-share -> guest-invitation",
+      "observed": "Anchor 'Open guest page' href=#screen-guest-invitation (line 327); hashchange listener + render() activates that screen since 'guest-invitation' is in SCREENS"
+    },
+    {
+      "criterionId": "mech-edge-guest-rsvp",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Tap RSVP routes guest-invitation -> rsvp-form",
+      "observed": "CTA 'RSVP' onclick go('rsvp-form') (line 350)"
+    },
+    {
+      "criterionId": "mech-edge-rsvp-guest",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Submit RSVP returns to guest-invitation with confirmation",
+      "observed": "submitRsvp() (line 432) unhides #rsvp-confirm toast ('RSVP received. Thank you!', line 332) then go('guest-invitation')"
+    },
+    {
+      "criterionId": "mech-no-external-assets",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "No external asset URLs fetched",
+      "observed": "grep for src=/https/url() found only url(#arrowhead) (local SVG fragment) and a display-only https URL as readonly input value (line 322); no img src, external scripts, fonts, or stylesheets"
+    },
+    {
+      "criterionId": "mech-lang-h1",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "lang attribute set; each screen has an h1",
+      "observed": "html lang='en' (line 2); h1 in all 6 screens (lines 239, 266, 297, 316, 335, 357) - guest-invitation's h1 is the couple-names heading 'Jiyoon & Minho'"
+    },
+    {
+      "criterionId": "mech-inputs-labeled",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Every form input has an accessible label",
+      "observed": "label[for] pairs for ed-names, ed-date, ed-venue, ed-address, ed-greeting, share-link; all radios wrapped in <label class='radio-row'>; stepper buttons carry aria-label Decrease/Increase headcount and the output has aria-live inside a legend-ed fieldset"
+    },
+    {
+      "criterionId": "ux-flow-build",
+      "axis": "ux-task",
+      "status": "pass",
+      "expected": "flow-build (choose template, enter details, photos+greeting, preview, publish+copy link) completable by clicking",
+      "observed": "Traced path: Flow map > Template Gallery > 'Use this template' > Invitation Editor (couple names, date, venue name/address inputs; two '+ Add photo' placeholders; greeting textarea) > 'Preview the guest view' > Guest View Preview > 'Publish' > Publish and Share showing live toast, share link field and working 'Copy link' button (flips to 'Copied!')"
+    },
+    {
+      "criterionId": "ux-flow-guest",
+      "axis": "ux-task",
+      "status": "pass",
+      "expected": "flow-guest (open link, read greeting/date/venue+map, transport/parking, RSVP with headcount+meal, transfer deep link) completable by clicking",
+      "observed": "Traced path: Publish and Share > 'Open guest page' > Guest Invitation Page (hero, names, date, greeting, Venue card with map placeholder, 'Getting there & parking' card with subway/parking placeholders) > 'RSVP' > RSVP Form (attend radios, 1-10 headcount stepper via step(), meal radios) > 'Submit RSVP' > returns to guest page with 'RSVP received' toast; 'Send congratulatory transfer' button present with 'Opens your banking app via deep link' note (static stub, appropriate for wireframe)"
+    },
+    {
+      "criterionId": "spec-must-have-screens",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "mustHaveScreens (Template gallery, Invitation editor, Guest invitation page, RSVP form) all represented",
+      "observed": "All four present as dedicated screens, plus guest-preview and publish-share covering the remaining flow-build steps; guest page notes 'No login needed to open it' matching the no-login constraint"
+    },
+    {
+      "criterionId": "spec-flow-steps",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Every PRD flow step represented in the wireframe",
+      "observed": "All 5 flow-build steps and all 5 flow-guest steps have concrete UI (template cards, detail inputs, photo/greeting fields, preview screen, share-link copy, greeting/date/venue+map, transport/parking card, RSVP form with headcount+meal, transfer deep-link button)"
+    },
+    {
+      "criterionId": "a11y-basics",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Mechanical accessibility basics hold",
+      "observed": "lang set, per-screen h1s, labeled inputs, aria-label on icon-only back/stepper buttons, role='status' on both confirmation toasts, aria-selected on view tabs, aria-hidden on the decorative flow-map SVG"
+    },
+    {
+      "criterionId": "aes-lowfi-discipline",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Low-fi discipline: no brand styling leaked; legible hierarchy",
+      "observed": "Entirely grayscale (#f2f2f2/#fff/#444 etc.), hatched .ph placeholders for photos/map/greeting, system font stack, no brand colors or decorative fonts despite 'warm/celebratory' brandHints; hierarchy legible - numbered flow nodes with subtitles, h1 per screen, cards, solid primary vs dashed secondary CTAs"
+    }
+  ],
+  "repairHistory": [],
+  "timing": {
+    "startedAt": "2026-09-05T15:31:44+09:00",
+    "finishedAt": "2026-09-05T15:34:43+09:00"
+  },
+  "rationaleSummary": "The six-screen inventory splits the PRD's two personas into a builder path (gallery > editor > preview > publish) and a guest path (invitation page > RSVP), with guest-preview and publish-share added beyond the four must-have screens so every flow-build step is clickable rather than implied. All screens live in one hash-routed HTML file with a flow-map landing view, keeping the prototype dependency-free and traceable edge-by-edge. Styling stays deliberately grayscale with hatched placeholders so review feedback targets structure and flow, not visual design."
+}

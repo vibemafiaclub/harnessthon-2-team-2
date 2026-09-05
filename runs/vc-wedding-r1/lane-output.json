@@ -1,0 +1,244 @@
+{
+  "laneId": "visual-concept",
+  "runId": "vc-wedding-r1",
+  "prdId": "prd-wedding-invitation-v1",
+  "round": 1,
+  "viewport": { "width": 390, "height": 844 },
+  "artifacts": [
+    {
+      "id": "concept-concept-blush-serif",
+      "type": "combined-concept",
+      "path": "concept-concept-blush-serif.html",
+      "revisionHash": "43b9f725f03e2fd2e55a8b90c1e407242c48d476e23a684b97703e07ac0bec53",
+      "conceptId": "concept-blush-serif"
+    },
+    {
+      "id": "concept-concept-midnight-garden",
+      "type": "combined-concept",
+      "path": "concept-concept-midnight-garden.html",
+      "revisionHash": "5c185e7fa34daf10af524b235ff8af42230bdcdc7dec9b9c296d323ff06e1dfb",
+      "conceptId": "concept-midnight-garden"
+    },
+    {
+      "id": "concept-concept-sunlit-editorial",
+      "type": "combined-concept",
+      "path": "concept-concept-sunlit-editorial.html",
+      "revisionHash": "5dc4a30bb9fac0d02c448c2b28f7f63dc0dc687f60bb7ff8f3b6c0541648789c",
+      "conceptId": "concept-sunlit-editorial"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "concept-blush-serif",
+      "name": "Blush Letterpress",
+      "direction": "Classic paper-invitation warmth: soft blush and cream ground, deep warm-brown text, generous rounded cards with barely-there shadows. Serif-flavored display moments, floral-adjacent restraint. Aims squarely at the 'trustworthy enough for parents' generation' hint - it reads like a printed invitation the whole family recognizes.",
+      "differentiation": "Warmest and most traditional of the three: light warm palette and soft large radii, versus Midnight Garden's dark cool-toned formality and Sunlit Editorial's sharp near-zero radii and high-contrast modern layout. Mood is gentle/romantic where the others are ceremonial or crisp.",
+      "tokenOverlay": {
+        "color": { "bg": "#FBF5F0", "surface": "#FFFFFF", "text": "#4A3B35", "primary": "#C4756B", "accent": "#8A9B6E" },
+        "radius": { "sm": 10, "md": 16, "lg": 24, "pill": 999 },
+        "shadow": "feather-soft, low-elevation warm-tinted shadows (0 2px 8px rgba(90,60,50,0.08)); cards float gently, never pop",
+        "mood": ["warm", "romantic", "familiar", "gentle"]
+      }
+    },
+    {
+      "id": "concept-midnight-garden",
+      "name": "Midnight Garden",
+      "direction": "Evening-ceremony formality: deep green-black ground with ivory text and champagne-gold accents, medium radii, luminous glow-edged surfaces. Celebratory in a candlelit, upscale-venue way - the invitation as a keepsake. Dark-first design that still keeps body text high-contrast for older guests.",
+      "differentiation": "The only dark, cool-temperature concept: inverted palette and gold-on-ink luxury versus the light warm ground of Blush Letterpress and the bright airy white of Sunlit Editorial. Density is mid, mood is formal/ceremonial rather than gentle or playful, and shadows are glows instead of drop shadows.",
+      "tokenOverlay": {
+        "color": { "bg": "#101812", "surface": "#1B241D", "text": "#F2EDE3", "primary": "#C9A96A", "accent": "#7FA98C" },
+        "radius": { "sm": 6, "md": 12, "lg": 18, "pill": 999 },
+        "shadow": "no drop shadows; surfaces separated by 1px gold-tinted hairline borders and a faint inner glow (0 0 0 1px rgba(201,169,106,0.25))",
+        "mood": ["formal", "luminous", "celebratory", "keepsake"]
+      }
+    },
+    {
+      "id": "concept-sunlit-editorial",
+      "name": "Sunlit Editorial",
+      "direction": "Bright modern-magazine energy for couples who want festive over frilly: pure white ground, near-black ink text, one saturated coral primary and marigold accent, squared-off corners and flat color blocks. Information-forward - schedule, map, and RSVP presented as bold, scannable modules that stay crisp on low-end phones.",
+      "differentiation": "Sharpest and most contemporary: near-zero radii and flat no-shadow blocks versus the soft rounded warmth of Blush Letterpress and the glowing dark surfaces of Midnight Garden. Highest perceived density and color saturation of the three; celebratory-playful mood where the others are romantic or formal.",
+      "tokenOverlay": {
+        "color": { "bg": "#FFFFFF", "surface": "#FFF6EE", "text": "#1C1B1A", "primary": "#E85C4A", "accent": "#F2B33D" },
+        "radius": { "sm": 2, "md": 4, "lg": 8, "pill": 999 },
+        "shadow": "flat design - no blur shadows; separation via solid 1.5px ink borders and offset solid-color underlays (2px 2px 0 accent) on interactive elements",
+        "mood": ["vibrant", "festive", "modern", "confident"]
+      }
+    }
+  ],
+  "qualityChecks": [
+    {
+      "criterionId": "concept-blush-serif:mech-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "No external URLs (scripts, stylesheets, images, fonts fetched over the network)",
+      "observed": "Grepped the file: no <script>, <link>, @import, or http(s) resource references. All visuals are inline SVG/CSS gradients; font-family stacks name only locally installed system fonts (Nanum Myeongjo, Apple SD Gothic Neo) with generic fallbacks. Only URLs are tel: links."
+    },
+    {
+      "criterionId": "concept-blush-serif:mech-lang",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "lang attribute set on <html>",
+      "observed": "Line 2: <html lang=\"ko\">, matching the Korean content."
+    },
+    {
+      "criterionId": "concept-blush-serif:mech-real-text",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Real text content, not lorem ipsum or placeholder gibberish",
+      "observed": "Full realistic Korean invitation copy: greeting message, parents' names (김영호·박미선의 장남 도윤), venue 더채플앳청담 4층 노블레스홀 with address/phone, transit lines (7호선 강남구청역 3번 출구), bank account rows, RSVP labels."
+    },
+    {
+      "criterionId": "concept-blush-serif:spec-content-blocks",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Representative screen shows all 9 content blocks: hero photo+names+date, greeting, date/countdown, venue+map, transport/parking, RSVP (attendance/headcount/meal), transfer with groom/bride bank deep-links, gallery strip, share/contact footer",
+      "observed": "All 9 present in the 390px device frame: (1) hero with 커플 사진 photo placeholder, names 김도윤·이서연, date overlay; (2) greeting card with couple signature; (3) date card with 토요일 오후 1:00 and 일/시간/분/초 countdown + D-70 line; (4) venue card with hall name, address, inline SVG map preview with pin label and 네이버/카카오/티맵 buttons; (5) transport dl with 지하철/버스/자가용/주차; (6) RSVP with 참석/불참/미정 chips, headcount stepper, 식사함/식사 안함 chips, submit button; (7) 마음 전하실 곳 with groom/bride <details> each holding 카카오페이 송금/토스 송금/계좌 복사 buttons; (8) horizontal-scroll gallery of 4 tiles; (9) footer with 카카오톡 공유/링크 복사 plus tel: links to couple and both fathers (parents)."
+    },
+    {
+      "criterionId": "concept-blush-serif:spec-style-tile",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile includes palette, type scale, buttons in 4 states, and a card sample",
+      "observed": "Tile has 5 labeled hex swatches (bg/surface/text/primary/accent), 6-step type scale (display 24 → caption 12), primary AND secondary buttons each in enabled/pressed/selected/disabled, a demo card, plus radius and shadow samples."
+    },
+    {
+      "criterionId": "concept-blush-serif:a11y-body-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body text contrast >= 4.5:1 against its background, computed from actual hex values",
+      "observed": "Computed: #4A3B35 on #FBF5F0 = 9.87:1; body copy #5C4A42 on #FFFFFF cards = 8.36:1 — both far above AA. Minor caveats: muted #8A776E captions = 4.25:1 on white (12-13px meta text only), and 15px-bold white-on-#C4756B primary button text = 3.44:1, below AA for its size; body text itself is excellent."
+    },
+    {
+      "criterionId": "concept-blush-serif:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Tap targets >= 44px",
+      "observed": "Every <button> has min-height 44px or more (map buttons 44, chips 44, stepper 44x44, btn-primary 48, summary rows 48, bank/share buttons 44). Sole exception: inline tel: text links in the footer contacts block (~12px text height), a conventional inline-link pattern rather than a primary control."
+    },
+    {
+      "criterionId": "concept-blush-serif:aesthetic-direction",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent with 'classic paper-invitation warmth': blush/cream ground, deep warm-brown text, generous rounded cards, barely-there shadows, serif display moments, floral restraint; readable hierarchy; distinct from the dark green-gold and white/coral-flat sibling directions",
+      "observed": "Ground #FBF5F0 blush-cream, text #4A3B35 warm brown, dusty-rose primary #C4756B, cards at 24px radius with feather shadow (0 2px 8px rgba(90,60,50,.08)), Nanum Myeongjo serif for display/date/headings, restrained floral SVG line-work and leaf ellipses in the hero only. Hierarchy reads cleanly: letterspaced English kickers over serif Korean H2s over 15px body. Clearly not the dark candlelit direction (no dark ground/gold/glow) nor the flat coral magazine one (no squared corners or saturated blocks); the letterpress-invitation framing lands the 'parents' generation' hint."
+    },
+    {
+      "criterionId": "concept-midnight-garden:mech-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "No external URLs; all CSS/JS/assets inline",
+      "observed": "grep for https?://, src=, and <link found zero matches; hero image, map, and gallery are inline SVG/CSS gradients; fonts are system stacks (Apple SD Gothic Neo, Georgia fallbacks). Only hrefs are tel: links."
+    },
+    {
+      "criterionId": "concept-midnight-garden:mech-lang",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "lang attribute set on html element",
+      "observed": "Line 2: <html lang=\"ko\">, matching the Korean content."
+    },
+    {
+      "criterionId": "concept-midnight-garden:mech-real-text",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Real text content, not lorem ipsum or placeholders",
+      "observed": "Full Korean invitation copy throughout: greeting message, parents' names (김영호·이미선의 장남 도윤), venue 더가든하우스 그랜드볼룸 5F with address/phone, transit lines (7호선 학동역 4번 출구), bank accounts, gallery captions. Only intentional placeholder is the COUPLE PHOTO circle marking the photo slot."
+    },
+    {
+      "criterionId": "concept-midnight-garden:spec-content-blocks",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Representative screen shows all 9 content blocks from the PRD",
+      "observed": "All 9 present in the 390px device frame: (1) hero with couple-photo placeholder, names 김도윤&박서연, date overlay (lines 161-188); (2) greeting card from the couple with both sets of parents (193-199); (3) date/time card with 토요일 day-of-week and 4-cell DAYS/HOURS/MIN/SEC countdown (202-214); (4) venue card with hall name, address, inline-SVG map preview with pin label + 네이버 지도/카카오맵 buttons (217-241); (5) transport rows for 지하철/버스/자가용/주차 (244-252); (6) RSVP with 참석/불참/미정 segmented control, headcount stepper, meal choice 코스/뷔페/식사 안 함, submit button (255-285); (7) gift section with groom/bride bank accounts, 복사하기 buttons, 카카오페이/토스 deep-link buttons (288-308); (8) 4-photo gallery strip (311-319); (9) footer with 카카오톡 공유/링크 복사 and tel: links to groom, bride, and 혼주 (parents) (322-333)."
+    },
+    {
+      "criterionId": "concept-midnight-garden:spec-style-tile",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile includes palette, type scale, buttons in 4 states, and card",
+      "observed": "Style tile section (lines 340-404) has: 5-swatch palette with hex labels; 6-step type scale (display 24 → caption 12) with size annotations; primary AND secondary buttons each in enabled/pressed/selected/disabled with distinct CSS (is-pressed darkens to #B8944F with inset shadow, is-selected adds double ring, is-disabled fades); demo card component; plus radius/surface-treatment row."
+    },
+    {
+      "criterionId": "concept-midnight-garden:a11y-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body-text contrast >= 4.5:1 against actual backgrounds (computed from hex)",
+      "observed": "Computed ratios: body text #F2EDE3 on bg #101812 = 15.5:1, on card surface #1B241D = 13.67:1; dim text #C9C3B4 on surface = 9.07:1; primary button label #17130A on gold #C9A96A = 8.26:1; gold labels #C9A96A on surface = 7.11:1. All exceed AA (4.5:1); body text exceeds AAA. Weakest is accent link #7FA98C on surface at 6.04:1, still AA-passing. High contrast for older guests honored."
+    },
+    {
+      "criterionId": "concept-midnight-garden:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Interactive tap targets >= 44px",
+      "observed": ".btn has min-height:44px (line 89); stepper +/- buttons are 44x44 (line 86); RSVP segment options min-height:44px (line 83); footer contact links min-height:44px inline-flex (line 113); pill radius sample 44px tall. No interactive element below 44px found."
+    },
+    {
+      "criterionId": "concept-midnight-garden:aes-direction-coherence",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent with stated direction: deep green-black ground, ivory text, champagne-gold accents, medium radii, luminous glow-edged surfaces, candlelit upscale keepsake feel",
+      "observed": "Ground is green-black (#0B110C/#101812/#1B241D — green channel highest), text ivory #F2EDE3, primary champagne gold #C9A96A with sage-green #7FA98C secondary accent. Radii 6/12/18 are medium. Surfaces use gold-tinted hairlines plus 0 0 0 1px rgba(201,169,106,.25) glow and the device frame adds a 40px gold ambient glow — no drop shadows, explicitly documented in the tile note. Candlelit mood carried by radial gold glows in hero, serif display names, letterspaced gold eyebrows, and copy referencing an evening ceremony (저녁 6시, 촛불이 켜지는 저녁)."
+    },
+    {
+      "criterionId": "concept-midnight-garden:aes-hierarchy",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Readable visual hierarchy",
+      "observed": "Clear ladder: gold uppercase letterspaced eyebrows label each block, serif display for names/dates, ivory body vs dimmed #C9C3B4 secondary text, filled gold buttons for primary actions (RSVP send, share, pay deep-links) vs outlined secondary (copy, map apps). Cards on lighter surface separate blocks; countdown numerals in gold serif draw the eye."
+    },
+    {
+      "criterionId": "concept-midnight-garden:aes-distinct",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Does not drift into a generic look indistinguishable from the blush/cream classic direction or the white/coral magazine direction",
+      "observed": "Dark-first green-black ground with glow-edged hairline surfaces is categorically unlike both siblings: no blush/cream warmth, no soft shadows on rounded pastel cards (direction 1), and no pure-white ground, coral primary, or squared flat blocks (direction 2). The foliage SVG, candlelight radial glows, and keepsake gold-on-dark treatment are unique to this concept."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:mechanical-self-contained",
+      "axis": "mechanical",
+      "status": "pass",
+      "expected": "Self-contained file (no external URLs), lang attribute set, real text content",
+      "observed": "No external URLs anywhere: fonts are a system stack (-apple-system, Apple SD Gothic Neo...), map/photos are CSS gradients, no <link>/<script>/@import. <html lang=\"ko\"> set. All content is real Korean copy (greeting paragraph, parents' names, address 서울 강남구 선릉로 757, bank account lines), no lorem ipsum."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:spec-content-blocks",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Representative screen shows all 9 content blocks: hero, greeting, date/countdown, venue+map, transport/parking, RSVP, transfer with bank buttons, gallery, share/contact footer",
+      "observed": "All 9 present in the 390px device frame: hero photo placeholder with names+date overlay (lines 276-283); greeting module with couple message and parents line (286-291); DATE & TIME with 토요일 in subtitle plus year/month/day cells and D-49 countdown (294-307); VENUE with hall name 더채플앳청담 3층 채플홀, address, map preview with pin and '지도 앱으로 열기' (310-318); transport rows for 지하철/버스/자가용/주차 (321-339); RSVP with 참석/불참/미정 segmented control, headcount stepper, meal preference, submit CTA (342-377); transfer section with 신랑 측/신부 측 cards and 송금하기 deep-link chip buttons (380-412); gallery strip of 4 swipeable tiles + '사진 12장' caption (415-425); footer with 링크 복사하기 button and 4 contact links to couple and both parents (428-439)."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:spec-style-tile",
+      "axis": "spec-fidelity",
+      "status": "pass",
+      "expected": "Style tile includes palette, type scale, buttons in 4 states, and a card",
+      "observed": "Tile section has: 5 color swatches with token names and hex (bg/surface/text/primary/accent, lines 459-480); 6-step type scale display 24 through caption 12 with specs (486-491); primary button in enabled/pressed/selected/disabled (497-503) AND secondary in the same 4 states (508-514); card component demo with header, D-49 pill, and body (519-529); plus radius and shadow samples."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:a11y-contrast",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Body-text contrast ratio >= 4.5:1 computed from actual hex values",
+      "observed": "Body text #1C1B1A on #FFFFFF ≈ 17.0:1 (luminance 0.0116 vs 1.0). Secondary #3A3835 ≈ 11:1, caption #57534E ≈ 7.6:1 on white — all well past AA. One marginal non-body spot: white on primary #E85C4A ≈ 3.47:1, fine for the 15px/800 CTA (AA large-bold threshold 3.0) but slightly under 4.5 on the 13px/800 송금하기 chip buttons; button labels, not body text, so not a fail against this criterion."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:a11y-tap-targets",
+      "axis": "accessibility",
+      "status": "pass",
+      "expected": "Interactive tap targets >= 44px",
+      "observed": ".btn min-height:44px; .seg button min-height:44px; .stepper button 44x44 with 56px-wide output; .chip-btn min-height:44px; .contact-grid a min-height:44px. The only sub-44 affordance, .map-cta '지도 앱으로 열기', is aria-hidden decoration inside the map preview (the whole 140px map block is the implied target), not a real control."
+    },
+    {
+      "criterionId": "concept-sunlit-editorial:aesthetic-direction-coherence",
+      "axis": "aesthetic",
+      "status": "pass",
+      "expected": "Coherent with 'bright modern-magazine, white ground, near-black ink, coral primary + marigold accent, squared corners, flat color blocks, information-forward' and distinct from the blush/serif and dark green-gold sibling directions",
+      "observed": "Direction lands convincingly: pure white ground with #1C1B1A ink, coral #E85C4A / marigold #F2B33D used decisively; 2-4px squared radii; a consistent flat 'ink border + 2px offset solid underlay' system with zero blur shadows; uppercase editorial module tags (GREETING, DATE & TIME, HOW TO GET HERE) and boxy date-cell/badge modules read as scannable magazine layout. Visual hierarchy is clear (tag → title → body per module). No serif display, no blush/cream ground, no dark glow surfaces — clearly separable from both other directions. Minor nitpick: hierarchy tops out at 24px display, so the hero is a touch quieter than 'magazine energy' could be, but it stays on-direction."
+    }
+  ],
+  "repairHistory": [],
+  "timing": {
+    "startedAt": "2026-09-05T15:31:44+09:00",
+    "finishedAt": "2026-09-05T15:35:54+09:00"
+  },
+  "rationaleSummary": "The PRD's competing hints — trustworthy enough for parents' generation, festive over frilly, and a keepsake-quality evening option — map naturally onto three maximally separated brand overlays: warm-light-traditional (Blush Letterpress), dark-formal-luxurious (Midnight Garden), and bright-flat-contemporary (Sunlit Editorial), differing on every overlay axis (palette temperature and value, radius scale, shadow model, mood). The single representative screen is the full invitation scroll at 390x844 because it exercises all nine PRD content blocks — hero through RSVP, transfer deep-links, and share footer — so reviewers judge each direction against the real content density and Korean copy it must carry. Each file pairs that screen with a style tile (palette, type scale, four-state buttons, card) so an approved direction can be applied to the remaining screens without re-deriving tokens."
+}

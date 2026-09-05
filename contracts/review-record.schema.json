@@ -1,0 +1,33 @@
+{
+  "$id": "review-record.schema.json",
+  "title": "Human review record appended per lane review",
+  "description": "Appended to runs/<runId>/reviews.json by scripts/record-review.mjs. A decision is only valid if boundRevisions exactly match the lane-output artifact hashes the human was shown (approval binds the exact revision).",
+  "type": "object",
+  "required": ["reviewId", "laneId", "runId", "round", "decision", "decidedBy", "boundRevisions", "decidedAt"],
+  "properties": {
+    "reviewId": { "type": "string" },
+    "laneId": { "type": "string", "enum": ["wireframe", "visual-concept", "integration-preview"] },
+    "runId": { "type": "string" },
+    "round": { "type": "number" },
+    "decision": { "type": "string", "enum": ["approved", "revise", "rejected"] },
+    "selectedConceptId": { "type": "string", "description": "Visual lane approval only." },
+    "decidedBy": { "type": "string", "enum": ["human"], "description": "Only humans accept. AI judgments live in qualityChecks, never here." },
+    "decidedAt": { "type": "string" },
+    "boundRevisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifactId", "revisionHash"],
+        "properties": {
+          "artifactId": { "type": "string" },
+          "revisionHash": { "type": "string" }
+        }
+      }
+    },
+    "axisNotes": {
+      "type": "object",
+      "description": "Optional per-axis human comments, kept separate (ux-task / spec-fidelity / accessibility / aesthetic)."
+    },
+    "feedback": { "type": "string", "description": "Free-form revision direction when decision is revise/rejected." }
+  }
+}

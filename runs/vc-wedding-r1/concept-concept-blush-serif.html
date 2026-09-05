@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blush Letterpress — Guest invitation concept</title>
+<style>
+  :root{
+    --bg:#FBF5F0;
+    --surface:#FFFFFF;
+    --text:#4A3B35;
+    --primary:#C4756B;
+    --accent:#8A9B6E;
+    --primary-deep:#A85A50;
+    --muted:#8A776E;
+    --line:#EFE2D8;
+    --r-sm:10px; --r-md:16px; --r-lg:24px; --r-pill:999px;
+    --shadow:0 2px 8px rgba(90,60,50,0.08);
+    --serif:"Nanum Myeongjo","Apple SD Gothic Neo",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Apple SD Gothic Neo","Malgun Gothic",-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#F3EAE2;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.45}
+  .stage{max-width:900px;margin:0 auto;padding:40px 20px}
+  .section-label{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+  h1.concept-title{font-family:var(--serif);font-size:24px;line-height:1.45;margin-bottom:4px}
+  .concept-sub{font-size:13px;color:var(--muted);margin-bottom:32px}
+
+  /* ---------- device frame ---------- */
+  .device{width:390px;margin:0 auto;background:var(--bg);border:1px solid #E3D3C7;border-radius:32px;overflow:hidden;box-shadow:0 12px 40px rgba(90,60,50,.14)}
+  .screen{width:100%;}
+
+  /* hero */
+  .hero{position:relative;height:430px;background:
+      radial-gradient(120% 80% at 20% 10%, #F4DCD4 0%, transparent 55%),
+      radial-gradient(110% 90% at 85% 15%, #EFE3CE 0%, transparent 50%),
+      linear-gradient(180deg,#E9CFC6 0%, #D9A99E 62%, #C99287 100%);}
+  .hero svg.florals{position:absolute;inset:0;width:100%;height:100%}
+  .hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(251,245,240,0) 40%,rgba(74,45,38,.42) 100%)}
+  .hero-copy{position:absolute;left:0;right:0;bottom:0;padding:24px 24px 28px;text-align:center;color:#FFF7F2}
+  .hero-eyebrow{font-size:12px;letter-spacing:.34em;opacity:.92;margin-bottom:8px}
+  .hero-names{font-family:var(--serif);font-size:24px;letter-spacing:.06em;font-weight:700}
+  .hero-date{font-size:13px;margin-top:8px;letter-spacing:.08em;opacity:.95}
+  .photo-hint{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.55);color:#6B4A40;font-size:12px;padding:4px 10px;border-radius:var(--r-pill)}
+
+  .body-pad{padding:24px 20px 0}
+  .card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:24px 20px;margin-bottom:20px}
+  .card h2{font-family:var(--serif);font-size:20px;line-height:1.45;margin-bottom:12px;text-align:center}
+  .kicker{display:block;text-align:center;font-size:12px;letter-spacing:.28em;color:var(--primary);margin-bottom:8px}
+
+  .greeting p{font-family:var(--serif);font-size:15px;text-align:center;color:#5C4A42;line-height:1.75}
+  .greeting .sig{margin-top:16px;font-size:13px;color:var(--muted);text-align:center;line-height:1.7}
+
+  /* date */
+  .date-big{font-family:var(--serif);font-size:24px;text-align:center;letter-spacing:.04em}
+  .date-sub{text-align:center;font-size:15px;color:#5C4A42;margin-top:4px}
+  .countdown{display:flex;justify-content:center;gap:8px;margin-top:16px}
+  .cd{background:var(--bg);border-radius:var(--r-sm);min-width:56px;padding:8px 4px;text-align:center}
+  .cd b{display:block;font-family:var(--serif);font-size:20px}
+  .cd span{font-size:12px;color:var(--muted)}
+  .dday{margin-top:12px;text-align:center;font-size:13px;color:var(--primary)}
+
+  /* venue */
+  .venue-name{text-align:center;font-size:17px;font-weight:700}
+  .venue-addr{text-align:center;font-size:13px;color:var(--muted);margin-top:4px}
+  .map{margin-top:16px;height:150px;border-radius:var(--r-md);overflow:hidden;position:relative;background:#F1E9DE}
+  .map svg{width:100%;height:100%;display:block}
+  .map .pin-label{position:absolute;left:50%;top:46%;transform:translate(-50%,-115%);background:var(--surface);border-radius:var(--r-pill);box-shadow:var(--shadow);font-size:12px;padding:4px 10px;white-space:nowrap}
+  .map-btns{display:flex;gap:8px;margin-top:12px}
+  .map-btns button{flex:1;min-height:44px;border:1px solid var(--line);background:var(--bg);border-radius:var(--r-sm);font-size:13px;color:var(--text);font-family:inherit}
+
+  .transport dt{font-size:13px;font-weight:700;color:var(--primary);margin-top:14px}
+  .transport dt:first-of-type{margin-top:0}
+  .transport dd{font-size:15px;color:#5C4A42;margin-top:2px}
+
+  /* rsvp */
+  .rsvp-lede{text-align:center;font-size:15px;color:#5C4A42;margin-bottom:16px}
+  .field-label{font-size:13px;font-weight:700;margin:16px 0 8px}
+  .chip-row{display:flex;gap:8px}
+  .chip{flex:1;min-height:44px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--surface);font-size:15px;color:var(--text);font-family:inherit}
+  .chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#FFF7F2;font-weight:700}
+  .stepper{display:flex;align-items:center;gap:12px}
+  .stepper button{width:44px;height:44px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--bg);font-size:20px;color:var(--text)}
+  .stepper output{font-family:var(--serif);font-size:20px;min-width:44px;text-align:center}
+  .btn-primary{display:block;width:100%;min-height:48px;margin-top:24px;border:0;border-radius:var(--r-md);background:var(--primary);color:#FFFFFF;font-size:15px;font-weight:700;font-family:inherit;box-shadow:var(--shadow)}
+
+  /* transfer */
+  .side{border:1px solid var(--line);border-radius:var(--r-md);margin-top:12px;overflow:hidden}
+  .side summary{list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 16px;font-size:15px;font-weight:700;cursor:pointer;background:var(--bg)}
+  .side summary::-webkit-details-marker{display:none}
+  .side .acct{padding:12px 16px 16px}
+  .acct-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px}
+  .acct-row .who{color:var(--muted)}
+  .acct-row .num{font-variant-numeric:tabular-nums}
+  .bank-btns{display:flex;gap:8px;margin-top:8px}
+  .bank-btns button{flex:1;min-height:44px;border-radius:var(--r-sm);border:1px solid var(--line);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)}
+  .bank-btns .kakao{background:#FAE64C;border-color:#F3DB33;color:#3A2E10;font-weight:700}
+  .bank-btns .copy{background:var(--bg)}
+
+  /* gallery */
+  .gallery{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .ph{flex:0 0 116px;height:150px;border-radius:var(--r-md);position:relative;overflow:hidden}
+  .ph span{position:absolute;left:8px;bottom:6px;font-size:12px;color:rgba(255,255,255,.9)}
+  .ph1{background:linear-gradient(160deg,#E8C9BF,#C98D80)}
+  .ph2{background:linear-gradient(160deg,#EFE0C8,#C8B187)}
+  .ph3{background:linear-gradient(160deg,#D6DCC4,#9BAA7E)}
+  .ph4{background:linear-gradient(160deg,#E4D2CE,#B79A93)}
+
+  /* footer */
+  .invite-footer{background:#F3E7DE;padding:24px 20px 32px;margin-top:4px;text-align:center}
+  .invite-footer .share-row{display:flex;gap:8px;margin-bottom:16px}
+  .invite-footer .share-row button{flex:1;min-height:44px;border-radius:var(--r-md);font-size:13px;font-family:inherit;border:1px solid #E0CCBE;background:var(--surface);color:var(--text)}
+  .invite-footer .share-row .primary{background:var(--primary);border-color:var(--primary);color:#FFFFFF;font-weight:700}
+  .contacts{font-size:12px;color:var(--muted);line-height:1.7}
+  .contacts a{color:var(--primary);text-decoration:none;font-weight:700}
+  .made-by{margin-top:16px;font-size:12px;color:#B09A8E;letter-spacing:.12em}
+
+  /* ---------- style tile ---------- */
+  .tile{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:32px;margin-top:24px}
+  .tile h3{font-family:var(--serif);font-size:20px;margin:32px 0 12px}
+  .tile h3:first-child{margin-top:0}
+  .swatches{display:flex;gap:12px;flex-wrap:wrap}
+  .sw{width:132px}
+  .sw .chipc{height:64px;border-radius:var(--r-md);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .sw p{font-size:13px;margin-top:8px}
+  .sw p b{display:block}
+  .sw p span{color:var(--muted);font-size:12px}
+  .typerow{border-bottom:1px dashed var(--line);padding:8px 0;display:flex;align-items:baseline;gap:16px}
+  .typerow .meta{flex:0 0 120px;font-size:12px;color:var(--muted)}
+  .t-display{font-family:var(--serif);font-size:24px;font-weight:700}
+  .t-title{font-family:var(--serif);font-size:20px;font-weight:700}
+  .t-subtitle{font-size:17px;font-weight:700}
+  .t-body{font-size:15px}
+  .t-label{font-size:13px;font-weight:700}
+  .t-caption{font-size:12px;color:var(--muted)}
+  .states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:640px}
+  .states figure{text-align:center}
+  .states figcaption{font-size:12px;color:var(--muted);margin-top:8px}
+  .b{width:100%;min-height:44px;border-radius:var(--r-md);font-size:15px;font-weight:700;font-family:inherit}
+  .b-pri{border:0;background:var(--primary);color:#FFFFFF;box-shadow:var(--shadow)}
+  .b-pri.pressed{background:var(--primary-deep);box-shadow:none}
+  .b-pri.selected{background:var(--primary);outline:2px solid var(--primary-deep);outline-offset:2px}
+  .b-pri.disabled{background:#E7D5CF;color:#B49C93;box-shadow:none}
+  .b-sec{border:1.5px solid var(--primary);background:var(--surface);color:var(--primary)}
+  .b-sec.pressed{background:#F6E4E0}
+  .b-sec.selected{background:#F6E4E0;border-color:var(--primary-deep);color:var(--primary-deep)}
+  .b-sec.disabled{border-color:#E3D3C7;color:#C2AFA5;background:var(--surface)}
+  .demo-card{max-width:340px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:20px}
+  .demo-card .kicker{text-align:left;margin-bottom:4px}
+  .demo-card h4{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+  .demo-card p{font-size:15px;color:#5C4A42}
+  .samples{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+  .rad{background:var(--bg);border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:var(--muted);padding-bottom:6px}
+  .rad,.shadow-demo{width:96px;height:72px}
+  .r10{border-radius:10px}.r16{border-radius:16px}.r24{border-radius:24px}
+  .rpill{border-radius:var(--r-pill);height:44px;align-items:center;padding-bottom:0}
+  .shadow-demo{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="stage">
+  <h1 class="concept-title">Blush Letterpress</h1>
+  <p class="concept-sub">Concept 1/3 · Mobile wedding invitation builder · 390×844 guest page</p>
+
+  <!-- ================= 1. REPRESENTATIVE SCREEN ================= -->
+  <p class="section-label">Representative screen — Guest invitation page</p>
+  <div class="device">
+    <div class="screen">
+
+      <header class="hero">
+        <svg class="florals" viewBox="0 0 390 430" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+          <g fill="none" stroke="rgba(255,247,242,.5)" stroke-width="1.5">
+            <path d="M-10 90 Q 60 40 130 78 T 260 60"/>
+            <path d="M300 20 Q 340 70 400 55"/>
+          </g>
+          <g fill="rgba(255,247,242,.35)">
+            <circle cx="52" cy="66" r="7"/><circle cx="120" cy="84" r="5"/>
+            <circle cx="330" cy="48" r="6"/><circle cx="370" cy="90" r="4"/>
+          </g>
+          <g fill="rgba(138,155,110,.35)">
+            <ellipse cx="30" cy="120" rx="12" ry="5" transform="rotate(-24 30 120)"/>
+            <ellipse cx="356" cy="120" rx="11" ry="5" transform="rotate(20 356 120)"/>
+          </g>
+        </svg>
+        <p class="photo-hint">커플 사진</p>
+        <div class="veil"></div>
+        <div class="hero-copy">
+          <p class="hero-eyebrow">WEDDING INVITATION</p>
+          <p class="hero-names">김도윤 <span aria-hidden="true">·</span> 이서연</p>
+          <p class="hero-date">2026년 11월 14일 토요일 오후 1시 · 더채플앳청담</p>
+        </div>
+      </header>
+
+      <div class="body-pad">
+
+        <section class="card greeting" aria-label="인사말">
+          <span class="kicker">INVITATION</span>
+          <h2>소중한 분들을 초대합니다</h2>
+          <p>서로가 마주 보며 다져온 사랑을<br>이제 함께 한 곳을 바라보며 걸어가려 합니다.<br>저희 두 사람의 새로운 시작을<br>가까이에서 축복해 주시면 감사하겠습니다.</p>
+          <p class="sig">김영호 · 박미선 의 장남 <strong>도윤</strong><br>이재석 · 최은정 의 장녀 <strong>서연</strong></p>
+        </section>
+
+        <section class="card" aria-label="예식 일시">
+          <span class="kicker">DATE</span>
+          <p class="date-big">2026. 11. 14</p>
+          <p class="date-sub">토요일 오후 1:00</p>
+          <div class="countdown" role="group" aria-label="예식까지 남은 시간">
+            <div class="cd"><b>70</b><span>일</span></div>
+            <div class="cd"><b>03</b><span>시간</span></div>
+            <div class="cd"><b>21</b><span>분</span></div>
+            <div class="cd"><b>09</b><span>초</span></div>
+          </div>
+          <p class="dday">도윤 ♥ 서연의 결혼식이 <strong>70일</strong> 남았습니다</p>
+        </section>
+
+        <section class="card" aria-label="오시는 길">
+          <span class="kicker">LOCATION</span>
+          <p class="venue-name">더채플앳청담 4층 노블레스홀</p>
+          <p class="venue-addr">서울 강남구 선릉로158길 11 · 02-512-3400</p>
+          <div class="map" role="img" aria-label="더채플앳청담 위치 지도 미리보기">
+            <svg viewBox="0 0 350 150" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+              <rect width="350" height="150" fill="#F1E9DE"/>
+              <path d="M0 40 H350 M0 108 H350 M70 0 V150 M170 0 V150 M266 0 V150" stroke="#E2D2BF" stroke-width="8"/>
+              <path d="M0 74 H350" stroke="#EAD9C4" stroke-width="14"/>
+              <rect x="86" y="12" width="60" height="18" rx="4" fill="#E7DAC6"/>
+              <rect x="190" y="118" width="52" height="20" rx="4" fill="#E7DAC6"/>
+              <rect x="284" y="14" width="46" height="16" rx="4" fill="#DCE3CB"/>
+              <circle cx="175" cy="70" r="9" fill="#C4756B"/>
+              <circle cx="175" cy="70" r="3.5" fill="#FFF7F2"/>
+            </svg>
+            <span class="pin-label">더채플앳청담</span>
+          </div>
+          <div class="map-btns">
+            <button type="button">네이버 지도</button>
+            <button type="button">카카오맵</button>
+            <button type="button">티맵</button>
+          </div>
+        </section>
+
+        <section class="card" aria-label="교통 및 주차 안내">
+          <span class="kicker">TRANSPORT</span>
+          <h2>교통 · 주차 안내</h2>
+          <dl class="transport">
+            <dt>지하철</dt>
+            <dd>7호선 · 수인분당선 강남구청역 3번 출구 도보 5분</dd>
+            <dt>버스</dt>
+            <dd>간선 301 · 342, 지선 4412 「강남구청」 하차</dd>
+            <dt>자가용</dt>
+            <dd>내비게이션 「더채플앳청담」 검색</dd>
+            <dt>주차</dt>
+            <dd>건물 지하 주차장 2시간 무료 (안내데스크 등록)</dd>
+          </dl>
+        </section>
+
+        <section class="card" aria-label="참석 여부 회신">
+          <span class="kicker">RSVP</span>
+          <h2>참석 의사 전달</h2>
+          <p class="rsvp-lede">준비에 정성을 다할 수 있도록<br>참석 여부를 알려주시면 감사하겠습니다.</p>
+          <p class="field-label" id="att-label">참석 여부</p>
+          <div class="chip-row" role="group" aria-labelledby="att-label">
+            <button type="button" class="chip" aria-pressed="true">참석</button>
+            <button type="button" class="chip" aria-pressed="false">불참</button>
+            <button type="button" class="chip" aria-pressed="false">미정</button>
+          </div>
+          <p class="field-label" id="cnt-label">참석 인원</p>
+          <div class="stepper" role="group" aria-labelledby="cnt-label">
+            <button type="button" aria-label="인원 줄이기">−</button>
+            <output>2명</output>
+            <button type="button" aria-label="인원 늘리기">+</button>
+          </div>
+          <p class="field-label" id="meal-label">식사 여부</p>
+          <div class="chip-row" role="group" aria-labelledby="meal-label">
+            <button type="button" class="chip" aria-pressed="true">식사함</button>
+            <button type="button" class="chip" aria-pressed="false">식사 안함</button>
+          </div>
+          <button type="button" class="btn-primary">참석 의사 보내기</button>
+        </section>
+
+        <section class="card" aria-label="마음 전하실 곳">
+          <span class="kicker">GIFT</span>
+          <h2>마음 전하실 곳</h2>
+          <details class="side" open>
+            <summary>신랑측 계좌번호 <span aria-hidden="true">﹀</span></summary>
+            <div class="acct">
+              <div class="acct-row"><span class="who">신랑 김도윤</span><span class="num">국민 123402-04-567890</span></div>
+              <div class="bank-btns">
+                <button type="button" class="kakao">카카오페이 송금</button>
+                <button type="button">토스 송금</button>
+                <button type="button" class="copy">계좌 복사</button>
+              </div>
+            </div>
+          </details>
+          <details class="side">
+            <summary>신부측 계좌번호 <span aria-hidden="true">﹀</span></summary>
+            <div class="acct">
+              <div class="acct-row"><span class="who">신부 이서연</span><span class="num">신한 110-456-789012</span></div>
+              <div class="bank-btns">
+                <button type="button" class="kakao">카카오페이 송금</button>
+                <button type="button">토스 송금</button>
+                <button type="button" class="copy">계좌 복사</button>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="card" aria-label="갤러리">
+          <span class="kicker">GALLERY</span>
+          <h2>우리의 순간들</h2>
+          <div class="gallery">
+            <div class="ph ph1"><span>첫 데이트</span></div>
+            <div class="ph ph2"><span>프러포즈</span></div>
+            <div class="ph ph3"><span>제주 여행</span></div>
+            <div class="ph ph4"><span>스튜디오</span></div>
+          </div>
+        </section>
+
+      </div>
+
+      <footer class="invite-footer">
+        <div class="share-row">
+          <button type="button" class="primary">카카오톡 공유</button>
+          <button type="button">링크 복사</button>
+        </div>
+        <p class="contacts">
+          신랑 <a href="tel:010-1234-5678">010-1234-5678</a> · 신부 <a href="tel:010-8765-4321">010-8765-4321</a><br>
+          혼주 김영호 <a href="tel:010-2222-3333">010-2222-3333</a> · 이재석 <a href="tel:010-4444-5555">010-4444-5555</a>
+        </p>
+        <p class="made-by">BLUSH LETTERPRESS</p>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ================= 2. STYLE TILE ================= -->
+  <p class="section-label" style="margin-top:40px">Style tile — Blush Letterpress</p>
+  <div class="tile">
+
+    <h3>Palette</h3>
+    <div class="swatches">
+      <div class="sw"><div class="chipc" style="background:#FBF5F0"></div><p><b>color.bg</b><span>#FBF5F0</span></p></div>
+      <div class="sw"><div class="chipc" style="background:#FFFFFF"></div><p><b>color.surface</b><span>#FFFFFF</span></p></div>
+      <div class="sw"><div class="chipc" style="background:#4A3B35"></div><p><b>color.text</b><span>#4A3B35</span></p></div>
+      <div class="sw"><div class="chipc" style="background:#C4756B"></div><p><b>color.primary</b><span>#C4756B</span></p></div>
+      <div class="sw"><div class="chipc" style="background:#8A9B6E"></div><p><b>color.accent</b><span>#8A9B6E</span></p></div>
+    </div>
+
+    <h3>Type scale</h3>
+    <div class="typerow"><span class="meta">display · 24</span><span class="t-display">소중한 분들을 초대합니다</span></div>
+    <div class="typerow"><span class="meta">title · 20</span><span class="t-title">마음 전하실 곳</span></div>
+    <div class="typerow"><span class="meta">subtitle · 17</span><span class="t-subtitle">더채플앳청담 4층 노블레스홀</span></div>
+    <div class="typerow"><span class="meta">body · 15</span><span class="t-body">저희 두 사람의 새로운 시작을 가까이에서 축복해 주시면 감사하겠습니다.</span></div>
+    <div class="typerow"><span class="meta">label · 13</span><span class="t-label">참석 여부</span></div>
+    <div class="typerow"><span class="meta">caption · 12</span><span class="t-caption">건물 지하 주차장 2시간 무료</span></div>
+
+    <h3>Primary button</h3>
+    <div class="states">
+      <figure><button type="button" class="b b-pri">참석 의사 보내기</button><figcaption>enabled</figcaption></figure>
+      <figure><button type="button" class="b b-pri pressed">참석 의사 보내기</button><figcaption>pressed</figcaption></figure>
+      <figure><button type="button" class="b b-pri selected">참석 의사 보내기</button><figcaption>selected</figcaption></figure>
+      <figure><button type="button" class="b b-pri disabled" disabled>참석 의사 보내기</button><figcaption>disabled</figcaption></figure>
+    </div>
+
+    <h3>Secondary button</h3>
+    <div class="states">
+      <figure><button type="button" class="b b-sec">링크 복사</button><figcaption>enabled</figcaption></figure>
+      <figure><button type="button" class="b b-sec pressed">링크 복사</button><figcaption>pressed</figcaption></figure>
+      <figure><button type="button" class="b b-sec selected">링크 복사</button><figcaption>selected</figcaption></figure>
+      <figure><button type="button" class="b b-sec disabled" disabled>링크 복사</button><figcaption>disabled</figcaption></figure>
+    </div>
+
+    <h3>Card</h3>
+    <div class="demo-card">
+      <span class="kicker">DATE</span>
+      <h4>2026. 11. 14 토요일 오후 1:00</h4>
+      <p>도윤 ♥ 서연의 결혼식이 70일 남았습니다. 준비에 정성을 다할 수 있도록 참석 여부를 알려주세요.</p>
+    </div>
+
+    <h3>Radius &amp; shadow</h3>
+    <div class="samples">
+      <div class="rad r10">sm 10</div>
+      <div class="rad r16">md 16</div>
+      <div class="rad r24">lg 24</div>
+      <div class="rad rpill">pill 999</div>
+      <div class="shadow-demo">feather-soft<br>0 2px 8px<br>rgba(90,60,50,.08)</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

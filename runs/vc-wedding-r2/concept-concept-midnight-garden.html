@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미드나잇 가든 — Visual Concept 2/3</title>
+<style>
+  /* ============ Concept tokens: Midnight Garden ============ */
+  :root{
+    --bg:#12211C;
+    --surface:#1C2F28;
+    --text:#F2EDE3;
+    --text-dim:#C9C2B2;
+    --primary:#D4B36A;
+    --accent:#8FAE9B;
+    --on-primary:#12211C;
+    --r-sm:12px; --r-md:16px; --r-lg:24px;
+    --glow:0 8px 32px rgba(0,0,0,0.45);
+    --gold-glow:0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(244,225,180,0.35);
+    /* fixed skeleton */
+    --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:20px; --sp6:24px; --sp7:32px; --sp8:40px;
+    --fs-display:24px; --fs-title:20px; --fs-subtitle:17px; --fs-body:15px; --fs-label:13px; --fs-caption:12px;
+    --serif:'Nanum Myeongjo','Apple SD Gothic Neo',Georgia,'Times New Roman',serif;
+    --sans:'Apple SD Gothic Neo','Malgun Gothic',-apple-system,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#0C1713;
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:var(--fs-body);
+    line-height:1.45;
+    padding:var(--sp8) var(--sp5) 80px;
+  }
+  h1,h2,h3{font-weight:600}
+  .section-label{
+    font-family:var(--sans);
+    font-size:var(--fs-label);
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 auto var(--sp4);
+    max-width:920px;
+  }
+  .concept-head{max-width:920px;margin:0 auto var(--sp7)}
+  .concept-head h1{font-family:var(--serif);font-size:var(--fs-display);color:var(--primary);margin-bottom:var(--sp2)}
+  .concept-head p{color:var(--text-dim);font-size:var(--fs-body);max-width:640px}
+
+  /* ============ Device frame ============ */
+  .frame-wrap{display:flex;justify-content:center;margin-bottom:var(--sp8)}
+  .device{
+    width:390px;
+    border-radius:40px;
+    border:1px solid rgba(212,179,106,0.35);
+    box-shadow:0 24px 80px rgba(0,0,0,0.6);
+    overflow:hidden;
+    background:var(--bg);
+  }
+  .screen{
+    width:100%;
+    height:844px;
+    overflow-y:auto;
+    background:
+      radial-gradient(120% 60% at 50% 0%, rgba(143,174,155,0.10) 0%, rgba(18,33,28,0) 60%),
+      var(--bg);
+    -webkit-overflow-scrolling:touch;
+  }
+  .screen::-webkit-scrollbar{width:0}
+
+  /* ------ hero ------ */
+  .hero{position:relative;padding:var(--sp8) var(--sp5) var(--sp6);text-align:center}
+  .hero-photo{
+    width:100%;height:340px;display:block;
+    border-radius:var(--r-lg);
+    box-shadow:var(--glow);
+  }
+  .hero-ornament{margin:var(--sp5) auto var(--sp3);display:block}
+  .hero-eyebrow{
+    font-size:var(--fs-caption);letter-spacing:.35em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:var(--sp3);
+  }
+  .hero-names{
+    font-family:var(--serif);font-size:var(--fs-display);color:var(--text);
+    letter-spacing:.06em;
+  }
+  .hero-names .amp{color:var(--primary);font-style:italic;padding:0 var(--sp2)}
+  .hero-sub{font-size:var(--fs-body);color:var(--text-dim);margin-top:var(--sp2)}
+
+  /* ------ generic card ------ */
+  .card{
+    background:var(--surface);
+    border-radius:var(--r-md);
+    box-shadow:var(--glow);
+    padding:var(--sp5);
+    margin:0 var(--sp5) var(--sp5);
+  }
+  .card-gold{
+    border:1px solid rgba(212,179,106,0.55);
+    box-shadow:var(--gold-glow);
+    border-radius:var(--r-lg);
+  }
+  .card h3{
+    font-family:var(--serif);font-size:var(--fs-title);color:var(--primary);
+    margin-bottom:var(--sp3);text-align:center;
+  }
+  .card .kicker{
+    display:block;text-align:center;font-size:var(--fs-caption);
+    letter-spacing:.28em;color:var(--accent);text-transform:uppercase;margin-bottom:var(--sp2);
+  }
+
+  /* ------ date block ------ */
+  .date-main{font-family:var(--serif);font-size:var(--fs-title);text-align:center;color:var(--text)}
+  .date-sub{text-align:center;color:var(--text-dim);font-size:var(--fs-body);margin-top:var(--sp1)}
+  .dday{
+    display:flex;justify-content:center;gap:var(--sp2);margin-top:var(--sp4);
+  }
+  .dday .unit{
+    background:var(--bg);border:1px solid rgba(143,174,155,0.3);
+    border-radius:var(--r-sm);min-width:56px;padding:var(--sp2) var(--sp1);text-align:center;
+  }
+  .dday .num{font-family:var(--serif);font-size:var(--fs-title);color:var(--primary)}
+  .dday .lbl{font-size:var(--fs-caption);color:var(--text-dim);margin-top:2px}
+
+  /* ------ greeting ------ */
+  .greeting p{
+    font-family:var(--serif);text-align:center;color:var(--text);
+    font-size:var(--fs-body);line-height:1.9;
+  }
+  .parents{
+    margin-top:var(--sp5);padding-top:var(--sp4);
+    border-top:1px solid rgba(212,179,106,0.25);
+    display:grid;gap:var(--sp2);
+  }
+  .parents .row{display:flex;justify-content:center;gap:var(--sp2);font-size:var(--fs-body);color:var(--text-dim)}
+  .parents .who{color:var(--text)}
+
+  /* ------ venue ------ */
+  .venue-name{font-size:var(--fs-subtitle);font-weight:600;text-align:center;color:var(--text)}
+  .venue-addr{font-size:var(--fs-label);color:var(--text-dim);text-align:center;margin-top:var(--sp1)}
+  .mapbox{
+    margin-top:var(--sp4);border-radius:var(--r-sm);overflow:hidden;
+    border:1px solid rgba(143,174,155,0.25);
+  }
+  .mapbox svg{display:block;width:100%;height:auto}
+  .map-btn-row{display:flex;gap:var(--sp2);margin-top:var(--sp3)}
+
+  /* ------ transport / accordion ------ */
+  details{border-top:1px solid rgba(143,174,155,0.2)}
+  details:first-of-type{border-top:none}
+  summary{
+    list-style:none;cursor:pointer;
+    min-height:44px;display:flex;align-items:center;justify-content:space-between;
+    font-size:var(--fs-body);color:var(--text);padding:var(--sp2) 0;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary .chev{color:var(--primary);font-size:var(--fs-label);transition:transform .2s}
+  details[open] summary .chev{transform:rotate(180deg)}
+  .acc-body{padding:0 0 var(--sp4);color:var(--text-dim);font-size:var(--fs-label);line-height:1.6}
+  .acc-body strong{color:var(--accent);font-weight:600}
+
+  /* ------ gallery ------ */
+  .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2);margin-top:var(--sp2)}
+  .gallery-grid svg{
+    width:100%;height:auto;display:block;border-radius:var(--r-sm);
+    box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  }
+  .gallery-grid .wide{grid-column:1 / -1}
+
+  /* ------ buttons (fixed states) ------ */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-height:44px;padding:0 var(--sp5);
+    border-radius:var(--r-sm);
+    font-family:var(--sans);font-size:var(--fs-body);font-weight:600;
+    border:none;cursor:pointer;line-height:1.45;
+  }
+  .btn-primary{
+    background:linear-gradient(180deg,#E2C685 0%,var(--primary) 100%);
+    color:var(--on-primary);
+    box-shadow:0 8px 24px rgba(212,179,106,0.25), inset 0 1px 0 rgba(255,244,214,0.6);
+  }
+  .btn-primary.pressed{background:#B8985A;box-shadow:inset 0 2px 6px rgba(0,0,0,0.35)}
+  .btn-primary.selected{outline:2px solid var(--accent);outline-offset:2px}
+  .btn-primary.disabled{background:#4A4536;color:#847C66;box-shadow:none;cursor:not-allowed}
+  .btn-secondary{
+    background:transparent;color:var(--primary);
+    border:1px solid rgba(212,179,106,0.6);
+  }
+  .btn-secondary.pressed{background:rgba(212,179,106,0.15)}
+  .btn-secondary.selected{background:rgba(212,179,106,0.12);border-color:var(--primary);outline:2px solid var(--accent);outline-offset:2px}
+  .btn-secondary.disabled{color:#6E7B70;border-color:#3A4A41;cursor:not-allowed}
+  .btn-block{width:100%}
+
+  /* ------ RSVP ------ */
+  .rsvp-choices{display:flex;gap:var(--sp2);margin:var(--sp3) 0 var(--sp4)}
+  .rsvp-choices .btn{flex:1}
+  .rsvp-row{
+    display:flex;align-items:center;justify-content:space-between;
+    min-height:44px;border-top:1px solid rgba(143,174,155,0.2);
+    font-size:var(--fs-body);color:var(--text);
+  }
+  .stepper{display:flex;align-items:center;gap:var(--sp3)}
+  .stepper button{
+    width:44px;height:44px;border-radius:var(--r-sm);
+    background:var(--bg);border:1px solid rgba(212,179,106,0.45);
+    color:var(--primary);font-size:var(--fs-subtitle);cursor:pointer;
+  }
+  .stepper .val{font-family:var(--serif);font-size:var(--fs-subtitle);min-width:24px;text-align:center}
+  .meal-opts{display:flex;gap:var(--sp2)}
+  .chip{
+    min-height:44px;display:inline-flex;align-items:center;
+    padding:0 var(--sp4);border-radius:999px;font-size:var(--fs-label);
+    border:1px solid rgba(143,174,155,0.4);color:var(--text-dim);background:transparent;cursor:pointer;
+  }
+  .chip.on{border-color:var(--primary);color:var(--primary);background:rgba(212,179,106,0.12)}
+
+  /* ------ accounts ------ */
+  .acct{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:var(--sp3);padding:var(--sp3) 0;border-top:1px solid rgba(212,179,106,0.18);
+  }
+  .acct:first-child{border-top:none}
+  .acct .info b{display:block;font-size:var(--fs-body);color:var(--text);font-weight:600}
+  .acct .info span{font-size:var(--fs-label);color:var(--text-dim)}
+  .acct .btns{display:flex;gap:var(--sp1)}
+  .mini-btn{
+    min-height:44px;min-width:44px;padding:0 var(--sp3);
+    border-radius:var(--r-sm);border:1px solid rgba(212,179,106,0.5);
+    background:transparent;color:var(--primary);font-size:var(--fs-caption);cursor:pointer;
+  }
+
+  /* ------ footer ------ */
+  .page-footer{padding:var(--sp6) var(--sp5) var(--sp8);text-align:center}
+  .share-row{display:flex;gap:var(--sp2);margin-bottom:var(--sp5)}
+  .share-row .btn{flex:1}
+  .credit{font-size:var(--fs-caption);color:#93A398;letter-spacing:.08em}
+  .divider-orn{margin:0 auto var(--sp4);display:block}
+
+  /* ============ Style tile ============ */
+  .tile{
+    max-width:920px;margin:0 auto;
+    background:var(--surface);
+    border:1px solid rgba(143,174,155,0.2);
+    border-radius:var(--r-lg);
+    box-shadow:var(--glow);
+    padding:var(--sp7);
+  }
+  .tile h2{font-family:var(--serif);font-size:var(--fs-title);color:var(--primary);margin-bottom:var(--sp5)}
+  .tile-section{margin-bottom:var(--sp7)}
+  .tile-section:last-child{margin-bottom:0}
+  .tile-section > h4{
+    font-size:var(--fs-caption);letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:var(--sp4);
+  }
+  .swatches{display:flex;flex-wrap:wrap;gap:var(--sp3)}
+  .swatch{width:132px}
+  .swatch .chipbox{
+    height:72px;border-radius:var(--r-sm);border:1px solid rgba(242,237,227,0.12);
+    margin-bottom:var(--sp2);
+  }
+  .swatch .tname{font-size:var(--fs-label);color:var(--text);font-weight:600}
+  .swatch .thex{font-size:var(--fs-caption);color:var(--text-dim);font-family:ui-monospace,Menlo,monospace}
+  .type-row{display:flex;align-items:baseline;gap:var(--sp4);padding:var(--sp2) 0;border-top:1px solid rgba(143,174,155,0.15)}
+  .type-row:first-of-type{border-top:none}
+  .type-row .meta{width:120px;flex:none;font-size:var(--fs-caption);color:var(--text-dim);font-family:ui-monospace,Menlo,monospace}
+  .t-display{font-family:var(--serif);font-size:var(--fs-display);color:var(--text)}
+  .t-title{font-family:var(--serif);font-size:var(--fs-title);color:var(--text)}
+  .t-subtitle{font-size:var(--fs-subtitle);color:var(--text);font-weight:600}
+  .t-body{font-size:var(--fs-body);color:var(--text)}
+  .t-label{font-size:var(--fs-label);color:var(--text)}
+  .t-caption{font-size:var(--fs-caption);color:var(--text-dim)}
+  .state-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:var(--sp3);align-items:center}
+  .state-grid .cell{text-align:center}
+  .state-grid .cap{font-size:var(--fs-caption);color:var(--text-dim);margin-top:var(--sp2)}
+  .samples-row{display:flex;flex-wrap:wrap;gap:var(--sp5);align-items:flex-start}
+  .radius-demo{display:flex;gap:var(--sp3)}
+  .radius-demo .box{
+    width:88px;height:88px;background:var(--bg);
+    border:1px solid rgba(212,179,106,0.5);
+    display:flex;align-items:center;justify-content:center;
+    font-size:var(--fs-caption);color:var(--text-dim);font-family:ui-monospace,Menlo,monospace;
+  }
+  .shadow-demo{
+    width:200px;height:88px;background:var(--surface);
+    border-radius:var(--r-md);box-shadow:var(--glow);
+    display:flex;align-items:center;justify-content:center;
+    font-size:var(--fs-caption);color:var(--text-dim);
+  }
+  .shadow-demo.gold{border:1px solid rgba(212,179,106,0.55);box-shadow:var(--gold-glow);color:var(--primary)}
+  .tile-card-demo{max-width:360px}
+  .tile-card-demo .card{margin:0}
+  @media (max-width:640px){
+    .state-grid{grid-template-columns:repeat(2,1fr)}
+    .tile{padding:var(--sp5)}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= 1. Representative screen ================= -->
+<p class="section-label">Representative Screen · 390 × 844</p>
+<header class="concept-head">
+  <h1>미드나잇 가든 (Midnight Garden)</h1>
+  <p>저녁 정원 예식의 다크 럭셔리 무드 — 딥 그린 바탕 위 샴페인 골드 포인트, 보태니컬 라인 오너먼트, 앰비언트 글로우. 하객용 청첩장 페이지.</p>
+</header>
+
+<div class="frame-wrap">
+  <div class="device">
+    <div class="screen">
+
+      <!-- Hero -->
+      <section class="hero">
+        <svg class="hero-photo" viewBox="0 0 350 340" role="img" aria-label="김민준·이서연 커플 사진 (저녁 정원)">
+          <defs>
+            <linearGradient id="heroSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#24403A"/><stop offset="0.55" stop-color="#1A2E29"/><stop offset="1" stop-color="#101E19"/>
+            </linearGradient>
+            <radialGradient id="moon" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#F4E6C0"/><stop offset="0.6" stop-color="#E4CE94" stop-opacity="0.55"/><stop offset="1" stop-color="#E4CE94" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="350" height="340" rx="24" fill="url(#heroSky)"/>
+          <circle cx="278" cy="72" r="58" fill="url(#moon)"/>
+          <circle cx="278" cy="72" r="22" fill="#F0E2BC"/>
+          <g stroke="#8FAE9B" stroke-width="1.4" fill="none" opacity="0.7">
+            <path d="M20 320 C 40 250, 30 200, 55 150 M55 150 C 45 170, 35 175, 28 168 M55 150 C 66 165, 76 168, 84 160 M42 220 C 30 228, 20 226, 14 216 M46 200 C 58 210, 70 209, 78 199"/>
+            <path d="M330 322 C 315 260, 322 210, 300 165 M300 165 C 310 182, 322 186, 330 178 M300 165 C 290 180, 278 183, 270 174 M312 235 C 324 244, 336 242, 342 231"/>
+          </g>
+          <g fill="#D4B36A" opacity="0.85">
+            <circle cx="60" cy="146" r="3"/><circle cx="88" cy="158" r="2.4"/><circle cx="296" cy="161" r="3"/><circle cx="266" cy="172" r="2.4"/>
+            <circle cx="46" cy="120" r="1.4"/><circle cx="110" cy="60" r="1.2"/><circle cx="180" cy="36" r="1.5"/><circle cx="228" cy="120" r="1.2"/><circle cx="70" cy="66" r="1.1"/>
+          </g>
+          <!-- couple silhouettes -->
+          <g fill="#0B1512">
+            <path d="M150 340 L150 250 C150 232 158 220 168 218 C162 213 160 206 162 199 C164 191 171 186 179 187 C176 182 176 175 180 170 C185 164 194 164 199 170 C203 175 203 182 200 187 C208 188 214 194 215 202 C216 208 214 214 209 218 C219 221 226 233 226 250 L226 340 Z"/>
+          </g>
+          <path d="M150 340 L226 340" stroke="#D4B36A" stroke-width="1" opacity="0.5"/>
+          <text x="175" y="316" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#C9C2B2" letter-spacing="3">OCTOBER 24, 2026</text>
+        </svg>
+
+        <svg class="hero-ornament" width="160" height="26" viewBox="0 0 160 26" aria-hidden="true">
+          <g stroke="#D4B36A" fill="none" stroke-width="1.2">
+            <path d="M6 13 H58 M102 13 H154"/>
+            <path d="M80 4 C 74 9, 74 17, 80 22 C 86 17, 86 9, 80 4 Z"/>
+            <path d="M62 13 C 68 9, 72 9, 76 12 M98 13 C 92 9, 88 9, 84 12"/>
+          </g>
+          <circle cx="6" cy="13" r="2" fill="#D4B36A"/><circle cx="154" cy="13" r="2" fill="#D4B36A"/>
+        </svg>
+
+        <p class="hero-eyebrow">Wedding Invitation</p>
+        <h2 class="hero-names">김민준 <span class="amp">그리고</span> 이서연</h2>
+        <p class="hero-sub">저희 두 사람, 소중한 분들을 초대합니다</p>
+      </section>
+
+      <!-- 예식 일시 -->
+      <section class="card card-gold" aria-label="예식 일시">
+        <span class="kicker">Save the Date</span>
+        <h3>예식 일시</h3>
+        <p class="date-main">2026년 10월 24일 토요일</p>
+        <p class="date-sub">오후 1시 30분</p>
+        <div class="dday" aria-label="디데이 카운트다운">
+          <div class="unit"><div class="num">413</div><div class="lbl">DAYS</div></div>
+          <div class="unit"><div class="num">07</div><div class="lbl">HOURS</div></div>
+          <div class="unit"><div class="num">24</div><div class="lbl">MIN</div></div>
+          <div class="unit"><div class="num">09</div><div class="lbl">SEC</div></div>
+        </div>
+      </section>
+
+      <!-- 모시는 글 -->
+      <section class="card greeting" aria-label="모시는 글">
+        <span class="kicker">Invitation</span>
+        <h3>모시는 글</h3>
+        <p>
+          깊어가는 가을 밤, 달빛 정원에서<br>
+          두 사람이 하나의 길을 걷고자 합니다.<br>
+          바쁘신 가운데 귀한 걸음 하시어<br>
+          저희의 새로운 시작을<br>
+          축복해 주시면 감사하겠습니다.
+        </p>
+        <div class="parents">
+          <div class="row"><span class="who">김영호 · 박정숙</span><span>의 장남</span><span class="who">민준</span></div>
+          <div class="row"><span class="who">이상철 · 최미경</span><span>의 장녀</span><span class="who">서연</span></div>
+        </div>
+      </section>
+
+      <!-- 예식장 정보 -->
+      <section class="card" aria-label="예식장 정보">
+        <span class="kicker">Location</span>
+        <h3>예식장 안내</h3>
+        <p class="venue-name">더채플앳청담 3층 아너스홀</p>
+        <p class="venue-addr">서울특별시 강남구 선릉로 757 (청담동)</p>
+        <div class="mapbox">
+          <svg viewBox="0 0 310 160" role="img" aria-label="예식장 위치 지도 미리보기">
+            <rect width="310" height="160" fill="#16241F"/>
+            <g stroke="#2A4038" stroke-width="6" fill="none">
+              <path d="M0 48 H310 M0 118 H310 M84 0 V160 M212 0 V160"/>
+            </g>
+            <g stroke="#22352E" stroke-width="2.5" fill="none">
+              <path d="M0 84 H310 M148 0 V160 M262 0 V160 M40 0 V160"/>
+            </g>
+            <rect x="94" y="58" width="44" height="18" rx="3" fill="#20332C"/>
+            <rect x="222" y="92" width="30" height="18" rx="3" fill="#20332C"/>
+            <rect x="96" y="128" width="40" height="16" rx="3" fill="#20332C"/>
+            <g>
+              <path d="M172 96 C 160 82 160 66 172 56 C 184 66 184 82 172 96 Z" fill="#D4B36A"/>
+              <circle cx="172" cy="70" r="6" fill="#12211C"/>
+            </g>
+            <text x="172" y="116" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#C9C2B2">더채플앳청담</text>
+          </svg>
+        </div>
+        <div class="map-btn-row">
+          <button class="btn btn-secondary btn-block" type="button">지도 앱으로 보기</button>
+          <button class="btn btn-secondary btn-block" type="button">주소 복사</button>
+        </div>
+      </section>
+
+      <!-- 오시는 길 -->
+      <section class="card" aria-label="오시는 길">
+        <span class="kicker">Directions</span>
+        <h3>오시는 길</h3>
+        <details open>
+          <summary>지하철 안내 <span class="chev">▾</span></summary>
+          <div class="acc-body"><strong>7호선·수인분당선</strong> 강남구청역 3-1번 출구 도보 5분<br><strong>수인분당선</strong> 압구정로데오역 4번 출구 도보 8분</div>
+        </details>
+        <details>
+          <summary>버스 안내 <span class="chev">▾</span></summary>
+          <div class="acc-body"><strong>간선</strong> 141 · 145 · 148 — 청담사거리 하차<br><strong>지선</strong> 4412 — 강남구청 정류장 하차 후 도보 3분</div>
+        </details>
+        <details>
+          <summary>자차 · 주차 안내 <span class="chev">▾</span></summary>
+          <div class="acc-body">내비게이션에 <strong>"더채플앳청담"</strong> 검색<br>건물 지하 1–4층 주차장 이용 (2시간 무료)<br>주차 등록은 3층 안내데스크에서 도와드립니다.</div>
+        </details>
+      </section>
+
+      <!-- 갤러리 -->
+      <section class="card" aria-label="갤러리">
+        <span class="kicker">Gallery</span>
+        <h3>우리의 순간들</h3>
+        <div class="gallery-grid">
+          <svg class="wide" viewBox="0 0 300 150" role="img" aria-label="갤러리 사진 1: 야간 정원 스냅">
+            <rect width="300" height="150" fill="#22382F"/>
+            <circle cx="248" cy="34" r="16" fill="#EFDFB4" opacity="0.9"/>
+            <path d="M0 150 C 60 110 120 130 180 104 C 230 84 270 96 300 82 L300 150 Z" fill="#182A23"/>
+            <g fill="#D4B36A" opacity="0.8"><circle cx="52" cy="40" r="1.6"/><circle cx="120" cy="24" r="1.2"/><circle cx="180" cy="50" r="1.4"/><circle cx="90" cy="70" r="1.2"/></g>
+            <text x="150" y="136" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#C9C2B2" letter-spacing="2">EVENING GARDEN</text>
+          </svg>
+          <svg viewBox="0 0 146 146" role="img" aria-label="갤러리 사진 2: 부케">
+            <rect width="146" height="146" fill="#1E332B"/>
+            <g stroke="#8FAE9B" stroke-width="1.3" fill="none"><path d="M73 128 C 68 96 58 78 44 62 M73 128 C 78 96 90 78 104 64 M73 128 C 73 92 73 72 73 52"/></g>
+            <g fill="#D4B36A"><circle cx="44" cy="58" r="7"/><circle cx="104" cy="60" r="7"/><circle cx="73" cy="46" r="8"/><circle cx="58" cy="74" r="5"/><circle cx="90" cy="76" r="5"/></g>
+          </svg>
+          <svg viewBox="0 0 146 146" role="img" aria-label="갤러리 사진 3: 반지 교환">
+            <rect width="146" height="146" fill="#20362D"/>
+            <circle cx="60" cy="76" r="20" fill="none" stroke="#D4B36A" stroke-width="3"/>
+            <circle cx="88" cy="76" r="20" fill="none" stroke="#E7D6A8" stroke-width="3"/>
+            <path d="M60 50 l3 6 6 1 -4.5 4 1 6 -5.5 -3 -5.5 3 1 -6 -4.5 -4 6 -1 Z" fill="#F0E2BC"/>
+          </svg>
+          <svg viewBox="0 0 146 146" role="img" aria-label="갤러리 사진 4: 청사초롱 조명">
+            <rect width="146" height="146" fill="#1C312A"/>
+            <path d="M10 30 C 50 44 96 44 136 30" stroke="#3A5348" stroke-width="1.5" fill="none"/>
+            <g><rect x="34" y="38" width="14" height="20" rx="6" fill="#EFDFB4"/><rect x="66" y="44" width="14" height="20" rx="6" fill="#E4CE94"/><rect x="98" y="38" width="14" height="20" rx="6" fill="#EFDFB4"/></g>
+            <path d="M0 146 C 40 120 100 132 146 112 L146 146 Z" fill="#152620"/>
+          </svg>
+          <svg viewBox="0 0 146 146" role="img" aria-label="갤러리 사진 5: 두 사람의 그림자">
+            <rect width="146" height="146" fill="#223930"/>
+            <circle cx="116" cy="28" r="12" fill="#F0E2BC" opacity="0.9"/>
+            <path d="M56 146 L56 96 C56 86 62 80 68 79 C64 74 66 66 73 64 C80 66 82 74 78 79 C84 80 90 86 90 96 L90 146 Z" fill="#0D1815"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- RSVP -->
+      <section class="card card-gold" aria-label="참석 여부 전달">
+        <span class="kicker">R.S.V.P</span>
+        <h3>참석 의사 전달</h3>
+        <p style="text-align:center;color:var(--text-dim);font-size:var(--fs-label);margin-bottom:var(--sp2)">
+          귀한 걸음 하실 예정이신지 미리 알려주시면<br>정성껏 준비하는 데 큰 도움이 됩니다.
+        </p>
+        <div class="rsvp-choices" role="group" aria-label="참석 여부 선택">
+          <button class="btn btn-secondary selected" type="button" aria-pressed="true">참석합니다</button>
+          <button class="btn btn-secondary" type="button" aria-pressed="false">참석이 어렵습니다</button>
+        </div>
+        <div class="rsvp-row">
+          <span>동행 인원</span>
+          <div class="stepper">
+            <button type="button" aria-label="인원 줄이기">−</button>
+            <span class="val" aria-live="polite">2</span>
+            <button type="button" aria-label="인원 늘리기">＋</button>
+          </div>
+        </div>
+        <div class="rsvp-row">
+          <span>식사 여부</span>
+          <div class="meal-opts" role="group" aria-label="식사 여부 선택">
+            <button class="chip on" type="button" aria-pressed="true">식사함</button>
+            <button class="chip" type="button" aria-pressed="false">식사 안 함</button>
+          </div>
+        </div>
+        <div style="margin-top:var(--sp4)">
+          <button class="btn btn-primary btn-block" type="button">참석 여부 전하기</button>
+        </div>
+      </section>
+
+      <!-- 마음 전하실 곳 -->
+      <section class="card card-gold" aria-label="마음 전하실 곳">
+        <span class="kicker">With Gratitude</span>
+        <h3>마음 전하실 곳</h3>
+        <details open>
+          <summary>신랑측 계좌번호 <span class="chev">▾</span></summary>
+          <div class="acc-body">
+            <div class="acct">
+              <div class="info"><b>김민준</b><span>국민은행 123456-04-567890</span></div>
+              <div class="btns"><button class="mini-btn" type="button">복사</button><button class="mini-btn" type="button">송금</button></div>
+            </div>
+            <div class="acct">
+              <div class="info"><b>혼주 김영호</b><span>신한은행 110-234-567890</span></div>
+              <div class="btns"><button class="mini-btn" type="button">복사</button><button class="mini-btn" type="button">송금</button></div>
+            </div>
+          </div>
+        </details>
+        <details>
+          <summary>신부측 계좌번호 <span class="chev">▾</span></summary>
+          <div class="acc-body">
+            <div class="acct">
+              <div class="info"><b>이서연</b><span>하나은행 620-123456-789</span></div>
+              <div class="btns"><button class="mini-btn" type="button">복사</button><button class="mini-btn" type="button">송금</button></div>
+            </div>
+            <div class="acct">
+              <div class="info"><b>혼주 이상철</b><span>우리은행 1002-345-678901</span></div>
+              <div class="btns"><button class="mini-btn" type="button">복사</button><button class="mini-btn" type="button">송금</button></div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- Footer -->
+      <footer class="page-footer">
+        <svg class="divider-orn" width="120" height="20" viewBox="0 0 120 20" aria-hidden="true">
+          <g stroke="#8FAE9B" fill="none" stroke-width="1.1">
+            <path d="M4 10 H44 M76 10 H116"/>
+            <path d="M60 3 C 55 7, 55 13, 60 17 C 65 13, 65 7, 60 3 Z"/>
+          </g>
+        </svg>
+        <div class="share-row">
+          <button class="btn btn-primary" type="button">카카오톡 공유</button>
+          <button class="btn btn-secondary" type="button">링크 복사</button>
+        </div>
+        <p class="credit">Made with 모바일 청첩장 빌더 · Midnight Garden Template</p>
+      </footer>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= 2. Style tile ================= -->
+<p class="section-label">Style Tile · Midnight Garden Tokens</p>
+<section class="tile" aria-label="스타일 타일">
+  <h2>미드나잇 가든 스타일 타일</h2>
+
+  <div class="tile-section">
+    <h4>Color Tokens</h4>
+    <div class="swatches">
+      <div class="swatch"><div class="chipbox" style="background:#12211C"></div><div class="tname">color.bg</div><div class="thex">#12211C</div></div>
+      <div class="swatch"><div class="chipbox" style="background:#1C2F28"></div><div class="tname">color.surface</div><div class="thex">#1C2F28</div></div>
+      <div class="swatch"><div class="chipbox" style="background:#F2EDE3"></div><div class="tname">color.text</div><div class="thex">#F2EDE3</div></div>
+      <div class="swatch"><div class="chipbox" style="background:#D4B36A"></div><div class="tname">color.primary</div><div class="thex">#D4B36A</div></div>
+      <div class="swatch"><div class="chipbox" style="background:#8FAE9B"></div><div class="tname">color.accent</div><div class="thex">#8FAE9B</div></div>
+      <div class="swatch"><div class="chipbox" style="background:#12211C;border-color:rgba(212,179,106,0.6)"></div><div class="tname">color.onPrimary</div><div class="thex">#12211C</div></div>
+    </div>
+  </div>
+
+  <div class="tile-section">
+    <h4>Type Scale — 세리프 디스플레이 + 산세리프 본문 (line-height 1.45)</h4>
+    <div class="type-row"><span class="meta">display · 24</span><span class="t-display">소중한 분들을 초대합니다</span></div>
+    <div class="type-row"><span class="meta">title · 20</span><span class="t-title">2026년 10월 24일 토요일</span></div>
+    <div class="type-row"><span class="meta">subtitle · 17</span><span class="t-subtitle">더채플앳청담 3층 아너스홀</span></div>
+    <div class="type-row"><span class="meta">body · 15</span><span class="t-body">바쁘신 가운데 귀한 걸음 하시어 축복해 주시면 감사하겠습니다.</span></div>
+    <div class="type-row"><span class="meta">label · 13</span><span class="t-label">지하철 7호선 강남구청역 3-1번 출구 도보 5분</span></div>
+    <div class="type-row"><span class="meta">caption · 12</span><span class="t-caption">Made with 모바일 청첩장 빌더 · Midnight Garden</span></div>
+  </div>
+
+  <div class="tile-section">
+    <h4>Primary Button — 참석 여부 전하기</h4>
+    <div class="state-grid">
+      <div class="cell"><button class="btn btn-primary" type="button">참석 여부 전하기</button><div class="cap">enabled</div></div>
+      <div class="cell"><button class="btn btn-primary pressed" type="button">참석 여부 전하기</button><div class="cap">pressed</div></div>
+      <div class="cell"><button class="btn btn-primary selected" type="button">참석 여부 전하기</button><div class="cap">selected</div></div>
+      <div class="cell"><button class="btn btn-primary disabled" type="button" disabled>참석 여부 전하기</button><div class="cap">disabled</div></div>
+    </div>
+  </div>
+
+  <div class="tile-section">
+    <h4>Secondary Button — 링크 복사</h4>
+    <div class="state-grid">
+      <div class="cell"><button class="btn btn-secondary" type="button">링크 복사</button><div class="cap">enabled</div></div>
+      <div class="cell"><button class="btn btn-secondary pressed" type="button">링크 복사</button><div class="cap">pressed</div></div>
+      <div class="cell"><button class="btn btn-secondary selected" type="button">링크 복사</button><div class="cap">selected</div></div>
+      <div class="cell"><button class="btn btn-secondary disabled" type="button" disabled>링크 복사</button><div class="cap">disabled</div></div>
+    </div>
+  </div>
+
+  <div class="tile-section">
+    <h4>Card Component — 골드 보더 승격 카드</h4>
+    <div class="tile-card-demo">
+      <div class="card card-gold">
+        <span class="kicker">Save the Date</span>
+        <h3>예식 일시</h3>
+        <p class="date-main">2026년 10월 24일 토요일</p>
+        <p class="date-sub">오후 1시 30분 · 더채플앳청담</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tile-section">
+    <h4>Radius &amp; Shadow</h4>
+    <div class="samples-row">
+      <div class="radius-demo">
+        <div class="box" style="border-radius:12px">12px</div>
+        <div class="box" style="border-radius:16px">16px</div>
+        <div class="box" style="border-radius:24px">24px</div>
+      </div>
+      <div class="shadow-demo">ambient glow<br>0 8px 32px rgba(0,0,0,.45)</div>
+      <div class="shadow-demo gold">gold card<br>+ inner highlight</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+{
+  "$id": "lane-output.schema.json",
+  "title": "Output contract produced by one lane workflow run",
+  "description": "Written to runs/<runId>/lane-output.json by the lane's package stage. The review sheet is rendered from this file; human approval binds to the artifact revision hashes recorded here.",
+  "type": "object",
+  "required": ["laneId", "runId", "prdId", "round", "viewport", "artifacts", "qualityChecks", "repairHistory", "timing"],
+  "properties": {
+    "laneId": { "type": "string", "enum": ["wireframe", "visual-concept"] },
+    "runId": { "type": "string" },
+    "prdId": { "type": "string" },
+    "round": { "type": "number", "description": "1-based human-directed round. Max 5 before escalation (existing default)." },
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": { "width": { "type": "number" }, "height": { "type": "number" } }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "path", "revisionHash"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "enum": ["flow-map", "clickable-wireframe", "concept-screen", "style-tile", "combined-concept"] },
+          "path": { "type": "string", "description": "Relative to the run directory." },
+          "revisionHash": { "type": "string", "description": "sha256 of the artifact file at package time." },
+          "conceptId": { "type": "string" }
+        }
+      }
+    },
+    "screens": {
+      "type": "array",
+      "description": "Wireframe lane only: the screen inventory the clickable prototype covers.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "purpose"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "purpose": { "type": "string" },
+          "reachedFrom": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "description": "Visual lane only: exactly three per batch unless a repair consumed one.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "direction", "differentiation"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "direction": { "type": "string" },
+          "differentiation": { "type": "string", "description": "Why this concept is meaningfully different from the other two." },
+          "tokenOverlay": { "type": "object", "description": "Brand overlay on the SEED-based fixed skeleton (color, radius, mood). Spacing/type-scale/state model stay fixed (decision D3)." }
+        }
+      }
+    },
+    "qualityChecks": {
+      "type": "array",
+      "description": "Separate axes; never collapsed into one score (confirmed constraint).",
+      "items": {
+        "type": "object",
+        "required": ["criterionId", "axis", "status", "expected", "observed"],
+        "properties": {
+          "criterionId": { "type": "string" },
+          "axis": { "type": "string", "enum": ["ux-task", "spec-fidelity", "accessibility", "aesthetic", "mechanical"] },
+          "status": { "type": "string", "enum": ["pass", "fail", "not-verified", "not-applicable"] },
+          "expected": { "type": "string" },
+          "observed": { "type": "string" },
+          "evidenceRefs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "repairHistory": {
+      "type": "array",
+      "description": "Every automatic repair before the human saw the artifact (decision D9: max 3, includes AI quality judgments; fully logged for transparency).",
+      "items": {
+        "type": "object",
+        "required": ["attempt", "trigger", "change"],
+        "properties": {
+          "attempt": { "type": "number" },
+          "trigger": { "type": "string" },
+          "change": { "type": "string" },
+          "result": { "type": "string" }
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "required": ["startedAt", "finishedAt"],
+      "properties": {
+        "startedAt": { "type": "string" },
+        "finishedAt": { "type": "string" },
+        "budgetNote": { "type": "string", "description": "Decision D6: lane target 10-15 min generation time; record overruns here." }
+      }
+    },
+    "rationaleSummary": { "type": "string", "description": "Concise reasoning record; never private chain of thought." }
+  }
+}

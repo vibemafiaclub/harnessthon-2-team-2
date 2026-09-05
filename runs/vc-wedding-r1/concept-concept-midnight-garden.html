@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midnight Garden</title>
+<style>
+  /* ============ Concept tokens: Midnight Garden ============ */
+  :root{
+    --bg:#101812;
+    --surface:#1B241D;
+    --surface-2:#222D24;
+    --text:#F2EDE3;
+    --text-dim:#C9C3B4;
+    --primary:#C9A96A;
+    --primary-press:#B8944F;
+    --accent:#7FA98C;
+    --hairline:rgba(201,169,106,0.35);
+    --glow:0 0 0 1px rgba(201,169,106,0.25);
+    --r-sm:6px; --r-md:12px; --r-lg:18px; --r-pill:999px;
+    /* fixed skeleton */
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+    --fs-display:24px; --fs-title:20px; --fs-subtitle:17px; --fs-body:15px; --fs-label:13px; --fs-caption:12px;
+    --serif:"Apple SD Gothic Neo","Nanum Myeongjo",Georgia,"Times New Roman",serif;
+    --sans:"Apple SD Gothic Neo","Malgun Gothic",-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#0B110C;color:var(--text);font-family:var(--sans);font-size:var(--fs-body);line-height:1.45}
+  .page{max-width:960px;margin:0 auto;padding:var(--s8) var(--s5)}
+  .section-h{font-family:var(--sans);font-size:var(--fs-title);letter-spacing:.04em;color:var(--primary);text-transform:uppercase;margin:var(--s8) 0 var(--s5)}
+  .section-h:first-child{margin-top:0}
+
+  /* ============ Device frame ============ */
+  .device{width:390px;margin:0 auto;background:var(--bg);border:1px solid var(--hairline);border-radius:28px;overflow:hidden;box-shadow:var(--glow), 0 0 40px rgba(201,169,106,0.08)}
+  .screen{width:100%}
+
+  /* ============ Guest invitation page ============ */
+  .hero{position:relative;height:430px;overflow:hidden;background:
+    radial-gradient(ellipse 70% 45% at 50% 30%, rgba(201,169,106,0.30), transparent 65%),
+    radial-gradient(ellipse 90% 60% at 20% 85%, rgba(127,169,140,0.28), transparent 70%),
+    linear-gradient(180deg,#1E2A21 0%,#141D16 55%,#101812 100%)}
+  .hero-foliage{position:absolute;inset:0;opacity:.5}
+  .hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,24,18,0) 40%,rgba(16,24,18,.55) 75%,var(--bg) 100%)}
+  .hero-txt{position:absolute;left:0;right:0;bottom:var(--s6);text-align:center;padding:0 var(--s5)}
+  .hero-eyebrow{font-size:var(--fs-caption);letter-spacing:.35em;color:var(--primary);text-transform:uppercase;margin-bottom:var(--s3)}
+  .hero-names{font-family:var(--serif);font-size:var(--fs-display);font-weight:600;letter-spacing:.06em}
+  .hero-amp{color:var(--primary);font-style:italic;padding:0 var(--s2)}
+  .hero-date{margin-top:var(--s3);font-size:var(--fs-label);color:var(--text-dim);letter-spacing:.18em}
+  .hero-rule{width:56px;height:1px;background:var(--hairline);margin:var(--s3) auto 0}
+
+  .inner{padding:var(--s7) var(--s5) var(--s8);display:flex;flex-direction:column;gap:var(--s7)}
+  .blk-eyebrow{font-size:var(--fs-caption);letter-spacing:.3em;color:var(--primary);text-transform:uppercase;text-align:center;margin-bottom:var(--s4)}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-md);box-shadow:var(--glow);padding:var(--s5)}
+
+  .greeting p{font-family:var(--serif);font-size:var(--fs-body);color:var(--text);text-align:center;line-height:1.45}
+  .greeting .from{margin-top:var(--s4);font-size:var(--fs-label);color:var(--text-dim);text-align:center}
+  .greeting .from b{color:var(--text);font-weight:600}
+
+  .when .big{font-family:var(--serif);font-size:var(--fs-title);text-align:center;letter-spacing:.04em}
+  .when .sub{text-align:center;color:var(--text-dim);font-size:var(--fs-body);margin-top:var(--s1)}
+  .count{display:flex;justify-content:center;gap:var(--s2);margin-top:var(--s4)}
+  .count .cell{min-width:56px;padding:var(--s2) var(--s1);background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-sm);text-align:center}
+  .count .n{font-family:var(--serif);font-size:var(--fs-title);color:var(--primary)}
+  .count .l{font-size:var(--fs-caption);color:var(--text-dim);margin-top:var(--s1)}
+
+  .venue .name{font-size:var(--fs-subtitle);font-weight:600;text-align:center}
+  .venue .addr{font-size:var(--fs-body);color:var(--text-dim);text-align:center;margin-top:var(--s1)}
+  .map{margin-top:var(--s4);height:150px;border-radius:var(--r-sm);border:1px solid var(--hairline);overflow:hidden;position:relative;background:#151E17}
+  .map svg{display:block;width:100%;height:100%}
+  .map .pin-label{position:absolute;left:50%;top:46%;transform:translate(-50%,-130%);background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:var(--s1) var(--s3);font-size:var(--fs-caption);color:var(--primary);white-space:nowrap}
+  .map-btn-row{display:flex;gap:var(--s2);margin-top:var(--s3)}
+
+  .transport{display:flex;flex-direction:column;gap:var(--s4)}
+  .t-row{display:flex;gap:var(--s3)}
+  .t-ico{flex:0 0 auto;width:32px;height:32px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--hairline);display:flex;align-items:center;justify-content:center;font-size:var(--fs-label);color:var(--accent)}
+  .t-body .t-t{font-size:var(--fs-label);font-weight:600;color:var(--primary);letter-spacing:.08em}
+  .t-body .t-d{font-size:var(--fs-body);color:var(--text-dim);margin-top:var(--s1)}
+
+  .rsvp .lead{text-align:center;color:var(--text-dim);font-size:var(--fs-body);margin-bottom:var(--s4)}
+  .field{margin-top:var(--s4)}
+  .field label{display:block;font-size:var(--fs-label);color:var(--primary);letter-spacing:.06em;margin-bottom:var(--s2)}
+  .seg{display:flex;gap:var(--s2)}
+  .seg .opt{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-sm);font-size:var(--fs-body);color:var(--text-dim)}
+  .seg .opt.sel{background:rgba(201,169,106,0.16);border-color:var(--primary);color:var(--text);box-shadow:inset 0 0 0 1px var(--primary)}
+  .stepper{display:flex;align-items:center;gap:var(--s3)}
+  .stepper .stp{width:44px;height:44px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--hairline);color:var(--primary);font-size:var(--fs-subtitle);display:flex;align-items:center;justify-content:center}
+  .stepper .val{flex:1;text-align:center;font-family:var(--serif);font-size:var(--fs-title)}
+
+  .btn{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:var(--r-sm);font-size:var(--fs-body);font-weight:600;letter-spacing:.04em;border:1px solid transparent;font-family:var(--sans);cursor:pointer}
+  .btn-primary{background:var(--primary);color:#17130A}
+  .btn-secondary{background:transparent;color:var(--primary);border-color:var(--primary)}
+  .btn-block{width:100%;margin-top:var(--s5)}
+  .btn-half{flex:1}
+
+  .gift .pair{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s4)}
+  .gift .side{background:var(--surface-2);border:1px solid var(--hairline);border-radius:var(--r-sm);padding:var(--s4);display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+  .gift .who{font-size:var(--fs-label);color:var(--text-dim)}
+  .gift .acct{font-size:var(--fs-body);margin-top:var(--s1)}
+  .gift .btn{min-width:96px;padding:0 var(--s3)}
+  .gift .note{font-size:var(--fs-caption);color:var(--text-dim);text-align:center;margin-top:var(--s3)}
+
+  .gallery-strip{display:flex;gap:var(--s2);overflow-x:auto;padding-bottom:var(--s1)}
+  .gallery-strip .ph{flex:0 0 110px;height:140px;border-radius:var(--r-sm);border:1px solid var(--hairline);position:relative;overflow:hidden}
+  .ph i{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:var(--s2);font-style:normal;font-size:var(--fs-caption);color:rgba(242,237,227,.75)}
+  .ph1{background:radial-gradient(circle at 30% 25%,rgba(201,169,106,.45),transparent 60%),linear-gradient(160deg,#26332A,#141D16)}
+  .ph2{background:radial-gradient(circle at 70% 70%,rgba(127,169,140,.45),transparent 60%),linear-gradient(200deg,#1F2A21,#10160F)}
+  .ph3{background:radial-gradient(circle at 50% 20%,rgba(201,169,106,.35),transparent 55%),linear-gradient(180deg,#2A2416,#141D16)}
+  .ph4{background:radial-gradient(circle at 25% 75%,rgba(127,169,140,.35),transparent 60%),linear-gradient(140deg,#1B241D,#0E140F)}
+
+  .footer{border-top:1px solid var(--hairline);padding-top:var(--s6);text-align:center}
+  .footer .share-row{display:flex;gap:var(--s2)}
+  .contacts{margin-top:var(--s5);display:flex;justify-content:center;gap:var(--s5);flex-wrap:wrap}
+  .contacts a{color:var(--accent);font-size:var(--fs-label);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:var(--s1)}
+  .footer .fin{margin-top:var(--s5);font-family:var(--serif);font-size:var(--fs-caption);letter-spacing:.3em;color:var(--text-dim)}
+
+  /* ============ Style tile ============ */
+  .tile{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);box-shadow:var(--glow);padding:var(--s6);display:flex;flex-direction:column;gap:var(--s6);max-width:760px;margin:0 auto}
+  .tile h3{font-size:var(--fs-subtitle);color:var(--primary);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+  .sw-row{display:flex;gap:var(--s3);flex-wrap:wrap}
+  .sw{width:120px}
+  .sw .chip{height:64px;border-radius:var(--r-sm);border:1px solid var(--hairline)}
+  .sw .nm{font-size:var(--fs-label);margin-top:var(--s2);color:var(--text)}
+  .sw .hx{font-size:var(--fs-caption);color:var(--text-dim)}
+  .type-row{display:flex;flex-direction:column;gap:var(--s3)}
+  .type-row .t-display{font-family:var(--serif);font-size:var(--fs-display);font-weight:600}
+  .type-row .t-title{font-size:var(--fs-title);font-weight:600}
+  .type-row .t-subtitle{font-size:var(--fs-subtitle)}
+  .type-row .t-body{font-size:var(--fs-body)}
+  .type-row .t-label{font-size:var(--fs-label);color:var(--primary);letter-spacing:.06em}
+  .type-row .t-caption{font-size:var(--fs-caption);color:var(--text-dim)}
+  .type-row .meta{color:var(--text-dim);font-size:var(--fs-caption);margin-left:var(--s2)}
+  .state-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:var(--s3)}
+  .state-grid .cellwrap{display:flex;flex-direction:column;gap:var(--s2);align-items:stretch}
+  .state-cap{font-size:var(--fs-caption);color:var(--text-dim);text-align:center}
+  .btn-primary.is-pressed{background:var(--primary-press);box-shadow:inset 0 2px 4px rgba(0,0,0,.35)}
+  .btn-primary.is-selected{background:var(--primary);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--primary)}
+  .btn-primary.is-disabled{background:rgba(201,169,106,0.28);color:rgba(23,19,10,0.55)}
+  .btn-secondary.is-pressed{background:rgba(201,169,106,0.14);color:var(--primary-press);border-color:var(--primary-press)}
+  .btn-secondary.is-selected{background:rgba(201,169,106,0.18);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--primary)}
+  .btn-secondary.is-disabled{color:rgba(201,169,106,0.4);border-color:rgba(201,169,106,0.25)}
+  .demo-card{max-width:340px}
+  .demo-card .dc-t{font-size:var(--fs-subtitle);font-weight:600}
+  .demo-card .dc-b{font-size:var(--fs-body);color:var(--text-dim);margin-top:var(--s2)}
+  .demo-card .dc-l{font-size:var(--fs-label);color:var(--accent);margin-top:var(--s3)}
+  .rad-row{display:flex;gap:var(--s4);flex-wrap:wrap;align-items:flex-end}
+  .rad{width:96px;height:64px;background:var(--surface-2);border:1px solid var(--hairline);box-shadow:var(--glow);display:flex;align-items:center;justify-content:center;font-size:var(--fs-caption);color:var(--text-dim)}
+  .rad.pill{height:44px;width:140px}
+  .shadow-note{font-size:var(--fs-caption);color:var(--text-dim);line-height:1.45}
+  @media (max-width:640px){.state-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h2 class="section-h">Representative screen — Guest invitation page</h2>
+
+  <div class="device">
+    <div class="screen">
+
+      <!-- Hero -->
+      <header class="hero">
+        <svg class="hero-foliage" viewBox="0 0 390 430" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g fill="none" stroke="#7FA98C" stroke-opacity="0.35" stroke-width="1.2">
+            <path d="M-10 60 C 80 90, 120 40, 200 70 S 340 50, 400 90"/>
+            <path d="M-10 100 C 60 140, 150 90, 230 120 S 350 100, 400 140"/>
+            <path d="M20 20 q 12 22 0 44 q -12 -22 0 -44" fill="#7FA98C" fill-opacity="0.25" stroke="none"/>
+            <path d="M355 40 q 12 22 0 44 q -12 -22 0 -44" fill="#7FA98C" fill-opacity="0.25" stroke="none"/>
+            <path d="M60 350 q 14 26 0 52 q -14 -26 0 -52" fill="#7FA98C" fill-opacity="0.18" stroke="none"/>
+            <path d="M330 330 q 14 26 0 52 q -14 -26 0 -52" fill="#7FA98C" fill-opacity="0.18" stroke="none"/>
+          </g>
+          <g fill="#C9A96A">
+            <circle cx="70" cy="150" r="1.6" opacity="0.8"/><circle cx="120" cy="90" r="1.2" opacity="0.6"/>
+            <circle cx="300" cy="120" r="1.6" opacity="0.8"/><circle cx="255" cy="70" r="1.1" opacity="0.5"/>
+            <circle cx="190" cy="40" r="1.4" opacity="0.7"/><circle cx="340" cy="200" r="1.3" opacity="0.6"/>
+            <circle cx="45" cy="240" r="1.3" opacity="0.6"/><circle cx="205" cy="190" r="1.8" opacity="0.9"/>
+          </g>
+          <circle cx="195" cy="165" r="86" fill="none" stroke="#C9A96A" stroke-opacity="0.5" stroke-width="1"/>
+          <circle cx="195" cy="165" r="80" fill="#C9A96A" fill-opacity="0.08"/>
+          <text x="195" y="171" text-anchor="middle" font-size="12" fill="#C9C3B4" font-family="sans-serif" letter-spacing="2">COUPLE PHOTO</text>
+        </svg>
+        <div class="hero-veil"></div>
+        <div class="hero-txt">
+          <p class="hero-eyebrow">The Wedding of</p>
+          <h1 class="hero-names">김도윤<span class="hero-amp">&amp;</span>박서연</h1>
+          <div class="hero-rule"></div>
+          <p class="hero-date">2026. 11. 21. SAT · 6:00 PM</p>
+        </div>
+      </header>
+
+      <main class="inner">
+
+        <!-- Greeting -->
+        <section aria-label="인사말">
+          <p class="blk-eyebrow">Invitation</p>
+          <div class="card greeting">
+            <p>차가운 계절의 문턱에서<br>서로의 가장 따뜻한 계절이 되기로 했습니다.<br>촛불이 켜지는 저녁, 저희 두 사람의<br>새로운 시작에 귀한 걸음 하시어<br>자리를 빛내 주시면 감사하겠습니다.</p>
+            <p class="from">김영호 · 이미선의 장남 <b>도윤</b><br>박정수 · 최은주의 장녀 <b>서연</b></p>
+          </div>
+        </section>
+
+        <!-- Date & countdown -->
+        <section aria-label="예식 일시">
+          <p class="blk-eyebrow">When</p>
+          <div class="card when">
+            <p class="big">2026년 11월 21일 토요일</p>
+            <p class="sub">저녁 6시 · 예식 후 만찬이 이어집니다</p>
+            <div class="count" role="group" aria-label="예식까지 남은 시간">
+              <div class="cell"><div class="n">77</div><div class="l">DAYS</div></div>
+              <div class="cell"><div class="n">08</div><div class="l">HOURS</div></div>
+              <div class="cell"><div class="n">24</div><div class="l">MIN</div></div>
+              <div class="cell"><div class="n">10</div><div class="l">SEC</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Venue -->
+        <section aria-label="오시는 길">
+          <p class="blk-eyebrow">Where</p>
+          <div class="card venue">
+            <p class="name">더가든하우스 그랜드볼룸 5F</p>
+            <p class="addr">서울 강남구 논현로 549 · 02-512-0021</p>
+            <div class="map" role="img" aria-label="더가든하우스 위치 약도: 언주로와 논현로 교차 지점 인근">
+              <svg viewBox="0 0 350 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <rect width="350" height="150" fill="#151E17"/>
+                <path d="M0 95 L350 75" stroke="#2C3A2F" stroke-width="14"/>
+                <path d="M140 0 L165 150" stroke="#2C3A2F" stroke-width="10"/>
+                <path d="M0 30 L350 45" stroke="#24312A" stroke-width="6"/>
+                <path d="M260 0 L245 150" stroke="#24312A" stroke-width="6"/>
+                <text x="12" y="88" font-size="9" fill="#7FA98C" font-family="sans-serif">논현로</text>
+                <text x="150" y="18" font-size="9" fill="#7FA98C" font-family="sans-serif">언주로</text>
+                <circle cx="175" cy="69" r="14" fill="rgba(201,169,106,0.2)"/>
+                <circle cx="175" cy="69" r="5" fill="#C9A96A"/>
+              </svg>
+              <span class="pin-label">더가든하우스</span>
+            </div>
+            <div class="map-btn-row">
+              <button class="btn btn-secondary btn-half" type="button">네이버 지도</button>
+              <button class="btn btn-secondary btn-half" type="button">카카오맵</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Transport -->
+        <section aria-label="교통 및 주차 안내">
+          <p class="blk-eyebrow">Getting Here</p>
+          <div class="card transport">
+            <div class="t-row"><div class="t-ico" aria-hidden="true">S</div><div class="t-body"><p class="t-t">지하철</p><p class="t-d">7호선 학동역 4번 출구 도보 5분 · 9호선 언주역 3번 출구 도보 8분</p></div></div>
+            <div class="t-row"><div class="t-ico" aria-hidden="true">B</div><div class="t-body"><p class="t-t">버스</p><p class="t-d">간선 147 · 463, 지선 4211 — 학동역 정류장 하차</p></div></div>
+            <div class="t-row"><div class="t-ico" aria-hidden="true">C</div><div class="t-body"><p class="t-t">자가용</p><p class="t-d">내비게이션에 “더가든하우스” 검색 · 건물 지하 진입</p></div></div>
+            <div class="t-row"><div class="t-ico" aria-hidden="true">P</div><div class="t-body"><p class="t-t">주차</p><p class="t-d">지하 1–4층 2시간 무료 · 안내데스크에서 주차 등록</p></div></div>
+          </div>
+        </section>
+
+        <!-- RSVP -->
+        <section aria-label="참석 여부 회신">
+          <p class="blk-eyebrow">RSVP</p>
+          <div class="card rsvp">
+            <p class="lead">준비에 정성을 다할 수 있도록<br>참석 여부를 알려주세요.</p>
+            <div class="field">
+              <label id="lb-att">참석 여부</label>
+              <div class="seg" role="group" aria-labelledby="lb-att">
+                <div class="opt sel">참석</div>
+                <div class="opt">불참</div>
+                <div class="opt">미정</div>
+              </div>
+            </div>
+            <div class="field">
+              <label id="lb-cnt">동행 인원 (본인 포함)</label>
+              <div class="stepper" role="group" aria-labelledby="lb-cnt">
+                <button class="stp" type="button" aria-label="인원 줄이기">−</button>
+                <span class="val">2명</span>
+                <button class="stp" type="button" aria-label="인원 늘리기">+</button>
+              </div>
+            </div>
+            <div class="field">
+              <label id="lb-meal">식사 선택</label>
+              <div class="seg" role="group" aria-labelledby="lb-meal">
+                <div class="opt sel">코스</div>
+                <div class="opt">뷔페</div>
+                <div class="opt">식사 안 함</div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-block" type="button">참석 여부 보내기</button>
+          </div>
+        </section>
+
+        <!-- Gift -->
+        <section aria-label="마음 전하실 곳">
+          <p class="blk-eyebrow">With Gratitude</p>
+          <div class="card gift">
+            <p class="lead" style="text-align:center;color:var(--text-dim)">참석이 어려우신 분들을 위해<br>계좌번호를 안내드립니다.</p>
+            <div class="pair">
+              <div class="side">
+                <div><p class="who">신랑 측 · 김도윤</p><p class="acct">국민 401001-04-582211</p></div>
+                <button class="btn btn-secondary" type="button">복사하기</button>
+              </div>
+              <div class="side">
+                <div><p class="who">신부 측 · 박서연</p><p class="acct">신한 110-482-556730</p></div>
+                <button class="btn btn-secondary" type="button">복사하기</button>
+              </div>
+            </div>
+            <div class="pair" style="flex-direction:row;margin-top:var(--s3)">
+              <button class="btn btn-primary btn-half" type="button">카카오페이 송금</button>
+              <button class="btn btn-primary btn-half" type="button">토스 송금</button>
+            </div>
+            <p class="note">버튼을 누르면 송금 앱으로 바로 연결됩니다.</p>
+          </div>
+        </section>
+
+        <!-- Gallery -->
+        <section aria-label="갤러리">
+          <p class="blk-eyebrow">Gallery</p>
+          <div class="gallery-strip">
+            <div class="ph ph1"><i>스튜디오</i></div>
+            <div class="ph ph2"><i>한옥 야경</i></div>
+            <div class="ph ph3"><i>본식 리허설</i></div>
+            <div class="ph ph4"><i>가든 촬영</i></div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="share-row">
+            <button class="btn btn-primary btn-half" type="button">카카오톡 공유</button>
+            <button class="btn btn-secondary btn-half" type="button">링크 복사</button>
+          </div>
+          <nav class="contacts" aria-label="연락처">
+            <a href="tel:010-1234-5678">신랑에게 전화</a>
+            <a href="tel:010-8765-4321">신부에게 전화</a>
+            <a href="tel:010-2222-3333">혼주 연락처</a>
+          </nav>
+          <p class="fin">DOYOON &amp; SEOYEON · 21 NOV 2026</p>
+        </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= Style tile ================= -->
+  <h2 class="section-h">Style tile — Midnight Garden</h2>
+
+  <div class="tile">
+
+    <div>
+      <h3>Palette</h3>
+      <div class="sw-row" style="margin-top:var(--s3)">
+        <div class="sw"><div class="chip" style="background:#101812"></div><p class="nm">color.bg</p><p class="hx">#101812</p></div>
+        <div class="sw"><div class="chip" style="background:#1B241D"></div><p class="nm">color.surface</p><p class="hx">#1B241D</p></div>
+        <div class="sw"><div class="chip" style="background:#F2EDE3"></div><p class="nm">color.text</p><p class="hx">#F2EDE3</p></div>
+        <div class="sw"><div class="chip" style="background:#C9A96A"></div><p class="nm">color.primary</p><p class="hx">#C9A96A</p></div>
+        <div class="sw"><div class="chip" style="background:#7FA98C"></div><p class="nm">color.accent</p><p class="hx">#7FA98C</p></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Type scale</h3>
+      <div class="type-row" style="margin-top:var(--s3)">
+        <p class="t-display">디스플레이 — 김도윤 &amp; 박서연<span class="meta">display · 24 / 1.45 · serif</span></p>
+        <p class="t-title">타이틀 — 2026년 11월 21일 토요일<span class="meta">title · 20</span></p>
+        <p class="t-subtitle">서브타이틀 — 더가든하우스 그랜드볼룸<span class="meta">subtitle · 17</span></p>
+        <p class="t-body">본문 — 촛불이 켜지는 저녁, 저희 두 사람의 새로운 시작에 함께해 주세요.<span class="meta">body · 15</span></p>
+        <p class="t-label">레이블 — 참석 여부 · 동행 인원 · 식사 선택<span class="meta">label · 13</span></p>
+        <p class="t-caption">캡션 — 버튼을 누르면 송금 앱으로 연결됩니다.<span class="meta">caption · 12</span></p>
+      </div>
+    </div>
+
+    <div>
+      <h3>Buttons — primary</h3>
+      <div class="state-grid" style="margin-top:var(--s3)">
+        <div class="cellwrap"><button class="btn btn-primary" type="button">참석 보내기</button><p class="state-cap">enabled</p></div>
+        <div class="cellwrap"><button class="btn btn-primary is-pressed" type="button">참석 보내기</button><p class="state-cap">pressed</p></div>
+        <div class="cellwrap"><button class="btn btn-primary is-selected" type="button">참석 보내기</button><p class="state-cap">selected</p></div>
+        <div class="cellwrap"><button class="btn btn-primary is-disabled" type="button" disabled>참석 보내기</button><p class="state-cap">disabled</p></div>
+      </div>
+      <h3 style="margin-top:var(--s5)">Buttons — secondary</h3>
+      <div class="state-grid" style="margin-top:var(--s3)">
+        <div class="cellwrap"><button class="btn btn-secondary" type="button">링크 복사</button><p class="state-cap">enabled</p></div>
+        <div class="cellwrap"><button class="btn btn-secondary is-pressed" type="button">링크 복사</button><p class="state-cap">pressed</p></div>
+        <div class="cellwrap"><button class="btn btn-secondary is-selected" type="button">링크 복사</button><p class="state-cap">selected</p></div>
+        <div class="cellwrap"><button class="btn btn-secondary is-disabled" type="button" disabled>링크 복사</button><p class="state-cap">disabled</p></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Card</h3>
+      <div class="card demo-card" style="margin-top:var(--s3)">
+        <p class="dc-t">오시는 길</p>
+        <p class="dc-b">7호선 학동역 4번 출구에서 도보 5분. 지하 주차 2시간 무료.</p>
+        <p class="dc-l">지도 앱으로 열기 →</p>
+      </div>
+    </div>
+
+    <div>
+      <h3>Radius &amp; surface treatment</h3>
+      <div class="rad-row" style="margin-top:var(--s3)">
+        <div class="rad" style="border-radius:6px">sm · 6</div>
+        <div class="rad" style="border-radius:12px">md · 12</div>
+        <div class="rad" style="border-radius:18px">lg · 18</div>
+        <div class="rad pill" style="border-radius:999px">pill · 999</div>
+      </div>
+      <p class="shadow-note" style="margin-top:var(--s3)">Shadow: no drop shadows. Surfaces are separated by 1px gold-tinted hairline borders plus a faint inner glow — <code>0 0 0 1px rgba(201,169,106,0.25)</code>. Mood: formal · luminous · celebratory · keepsake.</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

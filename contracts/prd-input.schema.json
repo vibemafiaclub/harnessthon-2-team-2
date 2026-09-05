@@ -1,0 +1,51 @@
+{
+  "$id": "prd-input.schema.json",
+  "title": "PRD input contract consumed by both design lanes",
+  "description": "Structured handoff from the upstream PRD-refinement stage. Both lane workflows read only this shape; free-form PRD text goes in `background`.",
+  "type": "object",
+  "required": ["id", "title", "domain", "problem", "targetUsers", "coreFlows"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "domain": { "type": "string" },
+    "sampleInput": {
+      "type": "boolean",
+      "description": "True marks this PRD as an example fixture. Domain specifics from samples must never be baked into lane rules."
+    },
+    "problem": { "type": "string" },
+    "targetUsers": { "type": "array", "items": { "type": "string" } },
+    "background": { "type": "string" },
+    "coreFlows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "steps"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "steps": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "mustHaveScreens": { "type": "array", "items": { "type": "string" } },
+    "brandHints": { "type": "array", "items": { "type": "string" } },
+    "constraints": { "type": "array", "items": { "type": "string" } },
+    "viewport": {
+      "type": "object",
+      "description": "Optional PRD override. When absent, lanes default to mobile 390x844 (decision D5).",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
+    "researchHandoff": {
+      "type": "object",
+      "description": "Optional structured output from the sibling competitor-reference workflow. Consumed read-only.",
+      "properties": {
+        "path": { "type": "string" },
+        "approvedRevision": { "type": "string" }
+      }
+    }
+  }
+}

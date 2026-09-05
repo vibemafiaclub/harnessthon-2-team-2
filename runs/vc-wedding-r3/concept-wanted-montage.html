@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비주얼 컨셉 3/3 — Wanted Montage (web)</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --surface:#f7f8f9;
+    --text:#171717;
+    --text-muted:#767676;
+    --primary:#3366ff;
+    --primary-pressed:#2952cc;
+    --primary-fg:#ffffff;
+    --accent:#eef3ff;
+    --border:#e8ebed;
+    --r-sm:6px; --r-md:8px; --r-lg:10px; --r-chip:9999px;
+    --shadow-bar:0 -2px 8px rgba(0,0,0,.06);
+    --font:'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--surface); color:var(--text); font-family:var(--font);
+    font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  button{font:inherit; color:inherit; cursor:pointer;}
+
+  /* ===== page scaffold (client-facing document) ===== */
+  .page{max-width:920px; margin:0 auto; padding:40px 16px 80px; display:flex; flex-direction:column; gap:48px;}
+  .page-header h1{font-size:20px; font-weight:700; letter-spacing:-.01em;}
+  .page-header p{font-size:13px; color:var(--text-muted); margin-top:4px;}
+  .section > h2{font-size:15px; font-weight:600; margin-bottom:16px; letter-spacing:-.01em;
+    display:flex; align-items:center; gap:8px;}
+  .section > h2::before{content:""; width:4px; height:16px; border-radius:2px; background:var(--primary);}
+  .section-note{font-size:12px; color:var(--text-muted); margin:-10px 0 16px;}
+
+  /* ===== 1. device frame ===== */
+  .device-wrap{display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .frame-caption{font-size:12px; color:var(--text-muted);}
+  .device{width:390px; height:844px; background:var(--bg); border:1px solid var(--border);
+    border-radius:24px; overflow:hidden; display:flex; flex-direction:column;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .scr-body{flex:1 1 auto; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:16px;
+    background:var(--bg);}
+  .scr-footer{flex:0 0 auto; border-top:1px solid var(--border); background:var(--bg);
+    padding:12px 16px; box-shadow:var(--shadow-bar); position:relative; z-index:2;}
+
+  /* guest screen typography (Montage hierarchy) */
+  .meta-note{font-size:12px; color:var(--text-muted);}
+  .g-title{font-size:20px; font-weight:700; text-align:center; letter-spacing:-.01em; line-height:1.4;}
+  .g-greeting{font-size:14px; color:var(--text); text-align:center; line-height:1.75;}
+  .g-h2{font-size:15px; font-weight:600; letter-spacing:-.01em;}
+  .g-bodytext{font-size:14px; color:var(--text); line-height:1.7;}
+
+  /* image / map placeholders — restrained product-grade */
+  .ph{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--text-muted); font-size:12px; text-align:center; padding:8px;}
+  .ph .ph-label{font-size:12px; color:var(--text-muted);}
+  .ph svg{opacity:.55;}
+
+  /* label–value block (info section) */
+  .info-card{border:1px solid var(--border); border-radius:var(--r-md); background:var(--bg); overflow:hidden;}
+  .info-row{display:flex; gap:12px; padding:12px 16px; align-items:baseline;}
+  .info-row + .info-row{border-top:1px solid var(--border);}
+  .info-row dt{flex:0 0 64px; font-size:12px; color:var(--text-muted); font-weight:500;}
+  .info-row dd{flex:1; font-size:14px; color:var(--text); font-weight:500;}
+
+  /* buttons — Montage confident primary */
+  .btn{display:flex; align-items:center; justify-content:center; gap:6px; width:100%;
+    min-height:48px; border-radius:var(--r-md); font-size:14px; font-weight:600;
+    text-decoration:none; border:1px solid transparent; letter-spacing:-.01em;}
+  .btn-primary{background:var(--primary); color:var(--primary-fg);}
+  .btn-primary:active{background:var(--primary-pressed);}
+  .btn-outline{background:var(--bg); color:var(--primary); border-color:var(--border);}
+  .btn-outline:active{background:var(--accent);}
+  .btn-neutral{background:var(--bg); color:var(--text); border-color:var(--border); font-weight:600;}
+  .btn-neutral:active{background:var(--surface);}
+
+  hr.divider{border:none; border-top:1px solid var(--border);}
+
+  /* accordion — blue affordance on summary */
+  details{border:1px solid var(--border); border-radius:var(--r-md); background:var(--bg);}
+  details summary{display:flex; align-items:center; justify-content:space-between;
+    min-height:48px; padding:0 16px; font-size:14px; font-weight:600; cursor:pointer;
+    list-style:none; letter-spacing:-.01em;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{content:"펼치기"; font-size:12px; font-weight:500; color:var(--primary);}
+  details[open] summary::after{content:"접기";}
+  details .d-body{padding:0 16px 14px; font-size:14px; color:var(--text-muted); line-height:1.7;
+    border-top:1px solid var(--border); padding-top:12px;}
+
+  /* ===== 2. style tile ===== */
+  .tile{background:var(--bg); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:24px; display:flex; flex-direction:column; gap:28px;}
+  .tile h3{font-size:13px; font-weight:600; color:var(--text-muted); text-transform:uppercase;
+    letter-spacing:.06em; margin-bottom:12px;}
+  .swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px;}
+  .swatch{border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden; background:var(--bg);}
+  .swatch .chip{height:56px;}
+  .swatch .sw-meta{padding:8px 10px;}
+  .swatch .sw-name{font-size:12px; font-weight:600; display:block;}
+  .swatch .sw-hex{font-size:11px; color:var(--text-muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+  .type-scale{display:flex; flex-direction:column; gap:14px;}
+  .type-row{display:flex; align-items:baseline; gap:16px; border-bottom:1px solid var(--border); padding-bottom:12px;}
+  .type-row:last-child{border-bottom:none; padding-bottom:0;}
+  .type-spec{flex:0 0 150px; font-size:11px; color:var(--text-muted);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .t-title{font-size:20px; font-weight:700; letter-spacing:-.01em;}
+  .t-section{font-size:15px; font-weight:600; letter-spacing:-.01em;}
+  .t-body{font-size:14px; font-weight:400;}
+  .t-caption{font-size:12px; color:var(--text-muted);}
+
+  .btn-matrix{display:flex; flex-direction:column; gap:16px;}
+  .btn-lane{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+  .btn-lane .lane-label{flex:0 0 100px; font-size:12px; font-weight:600; color:var(--text-muted);}
+  .sample-btn{min-height:44px; min-width:104px; padding:0 16px; border-radius:var(--r-md);
+    font-size:14px; font-weight:600; border:1px solid transparent; display:inline-flex;
+    align-items:center; justify-content:center; letter-spacing:-.01em;}
+  .sb-cap{display:flex; flex-direction:column; gap:4px; align-items:center;}
+  .sb-cap span{font-size:11px; color:var(--text-muted);}
+  .p-enabled{background:var(--primary); color:var(--primary-fg);}
+  .p-pressed{background:var(--primary-pressed); color:var(--primary-fg);}
+  .p-selected{background:var(--primary); color:var(--primary-fg);
+    box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--primary);}
+  .p-disabled{background:#c9d4f5; color:#f4f7ff; cursor:not-allowed;}
+  .s-enabled{background:var(--bg); color:var(--primary); border-color:var(--border);}
+  .s-pressed{background:var(--accent); color:var(--primary-pressed); border-color:var(--border);}
+  .s-selected{background:var(--accent); color:var(--primary); border-color:var(--primary);}
+  .s-disabled{background:var(--surface); color:#b6bcc2; border-color:var(--border); cursor:not-allowed;}
+
+  .card-sample{border:1px solid var(--border); border-radius:var(--r-md); background:var(--bg);
+    padding:16px; max-width:340px; display:flex; flex-direction:column; gap:8px;}
+  .card-sample .cs-eyebrow{font-size:12px; font-weight:600; color:var(--primary);}
+  .card-sample .cs-title{font-size:15px; font-weight:600; letter-spacing:-.01em;}
+  .card-sample .cs-body{font-size:14px; color:var(--text-muted); line-height:1.6;}
+
+  .rs-grid{display:flex; flex-wrap:wrap; gap:16px;}
+  .rs-item{display:flex; flex-direction:column; gap:6px; align-items:center;}
+  .rs-item .box{width:88px; height:56px; background:var(--bg); border:1px solid var(--border);}
+  .rs-item span{font-size:11px; color:var(--text-muted);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .rs-r-sm{border-radius:var(--r-sm);}
+  .rs-r-md{border-radius:var(--r-md);}
+  .rs-r-lg{border-radius:var(--r-lg);}
+  .rs-r-chip{border-radius:var(--r-chip);}
+  .rs-shadow{border-radius:var(--r-md); border:none; box-shadow:var(--shadow-bar); background:var(--bg); outline:1px solid var(--border);}
+
+  .tile-caption{font-size:12px; color:var(--text-muted); border-top:1px solid var(--border); padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="page-header">
+    <h1>모바일 청첩장 — 비주얼 컨셉 3/3 · Wanted Montage (web)</h1>
+    <p>대표 화면: 하객 초대장 페이지 (w-guest) · 구조는 와이어프레임과 동일, 비주얼 시스템만 적용</p>
+  </header>
+
+  <!-- ===================== 1. 대표 화면 ===================== -->
+  <section class="section" aria-labelledby="h-screen">
+    <h2 id="h-screen">대표 화면</h2>
+    <p class="section-note">하객 초대장 페이지 — 공유 링크로 열람, 로그인 불필요 · 390 × 844</p>
+    <div class="device-wrap">
+      <p class="frame-caption">390 × 844 — 하객 초대장 페이지</p>
+      <div class="device">
+        <div class="scr-body">
+          <p class="meta-note">공유 링크로 열린 페이지 · 로그인 불필요</p>
+
+          <div class="ph" style="height:220px" role="img" aria-label="대표 사진">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 5-5 4 4"/>
+            </svg>
+            <span class="ph-label">대표 사진 히어로</span>
+          </div>
+
+          <h1 class="g-title">민준 ♥ 서연, 결혼합니다</h1>
+          <p class="g-greeting">
+            저희 두 사람이 사랑과 믿음으로<br>한 가정을 이루게 되었습니다.<br>귀한 걸음으로 축복해 주세요.
+          </p>
+
+          <hr class="divider">
+
+          <h2 class="g-h2">예식 안내</h2>
+          <div class="info-card">
+            <dl>
+              <div class="info-row"><dt>일시</dt><dd>2026년 10월 24일 (토) 오후 1시</dd></div>
+              <div class="info-row"><dt>장소</dt><dd>OO웨딩홀 3층 그랜드홀</dd></div>
+            </dl>
+          </div>
+          <button class="btn btn-outline" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>
+            </svg>
+            내 캘린더에 추가
+          </button>
+
+          <h2 class="g-h2">오시는 길</h2>
+          <div class="ph" style="height:150px" role="img" aria-label="예식장 지도">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="1.5" aria-hidden="true">
+              <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>
+            </svg>
+            <span class="ph-label">지도</span>
+          </div>
+          <button class="btn btn-outline" type="button">주소 복사 — 서울시 OO구 OO로 123</button>
+
+          <details>
+            <summary>교통 안내</summary>
+            <div class="d-body">지하철 2호선 OO역 3번 출구 도보 5분 · 버스 123, 456번 OO정류장 하차</div>
+          </details>
+          <details>
+            <summary>주차 안내</summary>
+            <div class="d-body">건물 지하 1~3층 주차 가능 · 2시간 무료 (안내데스크 등록)</div>
+          </details>
+
+          <hr class="divider">
+
+          <h2 class="g-h2">마음 전하실 곳</h2>
+          <button class="btn btn-neutral" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/>
+            </svg>
+            축의금 송금하기 (송금 앱 딥링크)
+          </button>
+        </div>
+
+        <div class="scr-footer">
+          <a class="btn btn-primary" href="#h-screen" aria-label="참석 여부 회신 폼으로 이동">참석 여부 회신</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 2. 스타일 타일 ===================== -->
+  <section class="section" aria-labelledby="h-tile">
+    <h2 id="h-tile">스타일 타일</h2>
+    <div class="tile">
+
+      <div>
+        <h3>팔레트</h3>
+        <div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#ffffff; border-bottom:1px solid var(--border);"></div>
+            <div class="sw-meta"><span class="sw-name">bg</span><span class="sw-hex">#ffffff</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#f7f8f9;"></div>
+            <div class="sw-meta"><span class="sw-name">surface</span><span class="sw-hex">#f7f8f9</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#171717;"></div>
+            <div class="sw-meta"><span class="sw-name">text</span><span class="sw-hex">#171717</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#767676;"></div>
+            <div class="sw-meta"><span class="sw-name">textMuted</span><span class="sw-hex">#767676</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#3366ff;"></div>
+            <div class="sw-meta"><span class="sw-name">primary</span><span class="sw-hex">#3366ff</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#2952cc;"></div>
+            <div class="sw-meta"><span class="sw-name">primaryPressed</span><span class="sw-hex">#2952cc</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#eef3ff;"></div>
+            <div class="sw-meta"><span class="sw-name">accent</span><span class="sw-hex">#eef3ff</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#e8ebed;"></div>
+            <div class="sw-meta"><span class="sw-name">border</span><span class="sw-hex">#e8ebed</span></div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>타이포 스케일 — Pretendard</h3>
+        <div class="type-scale">
+          <div class="type-row"><span class="type-spec">title · 20px / 700</span><span class="t-title">두 사람의 결혼식에 초대합니다</span></div>
+          <div class="type-row"><span class="type-spec">section · 15px / 600</span><span class="t-section">예식 안내</span></div>
+          <div class="type-row"><span class="type-spec">body · 14px / 400</span><span class="t-body">2026년 10월 24일 (토) 오후 1시, OO웨딩홀 3층 그랜드홀</span></div>
+          <div class="type-row"><span class="type-spec">caption · 12px / 400</span><span class="t-caption">공유 링크로 열린 페이지 · 로그인 불필요</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>버튼</h3>
+        <div class="btn-matrix">
+          <div class="btn-lane">
+            <span class="lane-label">Primary</span>
+            <div class="sb-cap"><button class="sample-btn p-enabled" type="button">참석 여부 회신</button><span>enabled</span></div>
+            <div class="sb-cap"><button class="sample-btn p-pressed" type="button">참석 여부 회신</button><span>pressed</span></div>
+            <div class="sb-cap"><button class="sample-btn p-selected" type="button">참석 여부 회신</button><span>selected</span></div>
+            <div class="sb-cap"><button class="sample-btn p-disabled" type="button" disabled>참석 여부 회신</button><span>disabled</span></div>
+          </div>
+          <div class="btn-lane">
+            <span class="lane-label">Secondary</span>
+            <div class="sb-cap"><button class="sample-btn s-enabled" type="button">주소 복사</button><span>enabled</span></div>
+            <div class="sb-cap"><button class="sample-btn s-pressed" type="button">주소 복사</button><span>pressed</span></div>
+            <div class="sb-cap"><button class="sample-btn s-selected" type="button">주소 복사</button><span>selected</span></div>
+            <div class="sb-cap"><button class="sample-btn s-disabled" type="button" disabled>주소 복사</button><span>disabled</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3>카드</h3>
+        <div class="card-sample">
+          <span class="cs-eyebrow">예식 안내</span>
+          <span class="cs-title">2026년 10월 24일 (토) 오후 1시</span>
+          <span class="cs-body">OO웨딩홀 3층 그랜드홀 · 서울시 OO구 OO로 123 · 지하철 2호선 OO역 3번 출구 도보 5분</span>
+        </div>
+      </div>
+
+      <div>
+        <h3>라운드 · 그림자</h3>
+        <div class="rs-grid">
+          <div class="rs-item"><div class="box rs-r-sm"></div><span>radius.sm 6px</span></div>
+          <div class="rs-item"><div class="box rs-r-md"></div><span>radius.md 8px</span></div>
+          <div class="rs-item"><div class="box rs-r-lg"></div><span>radius.lg 10px</span></div>
+          <div class="rs-item"><div class="box rs-r-chip"></div><span>radius.chip pill</span></div>
+          <div class="rs-item"><div class="box rs-shadow"></div><span>shadow — 하단 바 전용</span></div>
+        </div>
+      </div>
+
+      <p class="tile-caption">시스템: Wanted Montage web design system (@wanteddev/wds) — 공식 소스: montage.wanted.co.kr · github.com/wanteddev/montage-web</p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
