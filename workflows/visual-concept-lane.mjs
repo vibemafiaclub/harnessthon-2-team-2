@@ -84,6 +84,39 @@ const ELICIT_SCHEMA = {
   },
 }
 
+// Decision D12/D14/D16: exactly these three systems, applied to ONE fixed structure.
+// The systems contribute PATTERN LANGUAGE ONLY (component anatomy, spacing discipline,
+// state model, hierarchy conventions). TONE & MANNER - color, mood, type feeling, shape
+// softness - comes EXCLUSIVELY from the client's elicited preferences. Reproducing a
+// system's brand tone (Daangn orange/warmth, Wanted's product palette, shadcn's zinc
+// neutrality) is an explicit FAILURE (user directive 2026-09-05).
+const SYSTEMS = [
+  {
+    id: 'shadcn',
+    name: 'shadcn/ui',
+    sources: ['https://ui.shadcn.com/docs', 'https://ui.shadcn.com/docs/skills'],
+    patternLanguage: 'Token-driven CSS custom properties (background/foreground/muted/accent roles), thin-border card anatomy, compact vertical rhythm, explicit focus rings, muted secondary-text hierarchy, form patterns with label-above inputs.',
+    forbiddenTone: 'Do NOT reproduce shadcn default zinc/slate/neutral gray tone or Inter-default look; all colors and type feeling come from the client preferences.',
+  },
+  {
+    id: 'seed',
+    name: 'SEED (Daangn)',
+    sources: ['https://seed-design.io/foundations/design-token', 'https://seed-design.io/foundations/layout', 'https://seed-design.io/foundations/state'],
+    patternLanguage: 'Semantic fg/bg/stroke token roles, mobile-first density and touch-target discipline, explicit enabled/pressed/selected/disabled state model, section-divider list anatomy, bottom-fixed primary action pattern.',
+    forbiddenTone: 'Do NOT reproduce Daangn brand tone (carrot orange, marketplace friendliness); all colors and mood come from the client preferences.',
+  },
+  {
+    id: 'wanted-montage',
+    name: 'Wanted Montage (web)',
+    sources: ['https://montage.wanted.co.kr/', 'https://github.com/wanteddev/montage-web'],
+    patternLanguage: 'Structured spacing scale, crisp typographic hierarchy with strong size contrast between heading levels, generous section padding, card-grid composition, decisive single-primary-CTA per view.',
+    forbiddenTone: 'Do NOT reproduce Wanted brand tone (its product blue/corporate palette); all colors and mood come from the client preferences.',
+  },
+]
+
+// SYSTEMS is declared above the recolor branch on purpose: that branch iterates
+// it, and a `const` further down leaves it in the temporal dead zone, so every
+// recolor run threw ReferenceError before reaching an agent.
 // Recolor mode (컬러 변경 원칙): args.recolor = { fromRunDir, request } applies a hue-only
 // main-color change to existing concepts without regenerating them.
 if (args.recolor) {
@@ -131,35 +164,6 @@ Return structured output only.`,
   return { laneId: 'visual-concept', runId, round, runDir, mode: 'elicitation', questionnaire }
 }
 
-// Decision D12/D14/D16: exactly these three systems, applied to ONE fixed structure.
-// The systems contribute PATTERN LANGUAGE ONLY (component anatomy, spacing discipline,
-// state model, hierarchy conventions). TONE & MANNER - color, mood, type feeling, shape
-// softness - comes EXCLUSIVELY from the client's elicited preferences. Reproducing a
-// system's brand tone (Daangn orange/warmth, Wanted's product palette, shadcn's zinc
-// neutrality) is an explicit FAILURE (user directive 2026-09-05).
-const SYSTEMS = [
-  {
-    id: 'shadcn',
-    name: 'shadcn/ui',
-    sources: ['https://ui.shadcn.com/docs', 'https://ui.shadcn.com/docs/skills'],
-    patternLanguage: 'Token-driven CSS custom properties (background/foreground/muted/accent roles), thin-border card anatomy, compact vertical rhythm, explicit focus rings, muted secondary-text hierarchy, form patterns with label-above inputs.',
-    forbiddenTone: 'Do NOT reproduce shadcn default zinc/slate/neutral gray tone or Inter-default look; all colors and type feeling come from the client preferences.',
-  },
-  {
-    id: 'seed',
-    name: 'SEED (Daangn)',
-    sources: ['https://seed-design.io/foundations/design-token', 'https://seed-design.io/foundations/layout', 'https://seed-design.io/foundations/state'],
-    patternLanguage: 'Semantic fg/bg/stroke token roles, mobile-first density and touch-target discipline, explicit enabled/pressed/selected/disabled state model, section-divider list anatomy, bottom-fixed primary action pattern.',
-    forbiddenTone: 'Do NOT reproduce Daangn brand tone (carrot orange, marketplace friendliness); all colors and mood come from the client preferences.',
-  },
-  {
-    id: 'wanted-montage',
-    name: 'Wanted Montage (web)',
-    sources: ['https://montage.wanted.co.kr/', 'https://github.com/wanteddev/montage-web'],
-    patternLanguage: 'Structured spacing scale, crisp typographic hierarchy with strong size contrast between heading levels, generous section padding, card-grid composition, decisive single-primary-CTA per view.',
-    forbiddenTone: 'Do NOT reproduce Wanted brand tone (its product blue/corporate palette); all colors and mood come from the client preferences.',
-  },
-]
 
 const DIRECT_SCHEMA = {
   type: 'object',

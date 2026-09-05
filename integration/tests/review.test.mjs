@@ -285,3 +285,18 @@ test("recolor needs a previous round to recolor, and the status view reports the
   assert.ok(html.includes("보라색으로 변경해 줘"));
   assert.ok(runDir);
 });
+
+// The recolor adapter is useless if the lane's recolor branch cannot run. It
+// iterates SYSTEMS, so a `const SYSTEMS` declared below it puts the branch in
+// the temporal dead zone and every recolor run throws before reaching an agent.
+test("the lane declares SYSTEMS before the recolor branch that iterates it", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { resolve, dirname, join } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+  const source = await readFile(join(root, "workflows/visual-concept-lane.mjs"), "utf8");
+  const declared = source.indexOf("\nconst SYSTEMS = [");
+  const branch = source.indexOf("if (args.recolor) {");
+  assert.ok(declared !== -1 && branch !== -1, "expected both the SYSTEMS const and the recolor branch");
+  assert.ok(declared < branch, "SYSTEMS must be initialized before the recolor branch iterates it");
+});

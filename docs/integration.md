@@ -157,8 +157,9 @@ tests rather than a live run.
 
 ```sh
 node --test research/tests/       # 74 pre-existing research tests
-node --test integration/tests/    # 66 integration tests
-node scripts/checks/run-checks.mjs  # lane contract checks
+node --test integration/tests/    # 68 integration tests
+node scripts/checks/run-checks.mjs  # 12 lane contract checks
+node --test product/tests/        # 19 post-approval product tests
 ```
 
 Fixture-based routing tests and real-execution evidence are kept separate; see
