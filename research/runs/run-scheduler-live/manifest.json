@@ -1,0 +1,161 @@
+{
+  "$schema": "competitor-research-review-manifest/v1",
+  "packageHash": "sha256:6f5dd2474ccd5490bffb66cf3f9cec0ff4e49fef59d0b6ce728d6e698008ab40",
+  "runId": "run-scheduler-live",
+  "round": 1,
+  "limits": {
+    "maxAutoRepairs": 3,
+    "maxHumanRounds": 5
+  },
+  "generatedAt": "2026-09-05T07:58:45.497Z",
+  "questions": [
+    {
+      "id": "evidence.source",
+      "prompt": "표시된 출처·URL·수집 시각이 실제 검토한 자료를 식별하나요?"
+    },
+    {
+      "id": "evidence.support",
+      "prompt": "중요한 주장마다 정확한 인용문 또는 실제 캡처 근거가 연결돼 있나요?"
+    },
+    {
+      "id": "evidence.conflict",
+      "prompt": "충돌하거나 신뢰도가 낮은 근거와 미확인(unknown) 항목이 숨김없이 표시됐나요?"
+    },
+    {
+      "id": "evidence.currency",
+      "prompt": "자료의 시점과 대상 도메인이 이번 결정에 적용하기에 적절한가요?"
+    },
+    {
+      "id": "evidence.sufficiency",
+      "prompt": "이 근거 묶음으로 다음 설계 단계(플로우·비주얼)를 시작해도 안전한가요?"
+    }
+  ],
+  "cardPins": [
+    {
+      "cardId": "card.comp-doodle.poll-1",
+      "cardHash": "sha256:e9214b46f3b5e8212265c4bd20c25e2a9a60338ae92bb5f87d8a08a3aa35c8c7",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-doodle.confirm-1",
+      "cardHash": "sha256:439c0d9310ea2f8fbcf5a0a7c124842d60f99207eddf1eca3cb11bcfac2dbdd5",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-doodle.status-1",
+      "cardHash": "sha256:fa8a2a77024f8d65ab26ae271153d6cc1e8cf89c0a6830a2881680ac0ce9e433",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-doodle.compose-1",
+      "cardHash": "sha256:a952a805ba4e9cce928bf5714ac2d497c049f7880af5f26677410dab16d07e66",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-doodle.pool-1",
+      "cardHash": "sha256:df5324cd58707e6b8fa4528b8cc2bbb41c5fe08f037a8c3113fda291a5245e60",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-doodle.overview-1",
+      "cardHash": "sha256:be0acf5c5282e44b9e4e79729a3f3ea9baef058da55cdafd1074c21993148439",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-rallly.poll-1",
+      "cardHash": "sha256:6f1e573c5dd9a064a763b2aec0dc06169028d74196f2a7dff0d29bb3ca74df6b",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-rallly.poll-deadline-1",
+      "cardHash": "sha256:2b38670872ea3170ccd50a7614a14243f077f7402d05c3ac672e5f53e0d53eb6",
+      "status": "explicit_absence"
+    },
+    {
+      "cardId": "card.comp-rallly.confirm-1",
+      "cardHash": "sha256:00747cd2fdb4a18e44df9580da0e953788a3e0aa325bf684eed3024f675bfcca",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-rallly.status-1",
+      "cardHash": "sha256:e330145605d9986b266ef16c3fc253a542436feb5734245319ba31f6b31c5fd0",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-rallly.pool-1",
+      "cardHash": "sha256:592a686e1fe29f6729af735f5af7ee4580c90a28fa222a24c6a6879facae3d47",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-rallly.compose-1",
+      "cardHash": "sha256:9ee1877aaa6a9a2894334d2e31243e5ff0354acce240b7ff22898aad2b3df433",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-rallly.overview-1",
+      "cardHash": "sha256:ae4a53a9b6b967ea920ca79082ef60f6fe7ef82a94818a62b8a20c99d555b375",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-whensee.poll-1",
+      "cardHash": "sha256:5746fce3c69c982ace7df42cc4e99250114023807ed8b4e67c1342d96c4402c6",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-whensee.confirm-1",
+      "cardHash": "sha256:6a1d52386de00f860144f219d30f87cc68b2ecaecb679c93cb4503d7cda26326",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-whensee.overview-1",
+      "cardHash": "sha256:5e4d1d355f70582d85746114cb6f0590a0e7580a525234fafee8be1b89e13429",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.comp-whensee.pool-1",
+      "cardHash": "sha256:170776cc4027a5b440f327a26207c15ee18c7da4992d8b24d510430e19a6eac1",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-whensee.compose-1",
+      "cardHash": "sha256:7f83afa080ab64db534452b1095e73a8bb0b96841d2ab4ab6fa845ecca9dedf3",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.comp-whensee.status-1",
+      "cardHash": "sha256:8b8f55f50cd962d18789fd5ef3158ed371c673877afbfe1a0d4d9feddf448b2d",
+      "status": "unknown"
+    },
+    {
+      "cardId": "card.ref-nng-visibility.status-1",
+      "cardHash": "sha256:2dbe0c2874865dbf7aac8f7383c7ba6d2df9cabfa6a2dd32252e8aa59ec1f517",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.ref-nng-date.calendar-1",
+      "cardHash": "sha256:680becdc030f91b6d80673f6f58870baabb3dea633f86f8e93430e4cc82c1367",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.ref-tossup.heatmap-1",
+      "cardHash": "sha256:541bdbf89e8c7a19abee79752435ba38dc826028c528a0af4b9c3c3a7774eec2",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.ref-tossup.confirm-gap-1",
+      "cardHash": "sha256:71c0e0b5d46cf6144925e51f0745f502d07e941e1f82134add3f7ad9135e90c9",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.ref-rallly-readme.flow-1",
+      "cardHash": "sha256:90cca07a675dd538853289a73fa25daf1e24f0d718d971bad8b1a7a31ececabf",
+      "status": "observed"
+    },
+    {
+      "cardId": "card.ref-shadcn.calendar-1",
+      "cardHash": "sha256:b7e25f7caaf21d2b5bc1a8a9f9e610e9e5dd3742d732c7465c91d389c564cdfe",
+      "status": "unknown"
+    }
+  ],
+  "manifestHash": "sha256:6e4415e9b95cf825343f3c868038b3808c29aae851c42033d0154dc7b6c59cd9"
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "approved-prd/v1",
+  "prdId": "prd.wedding-scheduler.v1",
+  "title": "Wedding invitation meetup scheduler (청첩장모임 스케줄러)",
+  "domain": "group meetup scheduling for engaged couples",
+  "problem": "Engaged Korean couples must hand-deliver wedding invitations through dozens of small meetups in the ~3 months before the wedding. Grouping acquaintances into meetups is hard (people belong to multiple circles, some require 1:1), and coordinating each group's schedule across messenger chat rooms becomes unmanageable as rooms multiply.",
+  "audience": "Korean engaged couples (bride and groom using it together, each managing their own acquaintance pool) and their invited acquaintances responding to date polls; 40-100+ invitees, weekends filling up 3 months before the wedding.",
+  "coreTasks": [
+    "Register and manage an acquaintance pool with names, relationship groups, and contacts, allowing one person in multiple groups",
+    "Compose meetups by selecting acquaintances into a group",
+    "Propose multiple candidate dates to a meetup and collect available/unavailable replies with a reply deadline",
+    "Confirm a final date and share it with all meetup members",
+    "View all confirmed meetups across both partners' pools in one calendar and spot date conflicts",
+    "Track meetup progress states: awaiting replies, ready to confirm, confirmed, completed"
+  ],
+  "features": [
+    { "featureId": "feat.pool", "name": "Acquaintance pool management", "description": "Register name, relationship group (university/work/family), contact; one person can belong to multiple groups at once.", "priority": "p0" },
+    { "featureId": "feat.compose", "name": "Meetup composition", "description": "Select registered acquaintances and bind them into one meetup; supports 1:1 meetups for relationships like bosses.", "priority": "p0" },
+    { "featureId": "feat.poll", "name": "Date polling and reply collection", "description": "Propose multiple candidate dates to meetup members, collect available/unavailable replies, and set a reply deadline.", "priority": "p0" },
+    { "featureId": "feat.confirm", "name": "Confirmation and sharing", "description": "Once the final date is set, every meetup member can see it.", "priority": "p0" },
+    { "featureId": "feat.overview", "name": "Whole-schedule overview", "description": "See all confirmed meetups across the groom-side and bride-side pools at a glance and detect overlapping dates.", "priority": "p0" },
+    { "featureId": "feat.status", "name": "Progress states", "description": "Distinguish meetups awaiting replies, ready to confirm, confirmed, and already held.", "priority": "p1" }
+  ],
+  "constraints": [
+    "Designed for the couple (two users) together, not a single-user calendar app",
+    "Greenfield: no existing screens or design assets; the source PRD deliberately specifies no screen counts, layouts, components, colors, or typography",
+    "No paid screen-library sources may be used during research"
+  ],
+  "approval": { "approvedBy": "team-shared example PRD (examples/wedding-scheduler/PRD.md, converted to approved-prd/v1 by stage 2-3 owner; no brand colors/fonts specified upstream)", "approvedAt": "2026-09-05T07:40:00Z" }
+}

@@ -1,0 +1,22 @@
+{
+  "status": "verified_autonomous",
+  "humanGate": "optional",
+  "runId": "run-scheduler-live",
+  "round": 1,
+  "control": {
+    "limits": {
+      "maxAutoRepairs": 3,
+      "maxHumanRounds": 5
+    },
+    "autoRepairsUsed": 0,
+    "humanRoundsUsed": 0,
+    "escalated": false,
+    "escalationReason": null,
+    "history": []
+  },
+  "packageHash": "sha256:6f5dd2474ccd5490bffb66cf3f9cec0ff4e49fef59d0b6ce728d6e698008ab40",
+  "manifestHash": "sha256:6e4415e9b95cf825343f3c868038b3808c29aae851c42033d0154dc7b6c59cd9",
+  "startedAt": "2026-09-05T07:58:45.497Z",
+  "liveVerified": true,
+  "updatedAt": "2026-09-05T07:58:45.522Z"
+}

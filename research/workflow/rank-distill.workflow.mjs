@@ -27,6 +27,8 @@ Rank the competitors (cards with subjectType "competitor" are their evidence) ho
   {
     label: 'rank-top3',
     phase: 'Rank',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['competitorRanking'],
@@ -63,6 +65,8 @@ BRAND CONSTRAINT RULE: if the input file's prd carries brandConstraints (client-
   {
     label: 'distill-references',
     phase: 'Distill',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['references', 'cards', 'referenceDistillation'],

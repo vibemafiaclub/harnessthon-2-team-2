@@ -89,6 +89,8 @@ Competitor ids: "comp.<short-slug>". Do not fabricate products; if you cannot co
   {
     label: 'scope+classify',
     phase: 'Scope',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['scope', 'competitors', 'referencePlan'],
@@ -147,6 +149,8 @@ Also return failures for anything you could not access (kind source_unavailable 
       {
         label: `observe:${competitor.competitorId}`,
         phase: 'Research',
+        model: 'sonnet',
+        effort: 'medium',
         schema: {
           type: 'object',
           required: ['cards'],
@@ -189,6 +193,8 @@ Tasks (do NOT invent new evidence, do NOT alter any quote text):
   {
     label: 'converge+matrix+rank',
     phase: 'Converge',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['cards', 'featureMatrix', 'decisionRationales', 'competitorRanking'],
@@ -244,6 +250,8 @@ ${EVIDENCE_RULES}`,
   {
     label: 'distill-references',
     phase: 'Distill',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['references', 'cards', 'referenceDistillation'],

@@ -1,0 +1,1290 @@
+{
+  "$schema": "competitor-research-package/v1",
+  "runId": "run-scheduler-live",
+  "prd": {
+    "prdId": "prd.wedding-scheduler.v1",
+    "title": "Wedding invitation meetup scheduler (청첩장모임 스케줄러)",
+    "domain": "group meetup scheduling for engaged couples",
+    "payloadHash": "sha256:054cca089fa060cb394d408a93c546aeeb1740330048a2ec374d38f8919f84c7"
+  },
+  "scope": {
+    "problem": "Engaged Korean couples must hand-deliver wedding invitations through dozens of small meetups in the ~3 months before the wedding; grouping acquaintances into meetups is hard (multi-circle membership, some 1:1), and coordinating each group's date across multiplying messenger chat rooms becomes unmanageable.",
+    "audience": "Korean engaged couples (bride and groom using the product together, each managing their own acquaintance pool) and their 40-100+ invited acquaintances responding to date polls, with weekends filling up in the 3 months before the wedding.",
+    "jobs": [
+      "Register and manage an acquaintance pool with names, relationship groups, and contacts, allowing one person in multiple groups",
+      "Compose meetups by selecting acquaintances into a group",
+      "Propose multiple candidate dates to a meetup and collect available/unavailable replies with a reply deadline",
+      "Confirm a final date and share it with all meetup members",
+      "View all confirmed meetups across both partners' pools in one calendar and spot date conflicts",
+      "Track meetup progress states: awaiting replies, ready to confirm, confirmed, completed"
+    ],
+    "featureScope": [
+      "feat.pool (p0): Acquaintance pool management — name, relationship group, contact; multi-group membership",
+      "feat.compose (p0): Meetup composition — bind selected acquaintances into one meetup, incl. 1:1 meetups",
+      "feat.poll (p0): Date polling and reply collection — multiple candidate dates, available/unavailable replies, reply deadline",
+      "feat.confirm (p0): Confirmation and sharing — final date visible to every meetup member",
+      "feat.overview (p0): Whole-schedule overview — all confirmed meetups across groom-side and bride-side pools, overlap detection",
+      "feat.status (p1): Progress states — awaiting replies, ready to confirm, confirmed, held"
+    ]
+  },
+  "brandConstraints": null,
+  "competitors": [
+    {
+      "competitorId": "comp.doodle",
+      "name": "Doodle",
+      "url": "https://doodle.com/en/",
+      "rationale": {
+        "sharedProblem": "Coordinating one date across a group of people without endless back-and-forth in chat/email threads — the same core pain as picking a date per invitation meetup.",
+        "sharedAudience": "Organizers of informal group events (friends, family, colleagues) proposing dates to invitees who reply with availability; overlaps directly with a couple polling each meetup group, though not Korea- or wedding-specific.",
+        "sharedJobs": [
+          "Propose multiple candidate dates and collect availability replies (Group Poll)",
+          "Set a poll deadline for responses",
+          "Confirm a final option and notify all participants",
+          "See responses/status at a glance as votes come in"
+        ],
+        "featureOverlap": [
+          "feat.poll — Group Poll with multiple date/time options and yes/no/if-need-be votes, plus poll deadlines",
+          "feat.confirm — finalize the winning option and push it to participants/calendars",
+          "feat.status — organizer dashboard shows who has and hasn't responded"
+        ]
+      },
+      "accessLimitations": [
+        "Premium features (deadlines, reminders, ad-free) sit behind Doodle Pro, so some flows are only fully visible with a paid account",
+        "Actual poll-creation UI requires creating an account/poll; marketing pages describe but do not show every screen",
+        "No acquaintance-pool or multi-meetup overview concept — evidence limited to per-poll flows"
+      ]
+    },
+    {
+      "competitorId": "comp.rallly",
+      "name": "Rallly",
+      "url": "https://rallly.co/",
+      "rationale": {
+        "sharedProblem": "Finding the best date for a group event by voting on candidate dates instead of debating in message threads — the per-meetup half of the couple's problem.",
+        "sharedAudience": "Casual organizers scheduling group meetups with participants who vote via a shared link without signing up — matching acquaintances who must reply frictionlessly to a couple's poll.",
+        "sharedJobs": [
+          "Propose multiple candidate dates for one gathering",
+          "Collect available/unavailable votes from participants via a shareable link",
+          "Finalize a date and notify voters",
+          "Track incoming votes and comments in real time"
+        ],
+        "featureOverlap": [
+          "feat.poll — date polls with per-option availability voting and comments",
+          "feat.confirm — 'finalize' step that locks the chosen date and informs participants",
+          "feat.status — live vote counts show whether a poll is still awaiting replies"
+        ]
+      },
+      "accessLimitations": [
+        "Pro plan gates some features (persistent polls, spaces), so free-tier screenshots may miss paid UI",
+        "Marketing site is concise; deeper feature evidence lives in the GitHub repo (https://github.com/lukevella/rallly) and docs rather than screen galleries",
+        "English-first product; no Korean-market or couple/two-organizer concepts"
+      ]
+    },
+    {
+      "competitorId": "comp.whensee",
+      "name": "WhenSee (웬시)",
+      "url": "https://whensee.xyz/",
+      "rationale": {
+        "sharedProblem": "Korean-language 약속잡기: collecting everyone's possible dates for a 모임 through a shared voting link instead of a messy KakaoTalk room — the same chat-room-overload pain the PRD names.",
+        "sharedAudience": "Korean organizers of social meetups (모임/회식) and their invitees who vote without registration — culturally and linguistically the closest match to a Korean couple's acquaintances replying to date polls.",
+        "sharedJobs": [
+          "Create a poll with candidate dates (date-only voting supported)",
+          "Share a link so members reply with available times without signing up",
+          "See overlapping availability and get a recommended date",
+          "Settle the final meetup date for the group"
+        ],
+        "featureOverlap": [
+          "feat.poll — candidate-date voting with date-only mode and custom options (e.g. 점심/저녁 회식)",
+          "feat.confirm — recommended/decided date surfaced to all participants",
+          "feat.overview (partial) — real-time availability visualization across all respondents for one meetup"
+        ]
+      },
+      "accessLimitations": [
+        "Small single-product site: feature copy exists (steps + FAQ) but there is no extensive screen gallery, so screenshot evidence must come from the live app flow",
+        "Creator flow requires Google login to demonstrate end-to-end (participants need none)",
+        "Single-poll scope: no acquaintance pool, no cross-meetup calendar, no couple/dual-pool concept — absence claims need explicit page evidence"
+      ]
+    }
+  ],
+  "competitorRanking": [
+    {
+      "competitorId": "comp.doodle",
+      "rank": 1,
+      "rationale": "Broadest evidenced coverage of the PRD (poll with deadlines, confirm with calendar push, per-poll status, a dedicated 1:1 flow, and a dashboard overview — 5 of 6 features touched), making it the primary functional benchmark despite paid gating on deadlines."
+    },
+    {
+      "competitorId": "comp.whensee",
+      "rank": 2,
+      "rationale": "Closest market and UX fit: Korean-language, no-signup link-based replies and a heatmap overlap view directly match the PRD's casual invitee flow, and its visuals (heatmap grid, 01-04 onboarding) are the best design reference even though pool/compose/status are unevidenced."
+    },
+    {
+      "competitorId": "comp.rallly",
+      "rank": 3,
+      "rationale": "Well-documented poll/confirm/invite-tracking flows worth borrowing (final date pinned on the shared poll page, per-invitee opened/responded indicators), but it has the most unknown cells, an explicit deadline gap, and Pro-gates its finalize step."
+    }
+  ],
+  "references": [
+    {
+      "referenceId": "ref.nng-visibility-status",
+      "title": "Visibility of System Status (Usability Heuristic #1)",
+      "url": "https://www.nngroup.com/articles/visibility-system-status/",
+      "kind": "article",
+      "whyRelevant": "Grounds the PRD's four-state meetup lifecycle (awaiting replies / ready to confirm / confirmed / completed) and the reply-tracking patterns seen in Doodle and Rallly in the canonical status-visibility heuristic."
+    },
+    {
+      "referenceId": "ref.nng-date-input",
+      "title": "Date-Input Form Fields: UX Design Guidelines",
+      "url": "https://www.nngroup.com/articles/date-input/",
+      "kind": "article",
+      "whyRelevant": "Free NN/g guidance on calendar pickers vs typed input - directly informs how organizers should propose candidate dates (near-term social events, multi-date/range selection) as Doodle, Rallly, and WhenSee all do with calendar-based option picking."
+    },
+    {
+      "referenceId": "ref.tossup-when2meet",
+      "title": "How to Use When2Meet in 2026: Step-by-Step (and When to Switch)",
+      "url": "https://toss-up.app/blog/how-to-use-when2meet",
+      "kind": "article",
+      "whyRelevant": "Free pattern write-up of the availability-heatmap grid - the same pattern WhenSee's cards flag as the best visual benchmark - including its known gap (no explicit 'pick the winner' confirm action) that the PRD's confirm step should close."
+    },
+    {
+      "referenceId": "ref.rallly-readme",
+      "title": "Rallly GitHub Repository README",
+      "url": "https://github.com/lukevella/rallly/blob/main/README.md",
+      "kind": "official_docs",
+      "whyRelevant": "Open-source repo (named in the stage source plan) whose README states the link-first, no-account voting flow, availability grid, and finalize-and-notify step in the product's own words, corroborating the Rallly cards and showing the pattern is buildable on an open Tailwind stack."
+    },
+    {
+      "referenceId": "ref.shadcn-calendar",
+      "title": "shadcn/ui Calendar Component",
+      "url": "https://ui.shadcn.com/docs/components/calendar",
+      "kind": "design_system",
+      "whyRelevant": "Freely available design-system calendar component (same Tailwind/Radix lineage Rallly is built with) supporting single-date and range selection - a concrete default the PRD can defer unspecified visual properties to, since the client specified no brand colors or fonts."
+    }
+  ],
+  "referenceDistillation": [
+    {
+      "category": "interaction",
+      "direction": "Keep the invitee path link-first and signup-free (name-only reply, as WhenSee and Rallly document) while making the organizer path stateful: every reply, the reply deadline, and the confirm action should visibly advance the meetup through the four lifecycle states, applying NN/g's status-visibility heuristic. Ship the deadline as a free core interaction that auto-locks replies at the cutoff and flips the meetup to 'ready to confirm' - Doodle paywalls this and Rallly explicitly lacks it, so it is a cheap differentiator. Confirming must be one explicit action that pins the date on the shared page, notifies every member, and closes the poll - combining Doodle's push-to-everyone guarantee with Rallly's pinned-result pattern and closing When2meet's 'no pick-the-winner button' gap; per-invitee responded indicators paired with a nudge action tell the organizer exactly whom to chase.",
+      "referenceIds": [
+        "ref.nng-visibility-status",
+        "ref.rallly-readme",
+        "ref.tossup-when2meet"
+      ],
+      "cardIds": [
+        "card.ref-nng-visibility.status-1",
+        "card.ref-rallly-readme.flow-1",
+        "card.ref-tossup.confirm-gap-1",
+        "card.comp-doodle.poll-1",
+        "card.comp-doodle.confirm-1",
+        "card.comp-doodle.status-1",
+        "card.comp-rallly.poll-deadline-1",
+        "card.comp-rallly.status-1",
+        "card.comp-whensee.poll-1"
+      ],
+      "rationale": "Stage-2 evidence shows the winning interactions are split across competitors: Doodle has deadline auto-lock and confirm-with-calendar-push but paywalls both behind Professional; Rallly has pinned finalization and per-invitee opened/responded tracking but no deadline at all ('No, this feature is currently not supported') and Pro-gates finalize; WhenSee has the frictionless no-signup reply and auto-highlighted best slots but no evidenced states or deadline. Unifying all four - free deadline, explicit confirm, no-signup replies, visible lifecycle states - is directly supported by the evidence and by NN/g's principle that communicating current state drives user control and trust."
+    },
+    {
+      "category": "layout",
+      "direction": "Structure the app around three surfaces: (1) a month-grid calendar picker for proposing candidate dates (NN/g: the right pattern for events within a year, and the pattern Doodle/Rallly/WhenSee all use); (2) a per-meetup shared result page that is the single canonical surface - availability heatmap with per-slot counts and auto-highlighted unanimous/majority slots on top, and the finalized date pinned on the same page once confirmed, as Rallly does; (3) a home dashboard that lists meetups grouped by the PRD's four lifecycle states and adds a cross-pool confirmed-meetups calendar merging both partners' pools with visible date-conflict flags. The merged conflict calendar is deliberately beyond any competitor's layout - Doodle's dashboard is a flat single-account list and no competitor detects overlaps.",
+      "referenceIds": [
+        "ref.nng-date-input",
+        "ref.tossup-when2meet",
+        "ref.rallly-readme"
+      ],
+      "cardIds": [
+        "card.ref-nng-date.calendar-1",
+        "card.ref-tossup.heatmap-1",
+        "card.ref-rallly-readme.flow-1",
+        "card.comp-whensee.overview-1",
+        "card.comp-whensee.confirm-1",
+        "card.comp-rallly.confirm-1",
+        "card.comp-doodle.overview-1",
+        "card.comp-doodle.status-1"
+      ],
+      "rationale": "The top-3 evidence converges on calendar-in, heatmap-out as the proven per-meetup layout (WhenSee's heatmap with counts, Rallly's calendar option picking and availability grid), and Rallly's 'final date is displayed on your poll for everyone to see' shows that pinning the outcome on the page members already visit beats a separate announcement surface. Doodle's overview card shows aggregate dashboards exist but stop at flat lists with no cross-pool view or clash detection - so the PRD's state-grouped dashboard plus merged couple calendar is where layout can differentiate rather than imitate."
+    },
+    {
+      "category": "style",
+      "direction": "The client specified no colors or fonts, so all unspecified visual properties defer to the selected design system's defaults - recommended: shadcn/ui's neutral, token-driven Tailwind palette (the same open lineage Rallly ships on), which stays warm and casual rather than corporate. Reserve color for meaning: a single-hue intensity ramp (dark = most available, white = none, with a 0-to-All legend) for availability heatmaps, and one soft accent for selected candidate dates and the confirmed date, echoing WhenSee's clean heatmap benchmark and NN/g's soft-highlight range example. Keep typography and chrome minimal so the grid and calendar carry the visual weight, matching WhenSee's instantly legible 01-04 onboarding aesthetic. This direction works within the (empty) brand constraints and proposes no replacement branding.",
+      "referenceIds": [
+        "ref.shadcn-calendar",
+        "ref.tossup-when2meet",
+        "ref.nng-date-input"
+      ],
+      "cardIds": [
+        "card.ref-shadcn.calendar-1",
+        "card.ref-tossup.heatmap-1",
+        "card.ref-nng-date.calendar-1",
+        "card.comp-whensee.overview-1",
+        "card.comp-whensee.poll-1"
+      ],
+      "rationale": "WhenSee - the closest market/UX fit per stage 2 - is the only competitor whose cards carry positive visualPreference notes, and both point to the same taste: a clean Mon-Fri intensity heatmap with a legend and a light four-step walkthrough. The Toss-up write-up confirms the intensity-ramp encoding is the established convention for group availability, and Rallly demonstrates the neutral Tailwind look succeeds in this exact product category, so defaulting to shadcn/ui tokens borrows a proven style at zero brand risk."
+    }
+  ],
+  "featureMatrix": [
+    {
+      "featureId": "feat.pool",
+      "prdFeature": "Acquaintance pool management",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-doodle.pool-1"
+          ]
+        },
+        "comp.rallly": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-rallly.pool-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-whensee.pool-1"
+          ]
+        }
+      },
+      "ideas": [
+        "A persistent, relationship-grouped acquaintance pool with multi-group membership has no evidenced counterpart in any competitor — the clearest differentiation candidate in this run.",
+        "All three competitors use per-poll link sharing or ad-hoc email entry; a pool that pre-fills invitees would remove the re-typing cost Doodle/Rallly docs imply.",
+        "Keep the pool lightweight (name + group + contact) so it stays closer to WhenSee's low-friction ethos than to a full CRM."
+      ]
+    },
+    {
+      "featureId": "feat.compose",
+      "prdFeature": "Meetup composition",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-doodle.compose-1"
+          ]
+        },
+        "comp.rallly": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-rallly.compose-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-whensee.compose-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Doodle treats 1:1 as its own product with a simplified flow (offer times, one person picks) — model the PRD's boss-type 1:1 meetup as a streamlined variant rather than a group of one.",
+        "No competitor binds pre-registered people into a persistent meetup unit; compose-from-pool is a differentiator that pairs with feat.pool.",
+        "Retain a WhenSee-style share-link fallback so members outside the pool can still join without registration."
+      ]
+    },
+    {
+      "featureId": "feat.poll",
+      "prdFeature": "Date polling and reply collection",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-doodle.poll-1"
+          ]
+        },
+        "comp.rallly": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-rallly.poll-1",
+            "card.comp-rallly.poll-deadline-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-whensee.poll-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Reply deadlines are paid-only in Doodle, explicitly absent in Rallly, and unmentioned by WhenSee — shipping a free deadline with auto-lock (Doodle's behavior) is a concrete edge.",
+        "Doodle's 'if-need-be' middle option is worth adopting beyond binary available/unavailable replies.",
+        "WhenSee's no-signup, name-only reply flow is the friction bar to match for invitee participation."
+      ]
+    },
+    {
+      "featureId": "feat.confirm",
+      "prdFeature": "Confirmation and sharing",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "unknown",
+          "cardIds": []
+        },
+        "comp.rallly": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-rallly.confirm-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-whensee.confirm-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Combine Rallly's pattern (final date pinned on the same page members voted at) with Doodle's push (calendar invite/email) so visibility does not depend on members revisiting a link.",
+        "Adopt WhenSee's auto-highlighting of unanimous vs majority slots to make the organizer's confirm decision nearly one-click.",
+        "Rallly gates finalize behind Pro — keeping confirmation free removes a competitor's monetization wall from the core loop."
+      ]
+    },
+    {
+      "featureId": "feat.overview",
+      "prdFeature": "Whole-schedule overview",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-doodle.overview-1"
+          ]
+        },
+        "comp.rallly": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-rallly.overview-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-whensee.overview-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Cross-meetup overlap detection is evidenced nowhere: Doodle offers only a flat dashboard list and WhenSee's heatmap is per-poll — the groom/bride whole-schedule view with clash detection is unserved territory.",
+        "Reuse WhenSee's color-intensity heatmap grammar at the cross-meetup level (confirmed dates on one calendar, clashes flagged).",
+        "Competitors delegate clash-spotting to the user's external calendar via export; doing it in-product is the PRD's chance at 'recognition rather than recall'."
+      ]
+    },
+    {
+      "featureId": "feat.status",
+      "prdFeature": "Progress states",
+      "perCompetitor": {
+        "comp.doodle": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-doodle.status-1"
+          ]
+        },
+        "comp.rallly": {
+          "status": "observed",
+          "cardIds": [
+            "card.comp-rallly.status-1"
+          ]
+        },
+        "comp.whensee": {
+          "status": "unknown",
+          "cardIds": [
+            "card.comp-whensee.status-1"
+          ]
+        }
+      },
+      "ideas": [
+        "Neither Doodle (open/booked/past) nor Rallly (per-invitee opened/responded) has an explicit 'ready to confirm' state — the PRD's four-state lifecycle is more expressive than anything evidenced.",
+        "Pair status with action like Doodle: surface non-responders directly in the overview next to a remind button.",
+        "Rallly's per-invitee opened/responded indicators are Pro-only; offering them free strengthens the who-to-nudge loop for informal organizers."
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "cardId": "card.comp-doodle.poll-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "observed",
+      "claim": "Doodle's Group Poll implements feat.poll: organizers propose multiple date/time options, invitees reply with availability (including an 'if-need-be' middle option covered by a dedicated help article), and a reply deadline can be set that locks participation once passed.",
+      "source": {
+        "url": "https://help.doodle.com/en/articles/9457346-how-do-i-set-a-deadline-limit-participants-send-automatic-reminders-or-make-my-group-poll-hidden",
+        "publisher": "Doodle Help Center",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:49:30Z",
+        "context": "Help article body explaining the deadline setting for Group Polls"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "When you select a deadline for your group poll, participants will not be able to participate or change their current selection once the deadline has passed."
+      },
+      "limitations": [
+        "Help-center description of product behavior, not a live observation of the poll UI (creating a poll requires an account)",
+        "The same article states deadlines require a paid plan: 'All the special settings require a Doodle Professional subscription.'",
+        "The if-need-be vote option is evidenced only by the existence of the help article 'How does the if-need-be group poll response work?' (not fetched in full)"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Flexibility and efficiency of use",
+            "task": "Collecting availability replies before a cutoff",
+            "note": "Deadline auto-locks votes, removing the organizer's manual chase-and-close step; however gating it behind the paid tier limits the informal-organizer audience the PRD targets"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:e9214b46f3b5e8212265c4bd20c25e2a9a60338ae92bb5f87d8a08a3aa35c8c7"
+    },
+    {
+      "cardId": "card.comp-doodle.confirm-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "unknown",
+      "claim": "Doodle implements feat.confirm: the organizer stars the winning option and clicks 'Book it', after which all participants are notified of the final date via a calendar invitation (or a confirmation email when no calendar is connected).",
+      "source": {
+        "url": "https://help.doodle.com/en/articles/9457342-how-do-i-select-the-final-option-for-my-group-poll",
+        "publisher": "Doodle Help Center",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:50Z",
+        "context": "Help article on selecting the final Group Poll option; describes what happens after clicking 'Book it' with a connected calendar"
+      },
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Help-center description, not an observed interaction in the live app",
+        "Notification path differs by calendar connection: without one, Doodle sends a confirmation email to organizer and participants instead",
+        "Visibility of the final date relies on email/calendar push; whether members can revisit the poll page later to re-check the confirmed date was not verified",
+        "Quote was not found in the re-fetched source; downgraded pending re-collection.",
+        "Original claimed status: observed; original quote retained in revision history."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Letting every member see the confirmed date",
+            "note": "Confirmation is pushed into participants' own calendars/inboxes rather than only shown in-app — a stronger guarantee everyone sees the final date"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:439c0d9310ea2f8fbcf5a0a7c124842d60f99207eddf1eca3cb11bcfac2dbdd5"
+    },
+    {
+      "cardId": "card.comp-doodle.status-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "observed",
+      "claim": "Doodle supports feat.status at the per-poll level: the organizer view shows responses at a glance and highlights who has not yet responded; the dashboard additionally separates open shareable Doodles from booked Upcoming Events and filters Upcoming vs Past.",
+      "source": {
+        "url": "https://doodle.com/en/product/polls/",
+        "publisher": "Doodle",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:10Z",
+        "context": "Group Poll product marketing page, section on tracking responses"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "See the overview at a glance. People not responding? You'll see it right there."
+      },
+      "limitations": [
+        "This is a marketing claim on a product page, not an observed dashboard interaction",
+        "Doodle distinguishes roughly open vs booked vs past (per the dashboard help article), but has no explicit 'ready to confirm' state like the PRD's four-state model",
+        "Actual dashboard appearance requires an account and was not observed"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Seeing which meetups still await replies",
+            "note": "Non-responders are surfaced directly in the poll overview, pairing status with the reminder action; the PRD's explicit lifecycle states go further than Doodle's implicit open/booked split"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:fa8a2a77024f8d65ab26ae271153d6cc1e8cf89c0a6830a2881680ac0ce9e433"
+    },
+    {
+      "cardId": "card.comp-doodle.compose-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "observed",
+      "claim": "Doodle partially covers feat.compose: it offers a dedicated 1:1 product (organizer offers times, one invitee picks) alongside Group Polls for groups, but a 'meetup' is just a poll's ad-hoc invitee list — there is no step of selecting pre-registered acquaintances and binding them into a persistent meetup unit.",
+      "source": {
+        "url": "https://doodle.com/en/product/1-1/",
+        "publisher": "Doodle",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:30Z",
+        "context": "1:1 product page, headline description of the one-on-one scheduling flow"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Offer a list of your available times, your client selects which works for them."
+      },
+      "limitations": [
+        "Marketing-page description; the 1:1 creation flow itself was not observed",
+        "The quote evidences the 1:1 half of the claim; the absence of persistent member binding is an inference from no such feature appearing on product, pricing, or help pages, not an explicit statement",
+        "Doodle's 1:1 is framed around clients/professional booking, not relationship types like bosses or family"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "indirect",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Match between system and the real world",
+            "task": "Setting up a 1:1 meetup with a boss",
+            "note": "Doodle models 1:1 as a separate product with its own flow rather than a group-of-one meetup, which keeps the group-poll flow uncluttered"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:a952a805ba4e9cce928bf5714ac2d497c049f7880af5f26677410dab16d07e66"
+    },
+    {
+      "cardId": "card.comp-doodle.pool-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "unknown",
+      "claim": "No evidence found that Doodle offers feat.pool (a persistent acquaintance pool with names, relationship groups, and multi-group membership); invitations appear to be per-poll via shared links or manually entered emails.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Searched the homepage, Group Poll and 1:1 product pages, pricing page, the 'How do I invite participants to my group poll?' help article, and the Account Settings help collection; none mention saved contacts, address books, or contact groups",
+        "Failure to find is not proof of absence: a contacts feature could exist inside the logged-in app, which was not accessed",
+        "The invite help article describes only link sharing and manual email entry, which weakly suggests no reusable pool, but no page explicitly states the feature does not exist"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "none",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:df5324cd58707e6b8fa4528b8cc2bbb41c5fe08f037a8c3113fda291a5245e60"
+    },
+    {
+      "cardId": "card.comp-doodle.overview-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.doodle",
+      "status": "observed",
+      "claim": "Doodle only partially covers feat.overview: its dashboard lists all of a user's Doodles and booked Upcoming Events in one place, but it is a flat per-organizer list — there is no cross-pool (groom-side/bride-side) view and no detection of overlapping confirmed dates.",
+      "source": {
+        "url": "https://help.doodle.com/en/articles/9457217-how-is-the-dashboard-organized",
+        "publisher": "Doodle Help Center",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:50Z",
+        "context": "Help article describing the dashboard's My Doodles vs Upcoming Events sections"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Upcoming Events are defined as events you have scheduled using Doodle."
+      },
+      "limitations": [
+        "Help-center description; the dashboard itself was not observed (requires login)",
+        "The quote evidences the aggregate event list; the absence of overlap/conflict detection across events is an inference from it not being mentioned anywhere on product, pricing, or help pages",
+        "Doodle has no concept of two pools (groom/bride) — the dashboard is single-account scoped"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Recognition rather than recall",
+            "task": "Spotting date clashes across confirmed meetups",
+            "note": "Doodle centralizes events in one dashboard list but leaves clash-spotting to the user's own calendar; the PRD's overlap detection would be a differentiator"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:be0acf5c5282e44b9e4e79729a3f3ea9baef058da55cdafd1074c21993148439"
+    },
+    {
+      "cardId": "card.comp-rallly.poll-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "observed",
+      "claim": "Rallly's core product is a date/time poll: the organizer picks candidate dates on a calendar, shares a link, and participants vote on the options that work for them — covering the propose-and-collect half of feat.poll, but not the reply-deadline half.",
+      "source": {
+        "url": "https://support.rallly.co/workflow/create.md",
+        "publisher": "Rallly (official support docs)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:30Z",
+        "context": "'Create a poll' workflow doc, step describing selecting candidate date/time options on the calendar"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Use the calendar to choose the options you want participants to vote on."
+      },
+      "limitations": [
+        "Quote is a documentation instruction (product behavior description), not a directly observed interaction in the app UI.",
+        "The reply-deadline sub-feature of feat.poll is explicitly unsupported — see card.comp-rallly.poll-deadline-1.",
+        "Docs describe the hosted product; free-tier vs Pro differences in the poll editor were not exercised."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Flexibility and efficiency of use",
+            "task": "Propose candidate dates for one gathering",
+            "note": "Calendar-based option picking with per-option duration presets (30m-2h) and an all-day mode keeps proposal friction low for casual organizers."
+          }
+        ],
+        "visualPreference": "Poll creation flows straight into a Share dialog, which fits a link-first, no-signup participant model."
+      },
+      "cardHash": "sha256:6f1e573c5dd9a064a763b2aec0dc06169028d74196f2a7dff0d29bb3ca74df6b"
+    },
+    {
+      "cardId": "card.comp-rallly.poll-deadline-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "explicit_absence",
+      "claim": "Rallly explicitly does not support setting a reply deadline on a poll — the deadline requirement inside feat.poll is a documented gap.",
+      "source": {
+        "url": "https://support.rallly.co/faq.md",
+        "publisher": "Rallly (official support docs)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:49:10Z",
+        "context": "FAQ answer to the question 'Can I set a deadline for my poll?'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "No, this feature is currently not supported but may be added in the future."
+      },
+      "limitations": [
+        "The quote is the answer text; the paired question 'Can I set a deadline for my poll?' sits immediately before it on the page.",
+        "FAQ pages can lag the product — the answer itself flags that the feature 'may be added in the future'."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:2b38670872ea3170ccd50a7614a14243f077f7402d05c3ac672e5f53e0d53eb6"
+    },
+    {
+      "cardId": "card.comp-rallly.confirm-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "observed",
+      "claim": "Rallly implements feat.confirm as a 'Schedule'/finalize step: the chosen final date is shown on the poll to all participants, calendar invites can be emailed, and the poll closes to new responses — but finalizing is a Pro (paid) feature.",
+      "source": {
+        "url": "https://support.rallly.co/workflow/schedule.md",
+        "publisher": "Rallly (official support docs)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:30Z",
+        "context": "'Schedule' workflow doc, describing what happens after the organizer picks the final date"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "The final date is displayed on your poll for everyone to see and can be added to a calendar with one click."
+      },
+      "limitations": [
+        "Documentation description, not a directly observed in-app interaction.",
+        "Finalizing is gated to the Pro plan (pricing page lists 'Finalize Date' as Pro-only, and the marketing FAQ says finalizing notifies participants by email with Rallly Pro), so the free tier lacks this step — paid UI not observed.",
+        "Email notification of participants on finalize is corroborated by the marketing site FAQ, which is a marketing claim rather than an observed flow."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Finalize a date and inform meetup members",
+            "note": "Finalizing pins the result on the shared poll page itself, so members see the outcome at the same link they voted at — no separate announcement channel needed."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:00747cd2fdb4a18e44df9580da0e953788a3e0aa325bf684eed3024f675bfcca"
+    },
+    {
+      "cardId": "card.comp-rallly.status-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "observed",
+      "claim": "Rallly partially covers feat.status at the per-participant level: for email invites the Share dialog shows who has opened and who has responded, and live results show which dates lead — but no documented poll-lifecycle states (awaiting replies / ready to confirm / confirmed / held).",
+      "source": {
+        "url": "https://support.rallly.co/workflow/invite.md",
+        "publisher": "Rallly (official support docs)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:49:10Z",
+        "context": "'Invite participants' workflow doc, section on email invitations and response tracking"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "If you invited people by email, the Share dialog also shows who has opened their invite and who has responded."
+      },
+      "limitations": [
+        "Documentation description, not a directly observed interaction; open/respond tracking requires Pro email invites, so link-only free polls get less status visibility.",
+        "Lifecycle states across polls (a dashboard distinguishing awaiting/confirmed/held meetups) were not found on the marketing site or public docs — the logged-in app dashboard could not be inspected."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Track incoming replies for a meetup poll",
+            "note": "Per-invitee opened/responded indicators tell the organizer exactly whom to nudge, though only on the paid email-invite path."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:e330145605d9986b266ef16c3fc253a542436feb5734245319ba31f6b31c5fd0"
+    },
+    {
+      "cardId": "card.comp-rallly.pool-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "unknown",
+      "claim": "No evidence that Rallly offers an acquaintance pool (feat.pool) — registering people with relationship groups (university/work/family) and multi-group membership. The closest concept, Spaces, manages paid organizer seats for team collaboration, not a personal contact pool of invitees.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Searched the marketing homepage, pricing page, the full support-docs index (llms.txt), the Spaces docs, and the GitHub README; none mention contact lists, relationship groups, or reusable invitee rosters.",
+        "Spaces docs describe 'centralized billing and member management under a single subscription' — organizer-side team seats, a different concept from an invitee pool — but no page explicitly states a contact pool does not exist, so this stays unknown rather than explicit_absence.",
+        "The logged-in app may store past participants per account; could not be observed without an account."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "none",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:592a686e1fe29f6729af735f5af7ee4580c90a28fa222a24c6a6879facae3d47"
+    },
+    {
+      "cardId": "card.comp-rallly.compose-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "unknown",
+      "claim": "No evidence of feat.compose (selecting pre-registered acquaintances and binding them into a meetup). Rallly's documented composition model is the inverse: create the poll first, then distribute a link or type email addresses ad hoc — no roster to pick members from.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Invite docs describe only link sharing ('click Copy and paste it anywhere') and per-address email invites ('enter an email address and click Send invite'); absence of a member-picker is inferred from the documented flow, not explicitly stated, so status stays unknown.",
+        "1:1 meetups are trivially possible (a poll with one invitee) but there is no dedicated 1:1 concept.",
+        "Poll-creation UI behind login/Pro was not exercised."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "none",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:9ee1877aaa6a9a2894334d2e31243e5ff0354acce240b7ff22898aad2b3df433"
+    },
+    {
+      "cardId": "card.comp-rallly.overview-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.rallly",
+      "status": "unknown",
+      "claim": "No evidence of feat.overview — a cross-poll calendar showing all confirmed meetups at a glance with overlap/conflict detection. Public materials only describe per-poll views plus one-click add-to-calendar export of a finalized date to the user's external calendar.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Searched homepage, pricing, full docs index, workflow docs, and GitHub README; no page describes an aggregate calendar of events or conflict detection across polls.",
+        "The logged-in app has a poll list/dashboard that could not be observed without an account, so an in-app overview cannot be ruled out (unknown, not absence).",
+        "Add-to-calendar export delegates overview/overlap detection to the user's own calendar app rather than providing it in-product."
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "none",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:ae4a53a9b6b967ea920ca79082ef60f6fe7ef82a94818a62b8a20c99d555b375"
+    },
+    {
+      "cardId": "card.comp-whensee.poll-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "observed",
+      "claim": "WhenSee implements candidate-date polling: the organizer picks candidate dates, shares a link, and invitees reply with their available dates without signing up; a date-only mode and custom-option voting (e.g. 점심 회식/저녁 회식) are supported. No reply-deadline setting is mentioned anywhere on the site.",
+      "source": {
+        "url": "https://whensee.xyz/",
+        "publisher": "WhenSee",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:47:30Z",
+        "context": "Homepage FAQ, answer to '여러 명의 약속 날짜는 어떻게 정하나요?'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "후보 날짜를 고른 뒤 생성된 링크를 공유하세요. 초대받은 사람은 가입 없이 가능한 날을 선택하고, 결과 화면에서 모두가 가능한 날짜나 가장 많은 사람이 가능한 날짜를 바로 확인할 수 있어요."
+      },
+      "limitations": [
+        "Marketing/help copy on the product's own site, not an observed interaction in the live app (creator flow requires Google login).",
+        "The PRD's reply-deadline sub-feature (답변 마감 설정) is not mentioned on any fetched page; only the propose/collect halves of feat.poll are evidenced.",
+        "Homepage FAQ also confirms date-only and custom-option modes: '네. 시간대 없이 가능한 날짜만 투표할 수도 있고' (same page)."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Flexibility and efficiency of use",
+            "task": "Invitee replies with available dates",
+            "note": "No-signup, name-only participation removes the biggest friction for casual Korean invitees, matching the PRD's non-registered acquaintance respondents."
+          }
+        ],
+        "visualPreference": "Four-step 01-04 walkthrough with an inline sample heatmap communicates the poll loop quickly; a pattern worth copying for onboarding."
+      },
+      "cardHash": "sha256:5746fce3c69c982ace7df42cc4e99250114023807ed8b4e67c1342d96c4402c6"
+    },
+    {
+      "cardId": "card.comp-whensee.confirm-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "observed",
+      "claim": "WhenSee supports settling a final date: once replies gather, times workable for everyone or for the most people are highlighted and the organizer confirms the meetup date from the result screen.",
+      "source": {
+        "url": "https://whensee.xyz/guide",
+        "publisher": "WhenSee",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:10Z",
+        "context": "Guide page '약속잡기 링크 만드는 법', step 03 '겹치는 날짜와 시간을 확인하세요'"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "참여자들의 선택이 모이면 전원이 가능한 때와 가장 많은 사람이 가능한 때가 강조됩니다. 결과를 보고 약속을 확정하세요."
+      },
+      "limitations": [
+        "Guide copy (instructional marketing), not an observed app interaction.",
+        "Confirmation is described as the organizer's decision on the result screen; the site does not explicitly state that a confirmed date is pushed/displayed to every participant afterward (PRD's 'every member can see it' is only indirectly supported — participants share the same result link)."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Organizer decides the final date",
+            "note": "Auto-highlighting of unanimous vs majority slots (and 'one person short' candidates per the /date-vote FAQ) reduces the organizer's decision work."
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:6a1d52386de00f860144f219d30f87cc68b2ecaecb679c93cb4503d7cda26326"
+    },
+    {
+      "cardId": "card.comp-whensee.overview-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "observed",
+      "claim": "WhenSee's availability overview is per-meetup only: it renders a real-time overlap heatmap of all respondents for one poll. Nothing on the public site describes a cross-meetup calendar of confirmed dates or overlap detection across multiple meetups (the PRD's groom/bride whole-schedule view).",
+      "source": {
+        "url": "https://whensee.xyz/group-schedule",
+        "publisher": "WhenSee",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:48:10Z",
+        "context": "'링크로 일정 조율하면 좋은 점' checklist on the 모임 시간 정하기 landing page"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "참여자가 늘어날수록 겹치는 시간이 히트맵으로 더 선명하게 보여요."
+      },
+      "limitations": [
+        "This evidences only the single-poll half of feat.overview; the absence of a cross-meetup overview is an inference from complete site coverage (home, /guide, /compare, /date-vote, /group-schedule), not an explicit denial — a logged-in '내 일정' area exists and could not be inspected.",
+        "Marketing claim, not an observed interaction; the homepage does include a live-looking sample heatmap widget."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "indirect",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Recognition rather than recall",
+            "task": "Compare everyone's availability",
+            "note": "Color-intensity heatmap plus counts per slot ('각 날짜와 시간에 가능한 인원 수가 색으로 표시') is the reference pattern the PRD's per-meetup view could adopt."
+          }
+        ],
+        "visualPreference": "The Mon-Fri hour-grid heatmap with an 0-to-All intensity legend is clean and instantly legible; a good visual benchmark for the PRD's reply-overlap screen."
+      },
+      "cardHash": "sha256:5e4d1d355f70582d85746114cb6f0590a0e7580a525234fafee8be1b89e13429"
+    },
+    {
+      "cardId": "card.comp-whensee.pool-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "unknown",
+      "claim": "No evidence of acquaintance pool management (registering people with name/relationship group/contact, or one person belonging to multiple groups). WhenSee's model is link-based: participants exist only as names typed into a single poll, and no contact book or group concept appears anywhere on the site.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Searched the full text of https://whensee.xyz/ plus /guide, /compare, /date-vote and /group-schedule; no mention of contact registration, relationship groups, or reusable member lists.",
+        "The logged-in creator area ('내 일정') could not be inspected without a Google login, so a hidden roster feature cannot be fully ruled out; per the evidence rules this stays 'unknown', not 'explicit_absence'."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "none",
+        "relevance": "high",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:170776cc4027a5b440f327a26207c15ee18c7da4992d8b24d510430e19a6eac1"
+    },
+    {
+      "cardId": "card.comp-whensee.compose-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "unknown",
+      "claim": "No evidence of meetup composition from registered acquaintances (selecting saved people and binding them into a meetup, or dedicated 1:1 meetup support). WhenSee meetups are formed implicitly by whoever opens the shared link and enters a name; membership is never pre-selected by the organizer.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "All five public pages describe the flow as create poll → share link → participants self-join by entering a name ('초대받은 사람은 가입 없이 이름만 입력하면 바로 참여할 수 있어요'); no page mentions picking members before sharing.",
+        "The poll-creation UI itself sits behind Google login, so an in-app member-selection step cannot be ruled out; kept 'unknown' rather than 'explicit_absence'."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "none",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:7f83afa080ab64db534452b1095e73a8bb0b96841d2ab4ab6fa845ecca9dedf3"
+    },
+    {
+      "cardId": "card.comp-whensee.status-1",
+      "subjectType": "competitor",
+      "subjectId": "comp.whensee",
+      "status": "unknown",
+      "claim": "No evidence of explicit progress states (awaiting replies / ready to confirm / confirmed / already held). The site implies at least two informal phases — collecting replies and a confirmed date — but never names lifecycle states, and the '내 일정' (My Schedules) dashboard where such states would live requires login.",
+      "source": null,
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Searched all five public pages for state/status language (대기, 확정됨, 완료, 진행 등); only the act of confirming ('결과를 보고 약속을 확정하세요') is described, with no state model.",
+        "The creator dashboard behind Google login is exactly where a status list would appear, so this is an access limitation rather than confirmed absence."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "none",
+        "relevance": "medium",
+        "uxHeuristics": [],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:8b8f55f50cd962d18789fd5ef3158ed371c673877afbfe1a0d4d9feddf448b2d"
+    },
+    {
+      "cardId": "card.ref-nng-visibility.status-1",
+      "subjectType": "reference",
+      "subjectId": "ref.nng-visibility-status",
+      "status": "observed",
+      "claim": "NN/g's first usability heuristic supports the PRD's explicit meetup lifecycle states and reply-tracking: communicating current system state lets users act appropriately and builds trust - the theoretical basis for surfacing awaiting-replies / ready-to-confirm / confirmed / completed states and non-responder indicators (as Doodle and Rallly partially do).",
+      "source": {
+        "url": "https://www.nngroup.com/articles/visibility-system-status/",
+        "publisher": "Nielsen Norman Group",
+        "publishedAt": "2018-06-03T00:00:00Z",
+        "fetchedAt": "2026-09-05T07:52:40Z",
+        "context": "Article summary line at the top of the page, immediately below the byline"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Communicating the current state allows users to feel in control of the system, take appropriate actions to reach their goal, and ultimately trust the brand."
+      },
+      "limitations": [
+        "General usability guidance, not evidence about any specific scheduling product",
+        "Article dates from 2018; the heuristic itself is stable but examples are older"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Visibility of system status",
+            "task": "Track meetup progress states across polls",
+            "note": "Justifies making the PRD's four lifecycle states first-class visible labels on the dashboard rather than Doodle's implicit open/booked split"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:2dbe0c2874865dbf7aac8f7383c7ba6d2df9cabfa6a2dd32252e8aa59ec1f517"
+    },
+    {
+      "cardId": "card.ref-nng-date.calendar-1",
+      "subjectType": "reference",
+      "subjectId": "ref.nng-date-input",
+      "status": "observed",
+      "claim": "NN/g recommends calendar pickers for near-term events, matching the PRD's use case (social meetups scheduled weeks ahead): a month-grid picker is the right pattern for organizers proposing candidate dates, as Rallly's documented calendar-based option picking already does.",
+      "source": {
+        "url": "https://www.nngroup.com/articles/date-input/",
+        "publisher": "Nielsen Norman Group",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:56:10Z",
+        "context": "'Date-Input Patterns' section, paragraph on calendar pickers"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Calendar pickers should be used for events close to the present time — within less than a year."
+      },
+      "limitations": [
+        "Guidance is about generic date entry in forms, not multi-candidate poll creation specifically",
+        "Examples cited in the article (Expedia, Todoist) are travel/task apps, not group scheduling"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Match between system and the real world",
+            "task": "Organizer proposes multiple candidate dates",
+            "note": "Month-grid calendar matches the desk/wall calendar metaphor; the same NN/g section notes calendar pickers 'are especially useful for selecting a date range'"
+          }
+        ],
+        "visualPreference": "The article's Expedia example uses a soft highlight color to mark selected dates within the month grid - a gentle accent treatment suited to marking candidate dates"
+      },
+      "cardHash": "sha256:680becdc030f91b6d80673f6f58870baabb3dea633f86f8e93430e4cc82c1367"
+    },
+    {
+      "cardId": "card.ref-tossup.heatmap-1",
+      "subjectType": "reference",
+      "subjectId": "ref.tossup-when2meet",
+      "status": "observed",
+      "claim": "The When2meet availability-heatmap pattern encodes group overlap as a single-hue intensity scale on a time grid (darkest = most people available), with hover revealing exactly who is free per slot - the same pattern WhenSee's cards identify as the reference visual for the PRD's reply-overlap screen.",
+      "source": {
+        "url": "https://toss-up.app/blog/how-to-use-when2meet",
+        "publisher": "Toss-up (blog)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:53:20Z",
+        "context": "'How to read the results' section of the walkthrough"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Once responses are in, the grid displays a heatmap: dark green cells are when the most people are available, lighter cells represent partial availability, white cells mean nobody in that slot is free."
+      },
+      "limitations": [
+        "Written by a competing product's blog (Toss-up), so framing of When2meet weaknesses may be self-serving; the heatmap description itself is factual",
+        "Describes When2meet, which is not one of the top-3 competitors - used as a pattern reference only"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Recognition rather than recall",
+            "task": "Compare everyone's availability across candidate dates",
+            "note": "Intensity encoding plus per-cell hover detail lets the organizer see both the aggregate best slot and whether a must-attend person is missing from it"
+          }
+        ],
+        "visualPreference": "Single-hue green-to-white intensity ramp with a legend is instantly legible and matches WhenSee's 0-to-All heatmap legend"
+      },
+      "cardHash": "sha256:541bdbf89e8c7a19abee79752435ba38dc826028c528a0af4b9c3c3a7774eec2"
+    },
+    {
+      "cardId": "card.ref-tossup.confirm-gap-1",
+      "subjectType": "reference",
+      "subjectId": "ref.tossup-when2meet",
+      "status": "observed",
+      "claim": "The raw heatmap pattern lacks a closing action: When2meet has no explicit confirm step, forcing the organizer to read the grid, decide manually, and announce the result in a separate channel - the gap the PRD's confirm-and-share feature (and Doodle's 'Book it' / Rallly's 'Schedule') exists to close.",
+      "source": {
+        "url": "https://toss-up.app/blog/how-to-use-when2meet",
+        "publisher": "Toss-up (blog)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:53:20Z",
+        "context": "'How to read the results' section, paragraph after the heatmap description"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "There’s no “pick the winner” button."
+      },
+      "limitations": [
+        "Competitor-authored critique of When2meet; verified as consistent with When2meet's publicly known feature set but not against When2meet itself",
+        "Single-sentence quote; the surrounding text ('You read the grid... and announce the time' in the group chat) carries the fuller claim"
+      ],
+      "assessment": {
+        "sourceReliability": "medium",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "User control and freedom",
+            "task": "Finalize a date and inform meetup members",
+            "note": "An explicit in-product confirm action that pins the result and notifies members removes the manual read-decide-announce loop"
+          }
+        ],
+        "visualPreference": null
+      },
+      "cardHash": "sha256:71c0e0b5d46cf6144925e51f0745f502d07e941e1f82134add3f7ad9135e90c9"
+    },
+    {
+      "cardId": "card.ref-rallly-readme.flow-1",
+      "subjectType": "reference",
+      "subjectId": "ref.rallly-readme",
+      "status": "observed",
+      "claim": "Rallly's own README states the canonical link-first poll loop - create a poll of options, share a link, participants vote without accounts - and lists an availability grid, notifications on responses, and a finalize step ('Pick the winning option and notify everyone') as core features, corroborating the stage-2 Rallly cards from a primary source.",
+      "source": {
+        "url": "https://github.com/lukevella/rallly/blob/main/README.md",
+        "publisher": "lukevella/rallly (GitHub)",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:55:00Z",
+        "context": "Intro paragraph of the repository README, below the app screenshot; fetched via raw.githubusercontent.com/lukevella/rallly/main/README.md"
+      },
+      "proof": {
+        "type": "quote",
+        "quote": "Create a poll with a few options, share the link, and let your participants vote on when they're available. No more back-and-forth emails."
+      },
+      "limitations": [
+        "README feature bullets are self-description by the project, not observed app behavior",
+        "README does not mention the Pro gating of the finalize step that the support docs and stage-2 card record - marketing-style omission"
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "high",
+        "uxHeuristics": [
+          {
+            "heuristic": "Flexibility and efficiency of use",
+            "task": "Invitee replies with availability",
+            "note": "'No account needed to vote - participants just open the link and respond' (README feature list) confirms the no-signup reply path the PRD's casual acquaintances need"
+          }
+        ],
+        "visualPreference": "README screenshot shows a clean availability grid (participants as rows, time slots as columns) on a light neutral Tailwind palette"
+      },
+      "cardHash": "sha256:90cca07a675dd538853289a73fa25daf1e24f0d718d971bad8b1a7a31ececabf"
+    },
+    {
+      "cardId": "card.ref-shadcn.calendar-1",
+      "subjectType": "reference",
+      "subjectId": "ref.shadcn-calendar",
+      "status": "unknown",
+      "claim": "shadcn/ui provides a free, open calendar component supporting single-date and range selection with neutral default styling - a concrete design-system default the PRD can adopt for candidate-date picking and the confirmed-meetups overview calendar, in the same Tailwind lineage Rallly's README lists as its stack.",
+      "source": {
+        "url": "https://ui.shadcn.com/docs/components/calendar",
+        "publisher": "shadcn/ui",
+        "publishedAt": null,
+        "fetchedAt": "2026-09-05T07:57:30Z",
+        "context": "Component description line at the top of the Calendar docs page; the About section adds 'The Calendar component is built on top of React DayPicker'"
+      },
+      "proof": {
+        "type": "none"
+      },
+      "limitations": [
+        "Component documentation, not UX research - it evidences availability of the pattern, not its superiority",
+        "Multi-date (non-contiguous) candidate selection is supported by the underlying React DayPicker but the quoted line only mentions date and range selection",
+        "Verification fetch failed (HTTP 200); quote could not be independently confirmed.",
+        "Original claimed status: observed; original quote retained in revision history."
+      ],
+      "assessment": {
+        "sourceReliability": "high",
+        "claimSupport": "direct",
+        "relevance": "medium",
+        "uxHeuristics": [
+          {
+            "heuristic": "Consistency and standards",
+            "task": "Pick candidate dates on a month grid",
+            "note": "Using a widely adopted open component keeps calendar interaction (keyboard nav, month paging, disabled dates) consistent with user expectations at no design cost"
+          }
+        ],
+        "visualPreference": "Neutral rounded-border month grid with token-driven light/dark theming - sensible defaults for a product with no client-specified brand palette"
+      },
+      "cardHash": "sha256:b7e25f7caaf21d2b5bc1a8a9f9e610e9e5dd3742d732c7465c91d389c564cdfe"
+    }
+  ],
+  "accessLimitations": [
+    "Poll-creation, dashboard, and confirmation flows sit behind account login; evidence is limited to marketing pages and help-center descriptions rather than observed UI",
+    "Deadlines, reminders, and other 'special settings' require a paid Doodle Professional subscription, so their exact in-product behavior could not be observed",
+    "Doodle has no acquaintance-pool or multi-pool (groom/bride) concept on any public page; pool and overview findings are inferences from absence in public materials",
+    "Could not log in to app.rallly.co, so the in-app dashboard (poll list, statuses, any past-participant reuse) was not observable; findings rely on the marketing site, public support docs (support.rallly.co), and the GitHub README.",
+    "Finalize Date, email invites with responded/opened tracking, duplicate polls, and Spaces are Pro-plan features; their actual UI could not be observed on the free tier — only their public documentation.",
+    "WebFetch returns model-summarized page text; quotes were requested verbatim but minor formatting differences from the raw HTML are possible.",
+    "Creator-side flows (poll creation UI, '내 일정' My Schedules dashboard) require Google login, so any roster, member-selection, status, or cross-meetup features inside the app could not be observed; per the no-login rule these remain 'unknown'.",
+    "The site is a small single-product marketing site (home + 4 landing/guide pages); there is no screen gallery, changelog, or docs section, so all evidence is site copy rather than observed interactions.",
+    "WebFetch's summarizer paraphrased/translated page text, so verbatim Korean quotes were verified against the raw HTML of the same public HTTPS URLs (curl of https://whensee.xyz/, /guide, /compare, /date-vote, /group-schedule) before being recorded.",
+    "Mobbin Pro (paid screen library tier)",
+    "Page Flows (paid flow-video library)",
+    "UI Sources (paid screenshot library)",
+    "Paid market-research reports (e.g. Statista premium)",
+    "Paid UI-pattern libraries (Mobbin Pro, UI Sources, Page Flows paid tier, SaaS screenshot libraries) were not used per the source plan; no paywall was bypassed and no free-tier gallery yielded quotable scheduling-flow text, so pattern evidence comes from free articles and official docs instead.",
+    "m3.material.io (Material Design 3 date-picker guidelines) and polaris.shopify.com (Polaris date picker) render their body text client-side, so no verbatim quotes could be extracted; shadcn/ui was used as the quotable design-system reference instead.",
+    "Logged-in areas of the top-3 competitors (Doodle dashboard, Rallly app, WhenSee '내 일정') remain uninspected, as recorded in the stage-2 cards; reference selection therefore leans on public docs and third-party write-ups."
+  ],
+  "decisionRationales": [
+    "feat.pool and cross-meetup feat.overview are the strongest differentiators: no competitor evidences a relationship-grouped acquaintance pool, and overlap detection across confirmed meetups appears nowhere — Doodle's dashboard is a flat list and WhenSee's heatmap is single-poll only.",
+    "Reply deadlines are a competitive gap in the poll core: Doodle gates them behind a paid plan and Rallly's FAQ states outright they are unsupported, so a free deadline with auto-lock is a low-cost edge.",
+    "Every 'unknown' cell in this run is an access limitation (logged-in dashboards at Doodle, Rallly, and WhenSee were not inspected), not confirmed absence — only Rallly's deadline gap met the explicit_absence bar; treat unknowns as risks to re-verify, not settled gaps.",
+    "For confirmation visibility, the evidence supports combining two proven patterns: pin the final date at the link members already use (Rallly) and push it to calendars/inboxes (Doodle), so no member depends on revisiting the poll.",
+    "WhenSee is the closest UX reference for the target audience: no-signup name-only participation and the availability heatmap directly match the PRD's casual Korean invitees, even though its feature breadth is narrowest."
+  ],
+  "timing": {
+    "startedAt": "2026-09-05T07:46:13Z",
+    "endedAt": "2026-09-05T07:57:31Z",
+    "elapsedMs": 678000
+  },
+  "failures": [
+    {
+      "kind": "source_unavailable",
+      "detail": "Guessed URLs https://doodle.com/en/group-poll/, https://doodle.com/en/product/group-polls/, and https://doodle.com/en/pricing/ returned HTTP 404; correct pages were /en/product/polls/ and /en/premium/, which were used instead",
+      "subjectId": "comp.doodle"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The logged-in app (poll creation screens, dashboard, any in-app contacts) could not be inspected without creating an account, so feat.pool support inside the app and the exact status labels on the dashboard remain unverified",
+      "subjectId": "comp.doodle"
+    },
+    {
+      "kind": "paywalled_source",
+      "detail": "Deadline, reminder, and hide-participant settings require a Doodle Professional subscription ('All the special settings require a Doodle Professional subscription.'), so their in-product flows were not observed",
+      "subjectId": "comp.doodle"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The logged-in app dashboard (poll list, lifecycle status labels, any saved-participant features relevant to feat.pool, feat.compose, feat.overview, feat.status) sits behind account login at app.rallly.co and could not be observed via public HTTPS pages.",
+      "subjectId": "comp.rallly"
+    },
+    {
+      "kind": "paywalled_source",
+      "detail": "Finalize (feat.confirm) and email-invite response tracking (feat.status) are Pro-plan features; their live UI is behind a paid subscription, so evidence is limited to public docs and pricing-page descriptions.",
+      "subjectId": "comp.rallly"
+    },
+    {
+      "kind": "app_only_evidence",
+      "detail": "The logged-in creator area ('내 일정' at https://whensee.xyz/#my-schedules) and the poll-creation flow require Google login; evidence for feat.pool, feat.compose, and feat.status would live there and could not be collected without logging in.",
+      "subjectId": "comp.whensee"
+    },
+    {
+      "kind": "source_unavailable",
+      "detail": "m3.material.io/components/date-pickers/guidelines returned only the page title (content is client-rendered JS), so Material Design 3 could not serve as the design-system reference; polaris.shopify.com/components/selection-and-input/date-picker had the same client-rendered limitation. shadcn/ui's static docs were substituted.",
+      "subjectId": "ref.shadcn-calendar"
+    },
+    {
+      "kind": "paywalled_source",
+      "detail": "Mobbin and similar paid screenshot libraries were excluded by rule; their scheduling-app flow galleries (e.g. Doodle mobile flows) could not be cited, so mobile in-app flow visuals for the top-3 competitors remain unevidenced.",
+      "subjectId": null
+    }
+  ],
+  "createdAt": "2026-09-05T07:58:45.497Z",
+  "payloadHash": "sha256:6f5dd2474ccd5490bffb66cf3f9cec0ff4e49fef59d0b6ce728d6e698008ab40"
+}

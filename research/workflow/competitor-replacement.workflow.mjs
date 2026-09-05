@@ -73,6 +73,8 @@ Requirements: each competitor must share the same user problem AND audience, and
   {
     label: 'find-live-competitors',
     phase: 'Find',
+    model: 'sonnet',
+    effort: 'medium',
     schema: {
       type: 'object',
       required: ['competitors'],
@@ -120,6 +122,8 @@ Also return failures for anything inaccessible.`,
     {
       label: `observe:${competitor.competitorId}`,
       phase: 'Observe',
+      model: 'sonnet',
+      effort: 'medium',
       schema: {
         type: 'object',
         required: ['cards'],

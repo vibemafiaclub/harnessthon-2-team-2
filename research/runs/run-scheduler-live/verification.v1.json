@@ -1,0 +1,156 @@
+{
+  "card.comp-doodle.poll-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:36.127Z"
+  },
+  "card.comp-doodle.confirm-1": {
+    "checked": true,
+    "verified": false,
+    "reason": "quote_not_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:36.549Z"
+  },
+  "card.comp-doodle.status-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:37.461Z"
+  },
+  "card.comp-doodle.compose-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:38.063Z"
+  },
+  "card.comp-doodle.pool-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-doodle.overview-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:38.549Z"
+  },
+  "card.comp-rallly.poll-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:39.164Z"
+  },
+  "card.comp-rallly.poll-deadline-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:39.547Z"
+  },
+  "card.comp-rallly.confirm-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:39.976Z"
+  },
+  "card.comp-rallly.status-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:40.419Z"
+  },
+  "card.comp-rallly.pool-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-rallly.compose-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-rallly.overview-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-whensee.poll-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:40.562Z"
+  },
+  "card.comp-whensee.confirm-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:40.674Z"
+  },
+  "card.comp-whensee.overview-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:40.724Z"
+  },
+  "card.comp-whensee.pool-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-whensee.compose-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.comp-whensee.status-1": {
+    "checked": false,
+    "reason": "no_quote_proof"
+  },
+  "card.ref-nng-visibility.status-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:42.923Z"
+  },
+  "card.ref-nng-date.calendar-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:44.905Z"
+  },
+  "card.ref-tossup.heatmap-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:45.243Z"
+  },
+  "card.ref-tossup.confirm-gap-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:45.244Z"
+  },
+  "card.ref-rallly-readme.flow-1": {
+    "checked": true,
+    "verified": true,
+    "reason": "quote_found",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:45.310Z"
+  },
+  "card.ref-shadcn.calendar-1": {
+    "checked": true,
+    "verified": false,
+    "reason": "source_unavailable",
+    "status": 200,
+    "checkedAt": "2026-09-05T07:58:45.496Z"
+  }
+}

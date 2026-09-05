@@ -53,7 +53,9 @@ function normalizeSource(value, status) {
   return {
     url: parsed.toString(),
     publisher: optionalString(value.publisher, 200, "source.publisher"),
-    publishedAt: value.publishedAt ? requiredTime(value.publishedAt, "source.publishedAt") : null,
+    // publishedAt is source metadata that often arrives date-only; normalize
+    // leniently to ISO (like the lab's normalizeIsoOrNull) instead of failing.
+    publishedAt: normalizeLenientTime(value.publishedAt),
     fetchedAt: requiredTime(value.fetchedAt, "source.fetchedAt"),
     context: requiredString(value.context, 1000, "source.context"),
   };
@@ -340,6 +342,12 @@ function normalizeTiming(value) {
   const elapsedMs = Date.parse(endedAt) - Date.parse(startedAt);
   if (elapsedMs < 0) fail("timing_invalid", "timing.endedAt must not precede timing.startedAt.");
   return { startedAt, endedAt, elapsedMs };
+}
+
+function normalizeLenientTime(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.valueOf()) ? null : date.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
 function requiredId(value, label) {
