@@ -1,0 +1,4 @@
+.playwright-mcp/
+docs/*.ko.html
+research/runs/.*
+research/runs/fixture-*/

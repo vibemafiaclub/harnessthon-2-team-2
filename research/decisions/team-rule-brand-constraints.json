@@ -1,0 +1,13 @@
+{
+  "$schema": "workflow-qa-decisions/v1",
+  "askedAt": "2026-09-05T07:15:00Z",
+  "answeredBy": "team rule relayed by user; recorded in /Users/simon/code/harnessthon-2-team-2/local-archive/feedback-2026-09-05-1549.md, section 'Additional confirmed rule: client colors and fonts'",
+  "decisions": [
+    {
+      "id": "rule1.client-brand-precedence",
+      "question": "How do client-specified colors/fonts in the approved PRD interact with downstream design-system defaults (shadcn/SEED/Wanted at stage 4-2)?",
+      "answer": "client_values_override_design_system_defaults",
+      "effect": "The research package carries prd.brandConstraints verbatim as package.brandConstraints (source approved-prd, precedence client_values_override_design_system_defaults, unspecified properties -> selected system defaults). Reference distillation's 'style' direction must recommend within these constraints and never propose replacing them; visualPreference notes remain advisory. Structural component/layout contracts of the design systems are retained. Ambiguity, unavailable fonts, or readability/contrast failures are surfaced to the client in the owning session, never silently substituted."
+    }
+  ]
+}

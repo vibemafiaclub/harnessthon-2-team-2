@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리서치 증거 리뷰</title>
+<style>
+  :root { --ink:#1a1d23; --sub:#5b6472; --line:#e3e6eb; --bg:#f7f8fa; --card:#fff; --accent:#3455db; --ok:#1d7a4f; --warn:#b26a00; --bad:#b3383e; --unk:#6b7280; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14.5px/1.6 "Apple SD Gothic Neo","Pretendard",system-ui,sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:28px 24px 100px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  h2 { font-size:16.5px; margin:32px 0 10px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+  .meta { color:var(--sub); font-size:12.5px; }
+  .banner { border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0; background:#e8edfd; border:1px solid #c9d4f7; }
+  .banner.err { background:#fbe9ea; border-color:#efc4c6; color:var(--bad); }
+  .banner.done { background:#e5f4ec; border-color:#bfe3cf; color:var(--ok); }
+  table { border-collapse:collapse; width:100%; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:#eef0f4; font-size:12px; }
+  .st { font-weight:700; font-size:12px; white-space:nowrap; }
+  .st-observed { color:var(--ok); } .st-explicit_absence { color:var(--accent); } .st-unknown { color:var(--unk); } .st-contradictory { color:var(--bad); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:12px 0; }
+  .card.rejected { border-color:#efc4c6; }
+  .badge { display:inline-block; font-size:11px; font-weight:600; padding:1px 8px; border-radius:99px; background:#eef0f4; color:var(--sub); margin-right:4px; }
+  .quote { border-left:3px solid var(--accent); background:#f4f6fd; padding:6px 10px; margin:8px 0; font-size:13px; white-space:pre-wrap; word-break:break-word; }
+  .lim { color:var(--warn); font-size:12.5px; }
+  .verif-ok { color:var(--ok); font-size:12px; font-weight:600; }
+  .verif-bad { color:var(--bad); font-size:12px; font-weight:600; }
+  .actions { margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:13px; }
+  .actions label { margin-right:14px; cursor:pointer; }
+  .actions input[type=text] { width:60%; padding:4px 8px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; }
+  .qbox { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:10px 0; }
+  .qbox .q { font-weight:600; }
+  .qbox label { margin-right:16px; }
+  .decide { position:sticky; bottom:0; background:var(--card); border-top:2px solid var(--line); padding:14px 24px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { font:600 14px/1 inherit; padding:10px 18px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  button.approve { background:var(--ok); border-color:var(--ok); color:#fff; }
+  button.revision { background:var(--warn); border-color:var(--warn); color:#fff; }
+  button.reject { background:var(--bad); border-color:var(--bad); color:#fff; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  input.reviewer { padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-size:13px; }
+  a { color:var(--accent); word-break:break-all; }
+  ul { margin:6px 0; padding-left:18px; }
+</style>
+</head>
+<body>
+<main id="app">불러오는 중…</main>
+<div class="decide" id="decide" hidden>
+  <input class="reviewer" id="reviewerName" placeholder="리뷰어 이름" value="">
+  <button class="approve" id="btnApprove">승인 (다운스트림 전달)</button>
+  <button class="revision" id="btnRevision">추가 조사 요청</button>
+  <button class="reject" id="btnReject">반려</button>
+  <span class="meta" id="decideHint"></span>
+</div>
+<script>
+const el = (tag, attrs = {}, ...children) => {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v; else if (k === "html") node.innerHTML = v; else node.setAttribute(k, v);
+  }
+  for (const child of children.flat()) node.append(child?.nodeType ? child : document.createTextNode(String(child)));
+  return node;
+};
+const STATUS_KO = { observed: "관찰됨", explicit_absence: "부재 확인", unknown: "미확인", contradictory: "근거 상충" };
+let data = null;
+
+async function load() {
+  const response = await fetch("/api/run");
+  data = await response.json();
+  try {
+    const fb = await (await fetch("/api/feedback")).json();
+    data.feedbackCount = fb.feedback.length;
+  } catch (_) { data.feedbackCount = 0; }
+  render();
+}
+
+async function saveFeedback() {
+  const overall = document.getElementById("fb-overall").value.trim();
+  const perCard = {};
+  for (const card of data.package.cards) {
+    const value = document.getElementById(`fb-${card.cardId}`)?.value.trim();
+    if (value) perCard[card.cardId] = value;
+  }
+  const reviewer = document.getElementById("reviewerName").value.trim() || "anonymous";
+  const response = await fetch("/api/feedback", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ overall, perCard, reviewer }),
+  });
+  const result = await response.json();
+  const status = document.getElementById("fbStatus");
+  if (!response.ok) { status.textContent = `저장 실패: ${result.detail || result.error}`; return; }
+  status.textContent = `저장됨 (${new Date().toLocaleTimeString()}) — 에이전트가 읽을 수 있습니다.`;
+}
+
+function render() {
+  const { manifest, package: pkg, verification, state, decisions } = data;
+  const app = document.getElementById("app");
+  app.replaceChildren();
+  const elapsedMin = (pkg.timing.elapsedMs / 60000).toFixed(1);
+  app.append(
+    el("h1", {}, `증거 리뷰 — ${pkg.prd.title}`),
+    el("div", { class: "meta" },
+      `run ${pkg.runId} · 라운드 ${manifest.round}/${manifest.limits ? manifest.limits.maxHumanRounds : "?"} (자동수리 한도 ${manifest.limits ? manifest.limits.maxAutoRepairs : "?"}회) · ` +
+      `리서치 소요 ${elapsedMin}분 (${pkg.timing.startedAt} ~ ${pkg.timing.endedAt}) · manifest ${manifest.manifestHash.slice(0, 19)}…`)
+  );
+  const status = state?.status || "awaiting_review";
+  if (status === "approved") app.append(el("div", { class: "banner done" }, "이 라운드는 승인되었습니다. 승인 영수증이 packageHash에 바인딩되어 다운스트림에서 소비할 수 있습니다."));
+  else if (status === "rejected") app.append(el("div", { class: "banner err" }, "이 라운드는 반려되었습니다."));
+  else if (status === "escalated") app.append(el("div", { class: "banner err" }, "휴먼 라운드 한도를 초과해 에스컬레이션되었습니다. 담당자와 직접 조율하세요."));
+  else if (status === "verified_autonomous") app.append(el("div", { class: "banner done" }, "자율 검증 통과 — 내부 증거 검수(라이브 재검증)를 통과해 다운스트림에서 소비 가능한 상태입니다. 이 화면은 선택적 점검용이며, 반려·피드백을 남기면 수리 라운드가 시작됩니다."));
+  else app.append(el("div", { class: "banner" }, "아래 증거를 확인하고 카드별 조치와 5개 질문에 답한 뒤 결정하세요. 승인은 지금 화면의 정확한 콘텐츠에 바인딩됩니다."));
+
+  // Scope
+  app.append(el("h2", {}, "리서치 범위"));
+  app.append(el("div", { class: "card" },
+    el("div", {}, el("b", {}, "문제: "), pkg.scope.problem),
+    el("div", {}, el("b", {}, "대상: "), pkg.scope.audience),
+    el("div", {}, el("b", {}, "핵심 과업: "), pkg.scope.jobs.join(" · ")),
+  ));
+
+  // Competitors
+  app.append(el("h2", {}, `경쟁사 분류 (${pkg.competitors.length})`));
+  for (const competitor of pkg.competitors) {
+    app.append(el("div", { class: "card" },
+      el("b", {}, competitor.name), " ",
+      competitor.url ? el("a", { href: competitor.url, target: "_blank" }, competitor.url) : "",
+      el("div", { class: "meta" }, `공유 문제: ${competitor.rationale.sharedProblem}`),
+      el("div", { class: "meta" }, `공유 사용자: ${competitor.rationale.sharedAudience}`),
+      competitor.accessLimitations.length ? el("div", { class: "lim" }, `접근 한계: ${competitor.accessLimitations.join(" / ")}`) : "",
+    ));
+  }
+
+  // Feature matrix
+  app.append(el("h2", {}, "기능 비교 매트릭스"));
+  const head = el("tr", {}, el("th", {}, "PRD 기능"), ...pkg.competitors.map((c) => el("th", {}, c.name)), el("th", {}, "아이디어"));
+  const rows = pkg.featureMatrix.map((row) => el("tr", {},
+    el("td", {}, row.prdFeature),
+    ...pkg.competitors.map((c) => {
+      const cell = row.perCompetitor[c.competitorId];
+      if (!cell) return el("td", { class: "st st-unknown" }, "미확인");
+      return el("td", {}, el("span", { class: `st st-${cell.status}` }, STATUS_KO[cell.status]),
+        cell.cardIds.length ? el("div", { class: "meta" }, cell.cardIds.map((id) => `#${id}`).join(", ")) : "");
+    }),
+    el("td", {}, (row.ideas || []).join("; "))
+  ));
+  app.append(el("table", {}, head, ...rows));
+  app.append(el("div", { class: "meta" }, "미확인(unknown)은 '기능 없음'이 아니라 '근거를 찾지 못함'입니다. 부재 확인은 명시적 근거가 있을 때만 표시됩니다."));
+
+  // Unknown / contradiction summary
+  const unknowns = pkg.cards.filter((card) => card.status === "unknown");
+  const contradictions = pkg.cards.filter((card) => card.status === "contradictory");
+  app.append(el("h2", {}, "미확인 · 상충 요약"));
+  app.append(el("div", { class: "card" },
+    el("div", {}, `미확인 카드 ${unknowns.length}건 · 상충 카드 ${contradictions.length}건 · 접근 한계 ${pkg.accessLimitations.length}건`),
+    pkg.accessLimitations.length ? el("ul", {}, ...pkg.accessLimitations.map((limitation) => el("li", { class: "lim" }, limitation))) : "",
+    pkg.failures.length ? el("ul", {}, ...pkg.failures.map((failure) => el("li", { class: "lim" }, `[${failure.kind}] ${failure.detail}`))) : "",
+  ));
+
+  // References
+  app.append(el("h2", {}, `레퍼런스 (${pkg.references.length})`));
+  for (const reference of pkg.references) {
+    app.append(el("div", { class: "card" },
+      el("span", { class: "badge" }, reference.kind), el("b", {}, reference.title), " ",
+      el("a", { href: reference.url, target: "_blank" }, reference.url),
+      el("div", { class: "meta" }, reference.whyRelevant)));
+  }
+
+  // Evidence cards with per-card actions
+  app.append(el("h2", {}, `증거 카드 (${pkg.cards.length}) — 카드별 조치`));
+  for (const card of pkg.cards) {
+    const verif = verification?.[card.cardId];
+    const node = el("div", { class: "card", id: `card-${card.cardId}` },
+      el("div", {},
+        el("span", { class: `st st-${card.status}` }, STATUS_KO[card.status]), " ",
+        el("b", {}, ` ${card.claim}`)),
+      el("div", { class: "meta" }, `#${card.cardId} · 대상 ${card.subjectId}`),
+      card.source ? el("div", { class: "meta" },
+        "출처: ", el("a", { href: card.source.url, target: "_blank" }, card.source.url),
+        ` · 수집 ${card.source.fetchedAt}` + (card.source.publishedAt ? ` · 게시 ${card.source.publishedAt}` : "") + ` · 맥락: ${card.source.context}`) : el("div", { class: "meta" }, "출처 없음 (미확인 카드)"),
+      card.proof?.type === "quote" ? el("div", { class: "quote" }, `“${card.proof.quote}”`) : "",
+      card.proof?.type === "screenshot" ? el("div", { class: "meta" }, `실측 캡처: ${card.proof.screenshot.file} (${card.proof.screenshot.captureMethod}, ${card.proof.screenshot.capturedAt})`) : "",
+      verif?.checked ? el("div", { class: verif.verified ? "verif-ok" : "verif-bad" },
+        verif.verified ? "✓ 원본 재접속으로 인용 확인됨" : `✗ 독립 검증 실패 (${verif.reason})`) : "",
+      el("div", { class: "meta" },
+        `신뢰도 ${card.assessment.sourceReliability} · 뒷받침 ${card.assessment.claimSupport} · 관련성 ${card.assessment.relevance}`),
+      card.assessment.uxHeuristics.length ? el("ul", {}, ...card.assessment.uxHeuristics.map((h) => el("li", {}, `[UX·${h.heuristic}] (${h.task}) ${h.note}`))) : "",
+      card.assessment.visualPreference ? el("div", { class: "meta" }, `시각 선호(취향, 신뢰도와 별개): ${card.assessment.visualPreference}`) : "",
+      card.limitations.length ? el("ul", {}, ...card.limitations.map((limitation) => el("li", { class: "lim" }, limitation))) : "",
+    );
+    const actions = el("div", { class: "actions" });
+    for (const [value, label] of [["accept", "수용"], ["reject", "반려"], ["request_more", "추가 조사"]]) {
+      const input = el("input", { type: "radio", name: `action-${card.cardId}`, value });
+      if (value === "accept") input.checked = true;
+      actions.append(el("label", {}, input, ` ${label}`));
+    }
+    actions.append(el("input", { type: "text", id: `note-${card.cardId}`, placeholder: "반려/추가조사 사유 (필수)" }));
+    node.append(actions);
+    node.append(el("div", { class: "actions" },
+      el("input", { type: "text", id: `fb-${card.cardId}`, placeholder: "이 카드에 대한 자유 피드백 (선택)", style: "width:100%" })));
+    app.append(node);
+  }
+
+  // Free-text feedback batch (saved as JSON; the agent reads it back)
+  app.append(el("h2", {}, "자유 피드백"));
+  const fbBox = el("div", { class: "card" },
+    el("div", { class: "meta" }, "리서치 결과 전반에 대한 평가·요청을 자유롭게 남기고 저장하세요. JSON으로 저장되며 에이전트가 읽어 다음 수리 라운드에 반영합니다."),
+    el("textarea", { id: "fb-overall", rows: "4", style: "width:100%;margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit", placeholder: "전체 피드백을 입력하세요…" }),
+    el("button", { id: "btnFeedback" }, "피드백 저장"),
+    el("span", { class: "meta", id: "fbStatus", style: "margin-left:10px" }),
+  );
+  app.append(fbBox);
+  document.getElementById("btnFeedback").onclick = saveFeedback;
+  if (data.feedbackCount) app.append(el("div", { class: "meta" }, `저장된 피드백 ${data.feedbackCount}건`));
+
+  // Five questions
+  app.append(el("h2", {}, "리뷰 질문 (배치당 5문항)"));
+  manifest.questions.forEach((question, index) => {
+    app.append(el("div", { class: "qbox" },
+      el("div", { class: "q" }, `${index + 1}. ${question.prompt}`),
+      el("label", {}, el("input", { type: "radio", name: `q-${question.id}`, value: "yes" }), " 예"),
+      el("label", {}, el("input", { type: "radio", name: `q-${question.id}`, value: "no" }), " 아니오"),
+    ));
+  });
+
+  // Decision history
+  if (decisions.length) {
+    app.append(el("h2", {}, "결정 이력"));
+    for (const decision of decisions) {
+      app.append(el("div", { class: "meta" },
+        `라운드 ${decision.round} · ${decision.decision} · ${decision.reviewer.identity} · ${decision.decidedAt} · ${decision.decisionHash.slice(0, 19)}…`));
+    }
+  }
+
+  const decide = document.getElementById("decide");
+  decide.hidden = !["awaiting_review", "revision_requested", "verified_autonomous"].includes(status);
+  document.getElementById("decideHint").textContent = "승인에는 모든 질문 '예' + 모든 카드 '수용'이 필요합니다.";
+}
+
+function collect(decision) {
+  const { manifest, package: pkg } = data;
+  const responses = manifest.questions.map((question) => {
+    const chosen = document.querySelector(`input[name="q-${question.id}"]:checked`);
+    return chosen ? { questionId: question.id, answer: chosen.value } : null;
+  });
+  if (responses.some((response) => !response)) return { error: "모든 질문에 답해주세요." };
+  const cardActions = pkg.cards.map((card) => {
+    const action = document.querySelector(`input[name="action-${card.cardId}"]:checked`).value;
+    const note = document.getElementById(`note-${card.cardId}`).value.trim();
+    if ((action === "reject" || action === "request_more") && !note) return { error: `#${card.cardId}: 반려/추가조사에는 사유가 필요합니다.` };
+    return { cardId: card.cardId, action, note: note || undefined };
+  });
+  const bad = cardActions.find((item) => item.error);
+  if (bad) return { error: bad.error };
+  const reviewer = document.getElementById("reviewerName").value.trim();
+  if (!reviewer) return { error: "리뷰어 이름을 입력해주세요." };
+  return { decision, responses, cardActions, reviewer: { identity: reviewer, role: "evidence-reviewer" } };
+}
+
+async function submit(decision) {
+  const payload = collect(decision);
+  if (payload.error) { alert(payload.error); return; }
+  const response = await fetch("/api/decision", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const result = await response.json();
+  if (!response.ok) { alert(`제출 실패: ${result.error}\n${result.detail || ""}`); return; }
+  alert(`기록 완료: ${result.status}${result.escalated ? " (한도 초과 — 에스컬레이션)" : ""}`);
+  await load();
+}
+
+document.getElementById("btnApprove").onclick = () => submit("approve");
+document.getElementById("btnRevision").onclick = () => submit("revision");
+document.getElementById("btnReject").onclick = () => submit("reject");
+load().catch((error) => { document.getElementById("app").textContent = `불러오기 실패: ${error}`; });
+</script>
+</body>
+</html>

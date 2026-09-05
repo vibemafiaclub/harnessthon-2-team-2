@@ -1,0 +1,22 @@
+{
+  "$schema": "approved-prd/v1",
+  "prdId": "prd.habit-tracker.v1",
+  "title": "Minimal daily habit tracker",
+  "domain": "habit tracking",
+  "problem": "People who want to build small daily habits abandon complex trackers; they need a low-friction way to check off habits and see streaks.",
+  "audience": "Working adults trying to sustain 1-5 personal habits, mobile-first.",
+  "coreTasks": [
+    "Add a habit with a schedule",
+    "Check off today's habits in under ten seconds",
+    "Review streaks and weekly consistency",
+    "Get a reminder at a chosen time"
+  ],
+  "features": [
+    { "featureId": "feat.quickcheck", "name": "One-tap check-in", "description": "Mark a habit done from the main screen with one tap.", "priority": "p0" },
+    { "featureId": "feat.streaks", "name": "Streaks and stats", "description": "Streak counter and weekly/monthly consistency view.", "priority": "p0" },
+    { "featureId": "feat.reminders", "name": "Reminders", "description": "Per-habit reminder notifications.", "priority": "p1" },
+    { "featureId": "feat.archive", "name": "Pause or archive habits", "description": "Temporarily pause a habit without losing history.", "priority": "p2" }
+  ],
+  "constraints": ["Different-domain fixture used to prevent wedding-invitation overfitting in tests"],
+  "approval": { "approvedBy": "prd-refinement-stage (fixture)", "approvedAt": "2026-09-04T09:00:00Z" }
+}

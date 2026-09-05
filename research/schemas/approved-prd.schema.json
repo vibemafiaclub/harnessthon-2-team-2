@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "approved-prd/v1",
+  "title": "Approved PRD handoff (input from the PRD-refinement stage)",
+  "type": "object",
+  "required": ["$schema", "prdId", "title", "domain", "problem", "audience", "coreTasks", "features", "approval"],
+  "properties": {
+    "$schema": { "const": "approved-prd/v1" },
+    "prdId": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{1,120}$" },
+    "title": { "type": "string", "maxLength": 300 },
+    "domain": { "type": "string", "maxLength": 200, "description": "Product domain, e.g. 'wedding invitation' or 'habit tracking'" },
+    "problem": { "type": "string", "maxLength": 2000 },
+    "audience": { "type": "string", "maxLength": 1000 },
+    "coreTasks": { "type": "array", "minItems": 1, "items": { "type": "string", "maxLength": 300 } },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["featureId", "name", "description"],
+        "properties": {
+          "featureId": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{1,120}$" },
+          "name": { "type": "string", "maxLength": 200 },
+          "description": { "type": "string", "maxLength": 1000 },
+          "priority": { "enum": ["p0", "p1", "p2"] }
+        }
+      }
+    },
+    "constraints": { "type": "array", "items": { "type": "string", "maxLength": 500 } },
+    "brandConstraints": {
+      "type": "object",
+      "description": "Client-specified colors/fonts. Team rule (2026-09-05): these override design-system default colors/fonts downstream; unspecified properties use the selected system's defaults. Carried verbatim into the research package.",
+      "properties": {
+        "colors": { "type": "array", "items": { "anyOf": [{ "type": "string" }, { "type": "object", "required": ["value"], "properties": { "role": { "type": "string" }, "value": { "type": "string" }, "note": { "type": "string" } } }] } },
+        "fonts": { "type": "array", "items": { "anyOf": [{ "type": "string" }, { "type": "object", "required": ["family"], "properties": { "role": { "type": "string" }, "family": { "type": "string" }, "note": { "type": "string" } } }] } },
+        "notes": { "type": "string" }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "required": ["approvedBy", "approvedAt"],
+      "properties": {
+        "approvedBy": { "type": "string", "maxLength": 200 },
+        "approvedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
