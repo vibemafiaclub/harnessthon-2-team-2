@@ -70,6 +70,41 @@ const EXTRACT_FLOW_SCHEMA = {
   required: ['screens', 'edges', 'entry', 'commonNav'],
 }
 
+// decisions를 flow에 반영: drop은 제거, merge는 into로 흡수. reachable:false는 항상 제외.
+function applyDecisions(flow, decisions) {
+  const drop = new Set(decisions.filter((d) => d.action === 'drop').map((d) => d.id))
+  const mergeMap = new Map(
+    decisions.filter((d) => d.action === 'merge').map((d) => [d.id, d.into]),
+  )
+  const resolve = (id) => {
+    let cur = id
+    while (mergeMap.has(cur)) cur = mergeMap.get(cur)
+    return cur
+  }
+
+  const screens = flow.screens
+    .filter((s) => s.reachable)
+    .filter((s) => !drop.has(s.id))
+    .filter((s) => !mergeMap.has(s.id))
+
+  const edges = []
+  const seen = new Set()
+  for (const e of flow.edges) {
+    if (drop.has(e.from) || drop.has(e.to)) continue
+    const from = resolve(e.from)
+    const to = resolve(e.to)
+    if (drop.has(from) || drop.has(to)) continue
+    if (from === to) continue
+    const key = `${from}->${to}:${e.trigger}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    edges.push({ ...e, from, to })
+  }
+
+  const entry = drop.has(flow.entry) ? screens[0] && screens[0].id : resolve(flow.entry)
+  return { screens, edges, entry, commonNav: flow.commonNav }
+}
+
 // =====================================================================
 // stage: extract
 // =====================================================================
