@@ -19,6 +19,19 @@ const prd = args.prd
 const nowIso = args.nowIso
 if (!prd || !nowIso) throw new Error('args.prd and args.nowIso are required')
 
+
+// Runtime guard: model schemas alone do not bound paid observation lanes.
+function assertSelected(list, expected = 3) {
+  if (!Array.isArray(list) || list.length !== expected) throw new Error('Research incomplete: expected exactly ' + expected + ' selected competitors; reselect before observation')
+  for (const key of ['competitorId', 'name', 'url']) {
+    const values = list.map(c => String(c[key] || '').trim().toLowerCase().replace(/^https:\/\/(www\.)?/, '').replace(/\/+$/, ''))
+    if (values.some(v => !v) || new Set(values).size !== expected) throw new Error('Research incomplete: duplicate or missing competitor ' + key)
+  }
+  if (list.some(c => !/^https:\/\//.test(c.url))) throw new Error('Research incomplete: competitor URLs must be HTTPS')
+}
+
+if (!Array.isArray(prd.features) || !prd.features.length || new Set(prd.features.map(f => f.featureId)).size !== prd.features.length || prd.features.some(f => !f.featureId)) throw new Error('Research incomplete: unique approved PRD feature IDs required')
+
 const EVIDENCE_RULES = `
 EVIDENCE RULES (mandatory):
 - Only free, public HTTPS sources. NEVER bypass paywalls, log in, or purchase anything. If key evidence sits behind a paywall or inside an app you cannot observe, record it in accessLimitations/failures (kind "paywalled_source" or "app_only_evidence") instead of inventing findings.
@@ -36,6 +49,8 @@ const CARD_SCHEMA = {
     cardId: { type: 'string' },
     subjectType: { enum: ['competitor', 'reference'] },
     subjectId: { type: 'string' },
+    featureId: { type: 'string', enum: prd.features.map(f => f.featureId) },
+    observationType: { enum: ['product_behavior', 'product_documentation', 'marketing_description', 'unknown'] },
     status: { enum: ['observed', 'explicit_absence', 'unknown', 'contradictory'] },
     claim: { type: 'string' },
     source: {
@@ -105,7 +120,7 @@ Competitor ids: "comp.<short-slug>". Do not fabricate products; if you cannot co
           },
         },
         competitors: {
-          type: 'array', minItems: 1, maxItems: 3,
+          type: 'array', minItems: 3, maxItems: 3,
           items: {
             type: 'object',
             required: ['competitorId', 'name', 'url', 'rationale'],
@@ -130,7 +145,8 @@ Competitor ids: "comp.<short-slug>". Do not fabricate products; if you cannot co
     },
   },
 )
-if (!scoped) throw new Error('scope stage failed')
+if (!scoped) throw new Error('Research incomplete: scope stage failed')
+assertSelected(scoped.competitors)
 log(`scope confirmed: ${scoped.competitors.length} competitors — ${scoped.competitors.map(c => c.name).join(', ')}`)
 
 phase('Research')
@@ -143,7 +159,7 @@ Competitor: ${JSON.stringify(competitor, null, 2)}
 PRD features to check:
 ${featureList}
 
-Using WebFetch on the competitor's public HTTPS pages (start at ${competitor.url}; follow feature/pricing/help pages), collect evidence of how this competitor implements each PRD feature. Produce one evidence card per feature where you found or explicitly ruled out support, plus "unknown" cards for features you could not confirm. subjectType "competitor", subjectId "${competitor.competitorId}". Distinguish an observed interaction/description from a marketing claim in the card's limitations. 3-8 cards total.
+Using WebFetch on the competitor's public HTTPS pages (start at ${competitor.url}; follow feature/pricing/help pages), collect evidence of how this competitor implements each PRD feature. Produce one evidence card per feature where you found or explicitly ruled out support, plus "unknown" cards for features you could not confirm. subjectType "competitor", subjectId "${competitor.competitorId}". Distinguish an observed interaction/description from a marketing claim in the card's limitations. Cover EVERY PRD feature, with its exact featureId on each card; no card-count cap. Set observationType to product_behavior, product_documentation, marketing_description, or unknown. A quote about a different feature is not support.
 ${EVIDENCE_RULES}
 Also return failures for anything you could not access (kind source_unavailable / app_only_evidence / paywalled_source).`,
       {
@@ -155,7 +171,7 @@ Also return failures for anything you could not access (kind source_unavailable 
           type: 'object',
           required: ['cards'],
           properties: {
-            cards: { type: 'array', items: CARD_SCHEMA },
+            cards: { type: 'array', items: { ...CARD_SCHEMA, required: [...CARD_SCHEMA.required, 'featureId', 'observationType'] } },
             failures: { type: 'array', items: FAILURE_SCHEMA },
             accessLimitations: { type: 'array', items: { type: 'string' } },
           },
@@ -167,7 +183,15 @@ Also return failures for anything you could not access (kind source_unavailable 
 // Per team direction (research/decisions/qa-round-2.json), reference work is
 // no longer an independent parallel lane: it consumes the top-3 competitor
 // ranking, so it runs AFTER Converge as the Distill phase.
-const laneResults = (await parallel(lanes)).filter(Boolean)
+const laneResults = await parallel(lanes)
+if (laneResults.length !== 3 || laneResults.some(result => !result?.cards?.length)) throw new Error('Research incomplete: missing competitor observation lane')
+
+for (let i = 0; i < laneResults.length; i++) {
+  const laneCards = laneResults[i].cards
+  const id = scoped.competitors[i].competitorId
+  if (laneCards.some(c => c.subjectType !== 'competitor' || c.subjectId !== id || !prd.features.some(f => f.featureId === c.featureId)) || !laneCards.some(c => c.status !== 'unknown' && c.proof?.type === 'quote' && c.source?.url && c.assessment?.claimSupport === 'direct' && c.assessment?.relevance === 'high')) throw new Error('Research incomplete: competitor lane lacks relevant feature-linked evidence')
+}
+
 const allCards = laneResults.flatMap(result => result.cards || [])
 const allFailures = laneResults.flatMap(result => result.failures || [])
 const allLimitations = laneResults.flatMap(result => result.accessLimitations || [])
@@ -184,10 +208,10 @@ Evidence cards from all lanes:
 ${JSON.stringify(allCards, null, 2)}
 
 Tasks (do NOT invent new evidence, do NOT alter any quote text):
-1. Audit each card's status against the taxonomy: "observed"/"explicit_absence"/"contradictory" require a quote proof; absence requires the quote to explicitly support absence. Downgrade violating cards to "unknown" (drop the proof to {type:"none"}, keep the source, add a limitation explaining the downgrade). "Not found" is never absence.
+1. Audit whether each quote supports this particular competitor AND its exact PRD feature requirement; a product-level mention or unrelated feature quote is not support and must become unknown. Keep direct behavior distinct from product documentation and marketing descriptions. Audit each card's status against the taxonomy: "observed"/"explicit_absence"/"contradictory" require a quote proof; absence requires the quote to explicitly support absence. Downgrade violating cards to "unknown" (drop the proof to {type:"none"}, keep the source, add a limitation explaining the downgrade). "Not found" is never absence.
 2. Detect contradictions: if two cards about the same competitor+feature conflict, set both to "contradictory" and add a failure {kind:"contradiction", detail, subjectId}.
 3. Deduplicate cards with identical claims; keep the better-sourced one.
-4. Build the feature matrix: one row per PRD feature (featureId, prdFeature = feature name), perCompetitor map {competitorId: {status, cardIds}} — cardIds may only cite surviving cards; cells with no supporting card are {"status":"unknown","cardIds":[]}. Add 1-3 "ideas" per row: useful ideas or differentiation candidates grounded in the evidence.
+4. Build the feature matrix: one row per PRD feature (featureId, prdFeature = feature name), perCompetitor map {competitorId: {status, cardIds}} — cardIds may only cite surviving cards with the SAME subjectId, exact featureId, and status as the cell; preserve featureId and observationType on audited cards; cells with no supporting card are {"status":"unknown","cardIds":[]}. Add 1-3 "ideas" per row: useful ideas or differentiation candidates grounded in the evidence.
 5. Write 2-5 decisionRationales: concise, evidence-grounded rationales and lessons from this run (no hidden reasoning, no chain of thought — short conclusions only).
 6. Rank the competitors holistically (evidence coverage, feature similarity to the PRD, value as a design reference) and return competitorRanking: one entry per competitor {competitorId, rank starting at 1, rationale} — the rationale is one or two sentences grounded in the evidence, and is mandatory: the top 3 of this ranking drive the reference-distillation stage.`,
   {
@@ -199,9 +223,9 @@ Tasks (do NOT invent new evidence, do NOT alter any quote text):
       type: 'object',
       required: ['cards', 'featureMatrix', 'decisionRationales', 'competitorRanking'],
       properties: {
-        cards: { type: 'array', items: CARD_SCHEMA },
+        cards: { type: 'array', items: { ...CARD_SCHEMA, required: [...CARD_SCHEMA.required, 'featureId', 'observationType'] } },
         featureMatrix: {
-          type: 'array',
+          type: 'array', minItems: prd.features.length, maxItems: prd.features.length,
           items: {
             type: 'object',
             required: ['featureId', 'prdFeature', 'perCompetitor'],
@@ -228,9 +252,23 @@ Tasks (do NOT invent new evidence, do NOT alter any quote text):
 )
 if (!converged) throw new Error('convergence stage failed')
 const ranking = [...converged.competitorRanking].sort((a, b) => a.rank - b.rank)
-const topThree = ranking.slice(0, 3)
+if (ranking.length !== 3 || new Set(ranking.map(r => r.competitorId)).size !== 3 || ranking.some(r => !scoped.competitors.some(c => c.competitorId === r.competitorId)) || ranking.map(r => r.rank).join(',') !== '1,2,3') throw new Error('Research incomplete: ranking must cover the selected three')
+const topThree = ranking
 log(`converged: ${converged.cards.length} cards, top-3 = ${topThree.map(r => r.competitorId).join(' > ')}`)
 
+// Do not spend reference-research calls on an incomplete or mislinked matrix.
+const matrix = converged.featureMatrix
+if (!Array.isArray(matrix) || matrix.length !== prd.features.length || new Set(matrix.map(r => r.featureId)).size !== prd.features.length || matrix.some(r => !prd.features.some(f => f.featureId === r.featureId))) throw new Error('Research incomplete: full PRD feature matrix required')
+for (const row of matrix) {
+  const keys = Object.keys(row.perCompetitor || {})
+  if (keys.length !== 3 || keys.some(id => !scoped.competitors.some(c => c.competitorId === id))) throw new Error('Research incomplete: matrix columns differ from selected competitors')
+  for (const [id, cell] of Object.entries(row.perCompetitor)) {
+    if ((cell.status !== 'unknown' && !cell.cardIds?.length) || (cell.cardIds || []).some(cardId => !converged.cards.some(c => c.cardId === cardId && c.subjectType === 'competitor' && c.subjectId === id && c.featureId === row.featureId && c.status === cell.status))) throw new Error('Research incomplete: matrix evidence linkage mismatch')
+  }
+}
+for (const competitor of scoped.competitors) {
+  if (!matrix.some(row => row.perCompetitor[competitor.competitorId].status !== 'unknown' && row.perCompetitor[competitor.competitorId].cardIds.some(id => converged.cards.some(c => c.cardId === id && c.proof?.type === 'quote' && c.source?.url && c.assessment?.claimSupport === 'direct' && c.assessment?.relevance === 'high')))) throw new Error('Research incomplete: convergence left insufficient competitor evidence')
+}
 phase('Distill')
 const topCards = converged.cards.filter(card => topThree.some(r => r.competitorId === card.subjectId))
 const distilled = await agent(

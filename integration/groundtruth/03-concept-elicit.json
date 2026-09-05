@@ -1,0 +1,98 @@
+{
+  "stage": "concept_elicit",
+  "workflow": "visual-concept-elicit",
+  "actor": "ai_confirmed",
+  "purpose": "Pass 1 of the visual-concept lane: produce the client's aesthetic questionnaire (colour first) and STOP before generating anything. Runs right after intake so the questions can be asked during the PRD review.",
+  "inputContract": {
+    "required": [
+      "prdPath",
+      "runDir",
+      "runId",
+      "round",
+      "startedAt"
+    ],
+    "mustOmit": [
+      "clientPreferences"
+    ],
+    "notes": "Same lane script as stage 10. Passing clientPreferences here would skip the questionnaire, so this pass must not carry them. prdPath is the PROVISIONAL lane PRD derived from the intake brief (lane-prd.draft.json) — the questionnaire needs domain and brand context, not an approved feature list."
+  },
+  "inputExample": {
+    "prdPath": "/abs/integration/runs/run-demo/lane-prd.draft.json",
+    "runDir": "/abs/integration/runs/run-demo/concepts",
+    "runId": "run-demo-vc-elicit",
+    "round": 1,
+    "startedAt": "2026-09-05T12:00:00.000Z"
+  },
+  "outputContract": {
+    "required": [
+      "laneId",
+      "mode",
+      "questionnaire"
+    ],
+    "perQuestion": [
+      "id",
+      "kind",
+      "question",
+      "options"
+    ],
+    "notes": "mode must be 'elicitation'. integrate.mjs additionally enforces that the FIRST question is kind 'color'."
+  },
+  "outputExample": {
+    "laneId": "visual-concept",
+    "runId": "run-demo-vc-elicit",
+    "round": 1,
+    "runDir": "/abs/integration/runs/run-demo/concepts",
+    "mode": "elicitation",
+    "questionnaire": {
+      "questions": [
+        {
+          "id": "q-color",
+          "kind": "color",
+          "question": "청첩장 화면을 어떤 색깔로 하면 좋을까요?",
+          "options": [
+            {
+              "id": "opt-sage",
+              "label": "차분한 초록",
+              "description": "숲처럼 가라앉은 톤이라 사진이 주인공이 되고, 글자가 오래 봐도 편안합니다.",
+              "exampleHex": [
+                "#2F4A3C",
+                "#C9A96A"
+              ]
+            },
+            {
+              "id": "opt-blush",
+              "label": "따뜻한 살구빛",
+              "description": "첫 화면부터 부드럽고 다정한 인상을 주고, 하객 안내 문구가 포근하게 읽힙니다.",
+              "exampleHex": [
+                "#E8C4B8",
+                "#8B5E52"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "q-mood",
+          "kind": "mood",
+          "question": "글씨와 여백은 어떤 느낌이 좋으세요?",
+          "options": [
+            {
+              "id": "opt-airy",
+              "label": "여백이 넉넉하고 조용한 느낌",
+              "description": "한 화면에 정보를 적게 담아 천천히 읽히게 합니다."
+            },
+            {
+              "id": "opt-dense",
+              "label": "한눈에 다 보이는 느낌",
+              "description": "일정·오시는 길·참석 응답을 스크롤 없이 모아 보여줍니다."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "handoff": {
+    "to": "concept_answers (asked inside the PRD review touchpoint)",
+    "via": "questionnaire.questions[].id are the exact keys the client's answers must use; unknown or missing keys are rejected.",
+    "checkedBy": "integration/bin/integrate.mjs cmdAnswer --preferences"
+  }
+}

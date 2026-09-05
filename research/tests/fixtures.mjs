@@ -1,3 +1,8 @@
+import { sealResearchPackage } from "../lib/evidence.mjs";
+
+// Historical fixtures intentionally exercise backwards-compatible v1 reads.
+export const sealLegacyPackage = input => sealResearchPackage(input, { allowLegacy: true });
+
 // Shared deterministic fixtures for two domains (wedding invitation and
 // habit tracking) so tests never overfit to a single example domain.
 import { readFile } from "node:fs/promises";

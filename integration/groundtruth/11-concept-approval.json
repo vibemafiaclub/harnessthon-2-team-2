@@ -1,0 +1,50 @@
+{
+  "stage": "concept_approval",
+  "workflow": null,
+  "actor": "human_approved",
+  "purpose": "THE human decision boundary of the whole pipeline. The client picks one of the three concepts.",
+  "inputContract": {
+    "required": [
+      "concepts"
+    ],
+    "notes": "artifacts from the concepts lane-output, each with its revisionHash."
+  },
+  "inputExample": {
+    "concepts": [
+      {
+        "conceptId": "shadcn",
+        "path": "/abs/…/concepts/concept-shadcn.html",
+        "revisionHash": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7"
+      },
+      {
+        "conceptId": "seed",
+        "path": "/abs/…/concepts/concept-seed.html",
+        "revisionHash": "42c866240cdf2efe5a94bd7adbce078b626b1163725ea051ee4dad9ef80c4367"
+      }
+    ]
+  },
+  "outputContract": {
+    "required": [
+      "by",
+      "at",
+      "revision",
+      "actor",
+      "note"
+    ],
+    "notes": "actor is always human_approved — recordApproval throws if anything tries to record an ai_confirmed value as an approval. revision is the sha256 of the exact approved file."
+  },
+  "outputExample": {
+    "by": "client",
+    "at": "2026-09-05T13:20:00.000Z",
+    "revision": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7",
+    "note": "shadcn",
+    "actor": "human_approved",
+    "evidence": "concept shadcn approved at revision a1d961b5fcfe…"
+  },
+  "handoff": {
+    "to": "production",
+    "via": "The approved conceptId + revision drive the post-approval outputs; any later change to the concept or the PRD invalidates this approval.",
+    "checkedBy": "integration/lib/runstate.mjs refreshStaleness"
+  },
+  "touchpoint": "concept_review"
+}

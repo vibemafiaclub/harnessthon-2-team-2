@@ -15,6 +15,7 @@
         "prdId": { "type": "string" },
         "title": { "type": "string" },
         "domain": { "type": "string" },
+        "features": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["featureId", "name", "description"], "properties": {"featureId": {"type": "string", "minLength": 1}, "name": {"type": "string", "minLength": 1}, "description": {"type": "string", "minLength": 1}}}},
         "payloadHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
       }
     },
@@ -97,6 +98,8 @@
           "cardId": { "type": "string" },
           "subjectType": { "enum": ["competitor", "reference"] },
           "subjectId": { "type": "string" },
+          "featureId": { "type": "string" },
+          "observationType": { "enum": ["product_behavior", "product_documentation", "marketing_description", "unknown"] },
           "status": { "enum": ["observed", "explicit_absence", "unknown", "contradictory"] },
           "claim": { "type": "string" },
           "source": {
@@ -180,6 +183,8 @@
     "createdAt": { "type": "string" },
     "payloadHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
   },
+  "$comment": "New assembly requires prd.features and exactly three distinct competitors. lib/comparison.mjs enforces exact feature/column coverage, competitor-feature-status evidence linkage and complete ranking. Missing features identify historical v1 packages; they require explicit migration before reuse.",
+  "allOf": [{"if": {"properties": {"prd": {"required": ["features"]}}}, "then": {"properties": {"competitors": {"minItems": 3, "maxItems": 3}, "cards": {"items": {"if": {"properties": {"subjectType": {"const": "competitor"}}}, "then": {"required": ["featureId", "observationType"]}}}}}}],
   "downstream": {
     "flowLane": "Consumes scope.jobs, featureMatrix (statuses + ideas), referenceDistillation categories 'layout' and 'interaction', and cards with assessment.uxHeuristics to derive flows/wireframes.",
     "visualLane": "Consumes referenceDistillation category 'style', references (kind design_system/pattern_gallery/case_study), and cards with assessment.visualPreference. Visual preference is opinion, separate from evidence reliability.",

@@ -1,0 +1,194 @@
+{
+  "stage": "wireframe",
+  "workflow": "wireframe-lane",
+  "actor": "ai_confirmed",
+  "purpose": "Three internal structural wireframe variants, AI-checked and auto-repaired, with the representative auto-selected. No designer gate.",
+  "inputContract": {
+    "required": [
+      "prdPath",
+      "runDir",
+      "runId",
+      "round",
+      "startedAt"
+    ],
+    "optional": [
+      "feedback"
+    ],
+    "notes": "prdPath points at the LANE PRD (contracts/prd-input.schema.json) written by approvedPrdToLaneInput — not the approved-prd/v1 file. runDir must exist; startedAt is passed in because workflow scripts cannot read the clock."
+  },
+  "inputExample": {
+    "prdPath": "/abs/integration/runs/run-demo/lane-prd.json",
+    "runDir": "/abs/integration/runs/run-demo/wireframe",
+    "runId": "run-demo-wf-r1",
+    "round": 1,
+    "startedAt": "2026-09-05T12:00:00.000Z"
+  },
+  "laneInputExample": {
+    "id": "prd-wedding-invitation-v1",
+    "title": "Mobile wedding invitation builder",
+    "domain": "wedding-invitation",
+    "sampleInput": true,
+    "problem": "Couples want a polished mobile wedding invitation page without hiring a designer, and guests need directions, schedule, and RSVP in one place.",
+    "targetUsers": [
+      "Engaged couples with no design experience",
+      "Wedding guests opening a shared link on their phone"
+    ],
+    "background": "SAMPLE INPUT for lane-workflow testing. Couples currently juggle messenger threads, map links, and bank-transfer notes. The product generates a single shareable invitation page and a small builder to customize it.",
+    "coreFlows": [
+      {
+        "id": "flow-build",
+        "name": "Build and publish an invitation",
+        "steps": [
+          "Choose a template",
+          "Enter couple names, date, venue",
+          "Add photos and greeting message",
+          "Preview the guest view",
+          "Publish and copy the share link"
+        ]
+      },
+      {
+        "id": "flow-guest",
+        "name": "Guest views invitation and RSVPs",
+        "steps": [
+          "Open shared link",
+          "Read greeting, date, and venue with map",
+          "Check transport and parking guidance",
+          "Submit RSVP with headcount and meal preference",
+          "Optionally send congratulatory transfer via deep link"
+        ]
+      }
+    ],
+    "mustHaveScreens": [
+      "Template gallery",
+      "Invitation editor",
+      "Guest invitation page",
+      "RSVP form"
+    ],
+    "brandHints": [
+      "warm",
+      "celebratory",
+      "trustworthy enough for parents' generation"
+    ],
+    "constraints": [
+      "All user-facing copy must be written in Korean (service targets Korean users)",
+      "Guest page must be readable without login",
+      "RSVP must work on low-end phones"
+    ]
+  },
+  "outputContract": {
+    "required": [
+      "laneId",
+      "runId",
+      "round",
+      "runDir",
+      "variants",
+      "aiRecommendation"
+    ],
+    "sideEffect": "writes <runDir>/lane-output.json (contracts/lane-output.schema.json) + the wireframe-<variant>.html files + review-sheet.html",
+    "notes": "aiRecommendation.recommendedVariantId is mandatory for the autonomous flow: integrate.mjs refuses to record a wireframe run without it rather than asking a designer."
+  },
+  "outputExample": {
+    "laneId": "wireframe",
+    "runId": "wf-wedding-r3",
+    "round": 3,
+    "runDir": "/abs/integration/runs/run-demo/wireframe",
+    "variants": [
+      {
+        "id": "wizard",
+        "name": "위저드",
+        "failingAfterRepairs": []
+      },
+      {
+        "id": "hub",
+        "name": "허브",
+        "failingAfterRepairs": []
+      },
+      {
+        "id": "canvas",
+        "name": "캔버스",
+        "failingAfterRepairs": []
+      }
+    ],
+    "aiRecommendation": {
+      "recommendedVariantId": "wizard",
+      "reason": "PRD의 flow-build 5단계(템플릿→정보→사진/인사말→미리보기→발행)가 위저드의 5화면과 1:1로 대응해 coreFlows 효율이 가장 높고, \"디자인 경험 없는 커플\"이라는 타겟에게 한 화면 한 작업 + 진행 도트가 첫 사용 명확성에서 확실히 우위다. 하객 측도 원스크롤 열람(인사말·일시·지도·교통/주차)+분리형 RSVP 폼이라 저사양 폰 제약과 \"로그인 없는 열람\" 흐름을 그대로 보여주며, 4단계 미리보기 화면이 하객 페이지 렌더를 게이트로 노출해 mustHaveScreens 4종(갤러리/에디터/하객 페이지/RSVP)을 모두 독립 화면으로 시연한다. canvas의 WYSIWYG는 컨셉은 참신하지만 와이어프레임상 편집 시트가 단일 범용 변형이라 대표 구조로는 검증이 얕고, hub는 비선형 진입과 하객 3탭 분할이 PRD의 순차적 스텝 정의 및 \"한 곳에서 확인\" 문제 정의와 어긋난다."
+    },
+    "repairs": 0,
+    "packageSummary": "lane-output.json written; review sheet rendered."
+  },
+  "laneOutputExample": {
+    "laneId": "wireframe",
+    "runId": "wf-wedding-r3",
+    "prdId": "prd-wedding-invitation-v1",
+    "round": 3,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "internalOnly": true,
+    "artifacts": [
+      {
+        "id": "wf-wizard",
+        "type": "clickable-wireframe",
+        "path": "wireframe-wizard.html",
+        "revisionHash": "af8114e203dc984a3629149626b5a95a3e2faf2b7755cfa0a03e40d8756f04dc"
+      },
+      {
+        "id": "wf-hub",
+        "type": "clickable-wireframe",
+        "path": "wireframe-hub.html",
+        "revisionHash": "195b7319eb18fae6e0f6bde210488d0ee70ead8f6d393e6543c22819d8793c89"
+      },
+      {
+        "id": "wf-canvas",
+        "type": "clickable-wireframe",
+        "path": "wireframe-canvas.html",
+        "revisionHash": "75f2827a476614ced8a424497b005529373fa614c2746e887f38caea4256c298"
+      }
+    ],
+    "screens": [
+      {
+        "id": "wizard:w-template",
+        "name": "[선형 위저드 + 분리형 하객 플로우] 1단계: 템플릿 선택",
+        "purpose": "위저드 첫 단계로 템플릿 갤러리에서 하나를 고른다 (mustHave: Template gallery)."
+      },
+      {
+        "id": "wizard:w-info",
+        "name": "[선형 위저드 + 분리형 하객 플로우] 2단계: 기본 정보 입력",
+        "purpose": "신랑·신부 이름, 예식 일시, 예식장 정보를 폼으로 입력한다."
+      }
+    ],
+    "qualityChecks": [
+      {
+        "criterionId": "wizard:mech-screens-routable",
+        "axis": "mechanical",
+        "status": "pass",
+        "expected": "All 7 variant screens (w-template, w-info, w-media, w-preview, w-publish, w-guest, w-rsvp) routable via hash",
+        "observed": "Browser-verified: setting #screen-<id> for each of the 7 ids activated the matching .screen div (exists/active/visible all true), with correct crumb text (e.g. '1단계: 템플릿 선택 · #screen-w-template') and frame caption updated by route() in the inline script."
+      },
+      {
+        "criterionId": "wizard:mech-edges-clickable",
+        "axis": "mechanical",
+        "status": "pass",
+        "expected": "Every variant edge clickable to an existing target screen",
+        "observed": "10 <a href=\"#screen-*\"> links and 16 onclick location.hash targets enumerated in-browser; zero dangling (badHrefs=[], badOnclick=[]). All 8 variant edges present: w-template→w-info (footer '다음 — 기본 정보 입력', line 269), w-info→w-media (307), w-media→w-preview (341), w-preview→w-media jump-link '수정하러 가기' (359), w-preview→w-publish '이대로 발행' (363), w-publish→w-guest '하객 화면 보기' (391), w-guest→w-rsvp '참석 여부 회신' (424), w-rsvp→w-guest '초대장으로 돌아가기' (466, 471)."
+      }
+    ],
+    "repairHistory": [],
+    "timing": {
+      "startedAt": "2026-09-05T16:08:57+09:00",
+      "finishedAt": "2026-09-05T16:15:26+09:00",
+      "budgetNote": "생성 약 6.5분 — 15분 레인 타깃 내 완료, 초과 없음."
+    },
+    "aiRecommendation": {
+      "recommendedVariantId": "wizard",
+      "reason": "PRD의 flow-build 5단계(템플릿→정보→사진/인사말→미리보기→발행)가 위저드의 5화면과 1:1로 대응해 coreFlows 효율이 가장 높고, \"디자인 경험 없는 커플\"이라는 타겟에게 한 화면 한 작업 + 진행 도트가 첫 사용 명확성에서 확실히 우위다. 하객 측도 원스크롤 열람(인사말·일시·지도·교통/주차)+분리형 RSVP 폼이라 저사양 폰 제약과 \"로그인 없는 열람\" 흐름을 그대로 보여주며, 4단계 미리보기 화면이 하객 페이지 렌더를 게이트로 노출해 mustHaveScreens 4종(갤러리/에디터/하객 페이지/RSVP)을 모두 독립 화면으로 시연한다. canvas의 WYSIWYG는 컨셉은 참신하지만 와이어프레임상 편집 시트가 단일 범용 변형이라 대표 구조로는 검증이 얕고, hub는 비선형 진입과 하객 3탭 분할이 PRD의 순차적 스텝 정의 및 \"한 곳에서 확인\" 문제 정의와 어긋난다."
+    }
+  },
+  "fromLiveRun": "runs/wf-wedding-r3",
+  "handoff": {
+    "to": "concepts",
+    "via": "representativeWireframePath = <runDir>/wireframe-${aiRecommendation.recommendedVariantId}.html, recorded with actor ai_confirmed (never human_approved).",
+    "checkedBy": "integration/bin/integrate.mjs record wireframe + integration/lib/reuse.mjs checkLaneArtifactReuse (artifact hashes, failing checks)"
+  }
+}

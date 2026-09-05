@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { sealResearchPackage } from "../lib/evidence.mjs";
+import { sealLegacyPackage as sealResearchPackage } from "./fixtures.mjs";
 import { buildReviewManifest } from "../lib/review.mjs";
 import { createControlState } from "../lib/limits.mjs";
 import { ensureRunDir, writeJsonRevision, writeRunState } from "../lib/store.mjs";

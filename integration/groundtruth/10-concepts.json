@@ -1,0 +1,175 @@
+{
+  "stage": "concepts",
+  "workflow": "visual-concept-lane",
+  "actor": "ai_confirmed",
+  "purpose": "Pass 2: three client-facing concepts on the fixed representative structure, tone driven by the client's answers.",
+  "inputContract": {
+    "required": [
+      "prdPath",
+      "runDir",
+      "runId",
+      "round",
+      "startedAt",
+      "representativeWireframePath",
+      "clientPreferences"
+    ],
+    "optional": [
+      "representativeVariant",
+      "feedback"
+    ],
+    "notes": "The lane throws without representativeWireframePath, and silently drops to elicitation mode without clientPreferences — the adapter requires both so neither can happen."
+  },
+  "inputExample": {
+    "prdPath": "/abs/integration/runs/run-demo/lane-prd.json",
+    "runDir": "/abs/integration/runs/run-demo/concepts",
+    "runId": "run-demo-vc-r1",
+    "round": 1,
+    "startedAt": "2026-09-05T12:00:00.000Z",
+    "representativeWireframePath": "/abs/integration/runs/run-demo/wireframe/wireframe-wizard.html",
+    "representativeVariant": {
+      "id": "wizard",
+      "selectedBy": "ai_confirmed",
+      "reason": "coreFlows 5단계가 위저드 5화면과 1:1 대응"
+    },
+    "clientPreferences": {
+      "q-color": "opt-sage",
+      "q-mood": "opt-airy"
+    }
+  },
+  "outputContract": {
+    "required": [
+      "laneId",
+      "runId",
+      "round",
+      "runDir",
+      "representative",
+      "concepts"
+    ],
+    "sideEffect": "writes <runDir>/lane-output.json + concept-<systemId>.html ×3 + review-sheet.html",
+    "notes": "Structure is held fixed across the three, so the client compares style only. These are the ONLY artifacts the client sees."
+  },
+  "outputExample": {
+    "laneId": "visual-concept",
+    "runId": "vc-wedding-r3",
+    "round": 3,
+    "runDir": "/abs/integration/runs/run-demo/concepts",
+    "representative": {
+      "path": "/abs/integration/runs/run-demo/wireframe/wireframe-wizard.html",
+      "screen": "청첩장 만들기 - 정보 입력"
+    },
+    "concepts": [
+      {
+        "id": "shadcn",
+        "name": "shadcn/ui",
+        "failingAfterRepairs": []
+      },
+      {
+        "id": "seed",
+        "name": "SEED (Daangn)",
+        "failingAfterRepairs": []
+      },
+      {
+        "id": "wanted-montage",
+        "name": "Wanted Montage (web)",
+        "failingAfterRepairs": []
+      }
+    ],
+    "repairs": 1,
+    "packageSummary": "lane-output.json written; review sheet rendered."
+  },
+  "laneOutputExample": {
+    "laneId": "visual-concept",
+    "runId": "vc-wedding-r3",
+    "prdId": "prd-wedding-invitation-v1",
+    "round": 3,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "artifacts": [
+      {
+        "id": "concept-shadcn",
+        "type": "combined-concept",
+        "path": "concept-shadcn.html",
+        "revisionHash": "a1d961b5fcfe020d289bf0523defcd9faf8a10b59265eba39c2c0749ae4246b7",
+        "conceptId": "shadcn"
+      },
+      {
+        "id": "concept-seed",
+        "type": "combined-concept",
+        "path": "concept-seed.html",
+        "revisionHash": "42c866240cdf2efe5a94bd7adbce078b626b1163725ea051ee4dad9ef80c4367",
+        "conceptId": "seed"
+      },
+      {
+        "id": "concept-wanted-montage",
+        "type": "combined-concept",
+        "path": "concept-wanted-montage.html",
+        "revisionHash": "2dc116415adc91a2c85e4ebfb9067fa819da29ec7e141119f2df98b125a29781",
+        "conceptId": "wanted-montage"
+      }
+    ],
+    "concepts": [
+      {
+        "id": "shadcn",
+        "name": "shadcn/ui",
+        "direction": "shadcn/ui 공식 시스템 적용 (구조 고정)",
+        "differentiation": "디자인 시스템 자체가 차별점: Neutral zinc/slate palette with CSS custom properties, subtle borders, rounded-md (0.375-0.5rem), Inter-like sans stack, quiet shadows, muted-foreground secondary text, clear focus rings.",
+        "tokenOverlay": {
+          "bg": "#fafafa",
+          "surface": "#ffffff",
+          "text": "#09090b",
+          "textMuted": "#71717a",
+          "primary": "#18181b",
+          "primaryForeground": "#fafafa",
+          "accent": "#f4f4f5",
+          "border": "#e4e4e7",
+          "focusRing": "#18181b",
+          "radius": {
+            "sm": "0.375rem",
+            "md": "0.5rem",
+            "lg": "0.625rem",
+            "chip": "9999px"
+          },
+          "fontStack": "'Inter', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",
+          "shadow": "quiet — shadow-sm(0 1px 2px rgba(0,0,0,.05))만 카드/CTA에 사용, hover에도 확대하지 않음"
+        }
+      }
+    ],
+    "qualityChecks": [
+      {
+        "criterionId": "shadcn:mech-self-contained",
+        "axis": "mechanical",
+        "status": "pass",
+        "expected": "Single self-contained HTML file, no external scripts/stylesheets/images",
+        "observed": "All CSS inline in one <style> block; no <script>, <link>, @import, or external URLs; placeholders are CSS gradients. Font stack names Inter/Pretendard with system fallbacks but loads nothing externally."
+      },
+      {
+        "criterionId": "shadcn:mech-lang-ko",
+        "axis": "mechanical",
+        "status": "pass",
+        "expected": "<html lang=\"ko\">",
+        "observed": "Line 2: <html lang=\"ko\">."
+      }
+    ],
+    "repairHistory": [
+      {
+        "attempt": 1,
+        "trigger": "seed: a11y-contrast",
+        "change": "Added a --text-soft:#6b7280 token (4.83:1 on white) and switched the three failing body-copy rules (.greeting, .info-card .sub, details .d-body) from --text-muted to it, leaving --text-muted #868b94 in place for small captions/labels.",
+        "result": "rechecked"
+      }
+    ],
+    "timing": {
+      "startedAt": "2026-09-05T16:31:45+09:00",
+      "finishedAt": "2026-09-05T16:37:05+09:00",
+      "budgetNote": "Generation took ~5m20s, well within the 15-minute lane target; no overrun."
+    }
+  },
+  "fromLiveRun": "runs/vc-wedding-r3",
+  "handoff": {
+    "to": "concept_approval",
+    "via": "artifacts[].conceptId are the choices offered to the client; approval re-hashes the chosen file and refuses if it changed after packaging.",
+    "checkedBy": "integration/bin/integrate.mjs cmdApprove concept_approval"
+  }
+}
