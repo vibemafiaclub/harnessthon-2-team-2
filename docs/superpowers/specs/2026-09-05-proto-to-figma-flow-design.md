@@ -24,7 +24,8 @@ v1에서 바뀐 것: 스파이크로 Workflow 서브에이전트가 Figma MCP를
 | `outDir` | 1, 2 | 산출물 폴더 |
 | `promptsDir` | 1, 2 | `prompts/` 절대경로 |
 | `devUrl` | 2 | 실행 중인 프로토타입 dev 서버 URL (예: `http://localhost:5173`) |
-| `figmaFileKey` | 2 | 화면을 넣을 Figma 디자인 파일 키. 사람이 미리 만들어 둔다 |
+| `figmaFileKey` | 2 | 화면을 넣을 Figma 디자인 파일 키. **옵션.** 없으면 Preflight가 자동으로 새 Figma 파일을 만들어 그 키를 쓴다 |
+| `figmaFileName` | 2 | 옵션. 자동 생성 시 파일 이름. 기본값 `"proto-to-figma"` |
 | `decisions` | 2 | 사람 확인 결과. `[{ id: 'S7', action: 'drop' }, { id: 'S4', action: 'merge', into: 'S3' }]`. 없으면 빈 배열 |
 | `concurrency` | 2 | 동시 캡처 수. 기본 3 |
 
@@ -141,22 +142,23 @@ stage: 'build'
 
 ### Preflight 에이전트 (00-preflight.md), 1개, low — Capture 전에 반드시 먼저 실행
 
-캡처를 시작하기 전에 이 환경에서 실제로 돌아갈지 확인한다. 화면 10개를 캡처하다 8번째에서야 dev 서버가 안 떠 있다는 걸 알게 되는 상황을 막는다.
+캡처를 시작하기 전에 이 환경에서 실제로 돌아갈지 확인한다. 화면 10개를 캡처하다 8번째에서야 dev 서버가 안 떠 있다는 걸 알게 되는 상황을 막는다. **사람이 Figma 파일을 미리 만들어 오지 않아도 된다** — `figmaFileKey`가 없으면 이 단계가 자동으로 만든다.
 
-입력: `devUrl`, `figmaFileKey`, 화면 목록 중 1개(대표 화면 하나만 시험용으로).
+입력: `devUrl`, `figmaFileKey`(옵션), `figmaFileName`(옵션, 기본 `"proto-to-figma"`), 화면 목록 중 1개(대표 화면 하나만 시험용으로).
 
-점검 항목과 실패 시 처리:
+점검·처리 순서:
 
-| 점검 | 방법 | 실패 시 |
+| 단계 | 방법 | 실패 시 |
 |---|---|---|
+| Figma MCP가 연결됐는가 | `ToolSearch`로 `whoami` 로드 후 호출 | `checks.figmaConnected = false`, 안내: "Figma MCP가 연결되지 않았습니다. Claude Code에서 Figma 플러그인 로그인 상태를 확인하세요." |
+| `figmaFileKey`가 있으면: 유효한가 | `get_metadata({ fileKey })` 호출 | `checks.fileKeyValid = false`, 안내: "전달된 figmaFileKey가 잘못됐거나 접근 권한이 없습니다." |
+| `figmaFileKey`가 없으면: 자동 생성 | `whoami`의 `plans` 배열에서 첫 번째 plan의 `key`를 `planKey`로 써서 `create_new_file({ planKey, fileName: figmaFileName, editorType: 'design' })` 호출. plan이 여러 개면 첫 번째를 쓰고 `message`에 "여러 plan 중 <이름>을 자동 선택했습니다"라고 남긴다 | `checks.fileCreated = false`, 실패 원문을 `checks.fileCreateError`에 담는다 |
 | dev 서버가 떠 있는가 | `devUrl`에 HTTP 요청(curl 또는 WebFetch) | `checks.devServer = false`, 안내: "`devUrl`에서 응답이 없습니다. 프로토타입 dev 서버(`npm run dev` 등)를 먼저 실행하세요." |
-| Figma MCP가 연결됐는가 | `ToolSearch`로 `mcp__plugin_figma_figma__whoami` 로드 후 호출 | `checks.figmaConnected = false`, 안내: "Figma MCP가 연결되지 않았습니다. Claude Code에서 Figma 플러그인 로그인 상태를 확인하세요." |
-| `figmaFileKey`가 유효한 파일을 가리키는가 | `get_metadata({ fileKey: figmaFileKey })` 호출 | `checks.fileKeyValid = false`, 안내: "figmaFileKey가 잘못됐거나 접근 권한이 없습니다. `/figma-create-new-file`로 새 파일을 만들거나 URL에서 fileKey를 다시 확인하세요." |
-| 대표 화면 캡처가 실제로 되는가 | 화면 1개로 `generate_figma_design` → 폴링까지 실제 실행 | `checks.sampleCapture = false`, 실패 원문을 `checks.sampleCaptureError`에 담는다 |
+| 대표 화면 캡처가 실제로 되는가 | (확정된 `figmaFileKey`로) 화면 1개로 `generate_figma_design` → 폴링까지 실제 실행 | `checks.sampleCapture = false`, 실패 원문을 `checks.sampleCaptureError`에 담는다 |
 
-넷 다 통과하면 `ok: true`와 함께 대표 화면의 `figmaNodeId`를 반환한다 (Capture 단계에서 그 화면은 재사용해 중복 캡처하지 않는다). 하나라도 실패하면 `ok: false`와 `checks`, 사람이 읽을 `message`(위 표의 안내문을 실패한 항목만 모아서)를 반환한다.
+모두 통과하면 `ok: true`, 확정된 `figmaFileKey`(전달받았거나 새로 만든 것), `figmaFileUrl`, 대표 화면의 `figmaNodeId`를 반환한다 (Capture 단계에서 그 화면은 재사용해 중복 캡처하지 않는다). 하나라도 실패하면 `ok: false`와 `checks`, 사람이 읽을 `message`를 반환한다.
 
-스크립트는 Preflight가 `ok: false`면 **Capture·Connect를 실행하지 않고 즉시 반환**한다:
+스크립트는 Preflight가 `ok: false`면 **Capture·Connect를 실행하지 않고 즉시 반환**한다. `ok: true`면 이후 Capture·Connect·Report는 전부 Preflight가 확정한 `figmaFileKey`를 쓴다 (사람이 넘긴 것이든 자동 생성된 것이든 동일하게 취급):
 
 ```js
 { stage: 'build', ok: false, phase: 'preflight', checks, message,
@@ -165,7 +167,7 @@ stage: 'build'
 
 ### Capture 에이전트 (02-capture.md), 화면당 1개
 
-입력: `figmaFileKey`, `devUrl`, 화면 1개(id, name, path, query).
+입력: `figmaFileKey`(Preflight가 확정한 값), `devUrl`, 화면 1개(id, name, path, query).
 
 1. `generate_figma_design({ fileKey })` 호출 → 캡처 스크립트 + `captureId`.
 2. 돌려받은 캡처 스크립트를 `devUrl + path + query`에 대해 도구 안내대로 실행한다 (로컬 dev 서버는 도구가 직접 열고, 안 되면 Playwright MCP로 연다). 정확한 실행 방식은 구현 시 첫 화면으로 한 번 확인한다.
@@ -178,7 +180,7 @@ stage: 'build'
 
 ### Connect 에이전트 (03-connect.md), 1개
 
-입력: `figmaFileKey`, 캡처 결과(id → figmaNodeId), edges, entry.
+입력: `figmaFileKey`(Preflight가 확정한 값), 캡처 결과(id → figmaNodeId), edges, entry.
 
 `use_figma` **1회**로:
 1. 캡처 프레임을 한 페이지로 모으고 이름을 `S1 지인 풀` 형식으로 바꾼다.
@@ -196,7 +198,7 @@ stage: 'build'
 
 ```js
 { stage: 'build', captured: N, captureFailed: [...], connected: M, connectFailed: [...], unreachable: [...],
-  figmaUrl: `https://figma.com/design/${figmaFileKey}`, files: [result.md] }
+  figmaUrl: <Preflight가 반환한 figmaFileUrl, 또는 https://figma.com/design/${figmaFileKey}>, files: [result.md] }
 ```
 
 ## 7. 실행법 (README 초안)

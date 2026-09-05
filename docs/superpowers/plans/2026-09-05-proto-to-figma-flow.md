@@ -265,7 +265,7 @@ git commit -m "test: proto-to-figma 검증용 최소 fixture 프로토타입 추
 export const meta = {
   name: 'proto-to-figma',
   description: '프로토타입 코드에서 화면·플로우를 추출해 Figma에 화면 프레임과 플로우 연결을 만든다 (2단계: extract → build)',
-  whenToUse: 'args.stage 기본값은 extract. args: {protoDir, designMdPath, outDir, promptsDir} → flow.json, screens.md. 사람이 screens.md를 보고 뺄 화면/합칠 화면을 정하면, args: {stage:"build", outDir, promptsDir, devUrl, figmaFileKey, flow, decisions, concurrency?} 로 다시 실행한다.',
+  whenToUse: 'args.stage 기본값은 extract. args: {protoDir, designMdPath, outDir, promptsDir} → flow.json, screens.md. 사람이 screens.md를 보고 뺄 화면/합칠 화면을 정하면, args: {stage:"build", outDir, promptsDir, devUrl, flow, decisions, figmaFileKey?, figmaFileName?, concurrency?} 로 다시 실행한다. figmaFileKey를 안 주면 새 Figma 파일을 자동으로 만든다.',
   phases: [
     { title: 'Extract', detail: '프로토타입 코드에서 화면·전이 추출', model: 'sonnet' },
     { title: 'Preflight', detail: '환경 점검 (dev 서버·Figma MCP·fileKey·샘플 캡처)', model: 'sonnet' },
@@ -537,28 +537,35 @@ git commit -m "feat: proto-to-figma — decisions(drop/merge) 반영 순수 함�
 - Modify: `.claude/workflows/proto-to-figma/workflow.js`
 
 **Interfaces:**
-- Consumes: `args.devUrl`, `args.figmaFileKey`, `args.flow`, `args.decisions`(옵션, 기본 `[]`).
-- Produces: `PREFLIGHT_SCHEMA`로 강제된 `{ ok, checks: {devServer, figmaConnected, fileKeyValid, sampleCapture}, message, sampleScreenId, sampleFigmaNodeId, sampleCaptureError }`. `ok:false`면 스크립트가 즉시 반환하고 Task 5(Capture)를 실행하지 않는다. `ok:true`면 Task 5가 `sampleScreenId`/`sampleFigmaNodeId`를 재사용해 그 화면을 다시 캡처하지 않는다.
+- Consumes: `args.devUrl`, `args.figmaFileKey`(옵션), `args.figmaFileName`(옵션, 기본 `"proto-to-figma"`), `args.flow`, `args.decisions`(옵션, 기본 `[]`).
+- Produces: `PREFLIGHT_SCHEMA`로 강제된 `{ ok, checks: {figmaConnected, fileKeyValid, fileCreated, devServer, sampleCapture}, message, figmaFileKey, figmaFileUrl, sampleScreenId, sampleFigmaNodeId, sampleCaptureError, fileCreateError }`. `ok:false`면 스크립트가 즉시 반환하고 Task 5(Capture)를 실행하지 않는다. `ok:true`면 이후 Capture·Connect·Report는 (사람이 준 것이든 새로 만든 것이든) `preflight.figmaFileKey`를 쓰고, Task 5가 `sampleScreenId`/`sampleFigmaNodeId`를 재사용해 그 화면을 다시 캡처하지 않는다.
+
+**사람이 Figma 파일을 미리 만들어 오지 않아도 된다.** `figmaFileKey`가 없으면 Preflight가 `whoami`로 plan을 찾아 자동으로 새 파일을 만든다.
 
 - [ ] **Step 1: 00-preflight.md 작성**
 
 ```markdown
 # 환경 점검 (Preflight)
 
-`ToolSearch`로 다음 도구를 로드하라: `mcp__plugin_figma_figma__whoami`, `mcp__plugin_figma_figma__get_metadata`, `mcp__plugin_figma_figma__generate_figma_design`. 필요하면 Playwright MCP 도구도 검색해 로드하라 (`select:mcp__plugin_playwright_playwright__browser_navigate` 등).
+`ToolSearch`로 다음 도구를 로드하라: `mcp__plugin_figma_figma__whoami`, `mcp__plugin_figma_figma__get_metadata`, `mcp__plugin_figma_figma__create_new_file`, `mcp__plugin_figma_figma__generate_figma_design`. 필요하면 Playwright MCP 도구도 검색해 로드하라 (`select:mcp__plugin_playwright_playwright__browser_navigate` 등).
 
-캡처를 실제로 시작하기 전에, 이 환경에서 실행 가능한지 아래 네 가지를 순서대로 확인한다. 하나라도 실패하면 그 이후 점검은 생략해도 된다.
+캡처를 실제로 시작하기 전에, 이 환경에서 실행 가능한지 아래 순서로 확인한다. 하나라도 실패하면 그 이후 점검은 생략해도 된다.
 
-1. **dev 서버 응답 확인**: `입력 > devUrl`에 HTTP 요청을 보낸다 (curl 또는 도구가 제공하는 fetch). 응답이 오면 `checks.devServer = true`.
-2. **Figma MCP 연결 확인**: `whoami`를 인자 없이 호출한다. 성공하면 `checks.figmaConnected = true`.
-3. **figmaFileKey 유효성 확인**: `get_metadata({ fileKey: 입력 > figmaFileKey })`를 호출한다. 파일 정보가 오면 `checks.fileKeyValid = true`.
-4. **샘플 캡처**: `입력 > 화면 목록`에서 첫 번째 화면 하나를 골라 실제로 `generate_figma_design({ fileKey })` → 반환된 캡처 스크립트를 `devUrl + path + query`에 대해 실행 → `captureId`로 5초 간격 최대 10회 폴링까지 전부 실행한다. 완료되면 `checks.sampleCapture = true`, 생성된 노드 id를 `sampleFigmaNodeId`에, 그 화면의 id를 `sampleScreenId`에 담는다. 실패하면 `checks.sampleCapture = false`, 에러 원문을 `sampleCaptureError`에 담는다.
+1. **Figma MCP 연결 확인**: `whoami`를 인자 없이 호출한다. 성공하면 `checks.figmaConnected = true`. 이 호출의 `plans` 배열은 다음 단계에서도 쓴다.
+2. **figmaFileKey 확정**:
+   - `입력 > figmaFileKey`가 있으면: `get_metadata({ fileKey })`를 호출한다. 파일 정보가 오면 `checks.fileKeyValid = true`, `figmaFileKey`에 그 값을 그대로, `figmaFileUrl`에 `https://figma.com/design/<fileKey>`를 담는다. 실패하면 `checks.fileKeyValid = false`.
+   - `입력 > figmaFileKey`가 없으면: 1번에서 받은 `plans` 배열의 첫 번째 plan의 `key`를 `planKey`로 써서 `create_new_file({ planKey, fileName: 입력 > figmaFileName (없으면 "proto-to-figma"), editorType: 'design' })`를 호출한다. plan이 여러 개면 첫 번째를 쓰고 그 사실을 `message`에 남긴다. 성공하면 `checks.fileCreated = true`, 반환된 `file_key`를 `figmaFileKey`에, `file_url`을 `figmaFileUrl`에 담는다. 실패하면 `checks.fileCreated = false`, 에러 원문을 `fileCreateError`에 담는다. (이 경우 `checks.fileKeyValid`은 `true`로 둔다 — 사람이 준 키가 아예 없어 이 점검 자체가 해당 없음.)
+3. **dev 서버 응답 확인**: `입력 > devUrl`에 HTTP 요청을 보낸다 (curl 또는 도구가 제공하는 fetch). 응답이 오면 `checks.devServer = true`.
+4. **샘플 캡처**: 2번에서 확정된 `figmaFileKey`로, `입력 > 화면 목록`에서 첫 번째 화면 하나를 골라 실제로 `generate_figma_design({ fileKey })` → 반환된 캡처 스크립트를 `devUrl + path + query`에 대해 실행 → `captureId`로 5초 간격 최대 10회 폴링까지 전부 실행한다. 완료되면 `checks.sampleCapture = true`, 생성된 노드 id를 `sampleFigmaNodeId`에, 그 화면의 id를 `sampleScreenId`에 담는다. 실패하면 `checks.sampleCapture = false`, 에러 원문을 `sampleCaptureError`에 담는다.
 
-넷 다 `true`면 `ok: true`. 하나라도 `false`면 `ok: false`이고, `message`에는 실패한 항목의 안내문만 모아 적는다:
-- devServer 실패: "devUrl에서 응답이 없습니다. 프로토타입 dev 서버(npm run dev 등)를 먼저 실행하세요."
+전부 `true`면 `ok: true` (`figmaFileKey`, `figmaFileUrl` 포함). 하나라도 `false`면 `ok: false`이고, `message`에는 실패한 항목의 안내문만 모아 적는다:
 - figmaConnected 실패: "Figma MCP가 연결되지 않았습니다. Claude Code에서 Figma 플러그인 로그인 상태를 확인하세요."
-- fileKeyValid 실패: "figmaFileKey가 잘못됐거나 접근 권한이 없습니다. /figma-create-new-file로 새 파일을 만들거나 URL에서 fileKey를 다시 확인하세요."
+- fileKeyValid 실패(전달된 키가 있을 때만): "전달된 figmaFileKey가 잘못됐거나 접근 권한이 없습니다."
+- fileCreated 실패(키를 안 줬을 때만): "새 Figma 파일 생성에 실패했습니다: " + fileCreateError
+- devServer 실패: "devUrl에서 응답이 없습니다. 프로토타입 dev 서버(npm run dev 등)를 먼저 실행하세요."
 - sampleCapture 실패: "대표 화면 캡처에 실패했습니다: " + sampleCaptureError
+
+출력 스키마의 모든 필드(`figmaFileKey`, `figmaFileUrl`, `fileCreateError` 등)는 해당 없는 경우 빈 문자열로 채워라 (JSON Schema가 필수 필드로 요구한다).
 ```
 
 - [ ] **Step 2: workflow.js에 PREFLIGHT_SCHEMA와 stage=build 진입부 추가**
@@ -573,19 +580,23 @@ const PREFLIGHT_SCHEMA = {
     checks: {
       type: 'object',
       properties: {
-        devServer: { type: 'boolean' },
         figmaConnected: { type: 'boolean' },
         fileKeyValid: { type: 'boolean' },
+        fileCreated: { type: 'boolean' },
+        devServer: { type: 'boolean' },
         sampleCapture: { type: 'boolean' },
       },
-      required: ['devServer', 'figmaConnected', 'fileKeyValid', 'sampleCapture'],
+      required: ['figmaConnected', 'fileKeyValid', 'fileCreated', 'devServer', 'sampleCapture'],
     },
     message: { type: 'string' },
+    figmaFileKey: { type: 'string' },
+    figmaFileUrl: { type: 'string' },
     sampleScreenId: { type: 'string' },
     sampleFigmaNodeId: { type: 'string' },
     sampleCaptureError: { type: 'string' },
+    fileCreateError: { type: 'string' },
   },
-  required: ['ok', 'checks', 'message', 'sampleScreenId', 'sampleFigmaNodeId', 'sampleCaptureError'],
+  required: ['ok', 'checks', 'message', 'figmaFileKey', 'figmaFileUrl', 'sampleScreenId', 'sampleFigmaNodeId', 'sampleCaptureError', 'fileCreateError'],
 }
 
 // =====================================================================
@@ -593,12 +604,13 @@ const PREFLIGHT_SCHEMA = {
 // =====================================================================
 if (stage === 'build') {
   const devUrl = args && args.devUrl
-  const figmaFileKey = args && args.figmaFileKey
+  const figmaFileKeyArg = args && args.figmaFileKey // 옵션 — 없으면 Preflight가 새로 만든다
+  const figmaFileName = (args && args.figmaFileName) || 'proto-to-figma'
   const rawFlow = args && args.flow
   const decisions = (args && args.decisions) || []
   const concurrency = (args && args.concurrency) || 3
-  if (!devUrl || !figmaFileKey || !rawFlow) {
-    throw new Error('stage=build 에는 args.devUrl, args.figmaFileKey, args.flow (stage=extract 반환값의 flow)가 필요합니다')
+  if (!devUrl || !rawFlow) {
+    throw new Error('stage=build 에는 args.devUrl, args.flow (stage=extract 반환값의 flow)가 필요합니다')
   }
 
   const flow = applyDecisions(rawFlow, decisions)
@@ -608,7 +620,8 @@ if (stage === 'build') {
   const preflight = await agent(
     withPrompt('00-preflight.md', {
       devUrl,
-      figmaFileKey,
+      figmaFileKey: figmaFileKeyArg,
+      figmaFileName,
       '화면 목록': flow.screens,
     }),
     { schema: PREFLIGHT_SCHEMA, ...SUB_LOW, label: 'preflight', phase: 'Preflight' },
@@ -625,7 +638,8 @@ if (stage === 'build') {
       nextStep: '안내된 항목을 고친 뒤 같은 args로 다시 실행하세요.',
     }
   }
-  log(`Preflight 통과 (샘플 화면 ${preflight.sampleScreenId} 캡처 재사용)`)
+  const figmaFileKey = preflight.figmaFileKey
+  log(`Preflight 통과 (figmaFileKey=${figmaFileKey}, 샘플 화면 ${preflight.sampleScreenId} 캡처 재사용)`)
 
   // Capture, Connect, Report는 Task 5, 6에서 이어서 작성
   throw new Error('Capture/Connect/Report 미구현 (Task 5, 6에서 추가)')
@@ -823,7 +837,7 @@ const connectFailed = connect ? connect.failed : flow.edges.map((e) => ({ from: 
 log(`연결 완료: ${connected}개, 실패 ${connectFailed.length}개`)
 
 const unreachable = rawFlow.screens.filter((s) => !s.reachable).map((s) => s.id)
-const figmaUrl = `https://figma.com/design/${figmaFileKey}`
+const figmaUrl = preflight.figmaFileUrl || `https://figma.com/design/${figmaFileKey}`
 
 phase('Report')
 const REPORT_SCHEMA = { type: 'object', properties: { ok: { type: 'boolean' } }, required: ['ok'] }
@@ -846,6 +860,7 @@ return {
   connected,
   connectFailed,
   unreachable,
+  figmaFileKey,
   figmaUrl,
   files: [files.result],
   reportWritten: !!(report && report.ok),
@@ -901,10 +916,9 @@ Workflow({
 ## 2단계 실행 전 로컬 준비물
 
 1. 프로토타입 의존성 설치·dev 서버 실행 (예: `npm install && npm run dev`), 뜬 포트를 `devUrl`로 쓴다.
-2. Figma에 빈 파일 하나 준비 (`/figma-create-new-file` 또는 기존 파일 URL에서 fileKey 추출).
-3. Claude Code에서 Figma 플러그인 로그인 상태 확인.
+2. Claude Code에서 Figma 플러그인 로그인 상태 확인.
 
-준비물이 안 맞아도 워크플로우가 죽지 않는다 — Preflight가 안내 메시지로 멈춘다.
+Figma 파일은 미리 만들어 둘 필요 없다 — `figmaFileKey`를 생략하면 Preflight가 자동으로 새 파일을 만든다. 기존 파일에 이어 그리고 싶으면 그 파일의 URL에서 fileKey를 추출해 넘긴다. 준비물이 안 맞아도 워크플로우가 죽지 않는다 — Preflight가 안내 메시지로 멈춘다.
 
 ## 2단계: Figma에 그리기
 
@@ -916,7 +930,8 @@ Workflow({
     outDir: "<1단계와 동일>",
     promptsDir: "<1단계와 동일>",
     devUrl: "http://localhost:5173",
-    figmaFileKey: "<Figma 파일 키>",
+    // figmaFileKey: 생략하면 자동 생성. 기존 파일에 이어 그리려면 그 fileKey를 넘긴다.
+    // figmaFileName: 자동 생성 시 파일 이름 (기본 "proto-to-figma").
     flow: /* 1단계 반환값의 flow를 그대로 */,
     decisions: [{ id: "S7", action: "drop" }, { id: "S4", action: "merge", into: "S3" }],
     concurrency: 3,
@@ -924,7 +939,7 @@ Workflow({
 })
 \`\`\`
 
-`ok: false`가 오면 `message`를 그대로 사용자에게 보여주고, 안내된 항목을 고친 뒤 같은 args로 재실행한다. `ok: true`면 `figmaUrl`을 열어 확인한다.
+`ok: false`가 오면 `message`를 그대로 사용자에게 보여주고, 안내된 항목을 고친 뒤 같은 args로 재실행한다. `ok: true`면 `figmaUrl`을 열어 확인한다 (`figmaFileKey`도 함께 반환되므로, 같은 파일에 이어서 다시 돌리고 싶으면 다음 실행에 그 값을 넘긴다).
 ```
 
 - [ ] **Step 2: Commit**
