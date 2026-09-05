@@ -216,8 +216,49 @@ if (stage === 'build') {
   const figmaFileKey = preflight.figmaFileKey
   log(`Preflight 통과 (figmaFileKey=${figmaFileKey}, 샘플 화면 ${preflight.sampleScreenId} 캡처 재사용)`)
 
-  // Capture, Connect, Report는 Task 5, 6에서 이어서 작성
-  throw new Error('Capture/Connect/Report 미구현 (Task 5, 6에서 추가)')
+  const CAPTURE_SCHEMA = {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      figmaNodeId: { type: 'string' },
+      ok: { type: 'boolean' },
+      error: { type: 'string' },
+    },
+    required: ['id', 'figmaNodeId', 'ok', 'error'],
+  }
+
+  phase('Capture')
+  const sampleResult = { id: preflight.sampleScreenId, figmaNodeId: preflight.sampleFigmaNodeId, ok: true, error: '' }
+  const toCapture = flow.screens.filter((s) => s.id !== preflight.sampleScreenId)
+
+  const captureResults = [sampleResult]
+  for (let i = 0; i < toCapture.length; i += concurrency) {
+    const batch = toCapture.slice(i, i + concurrency)
+    const batchResults = await parallel(
+      batch.map((screen) => () =>
+        agent(
+          withPrompt('02-capture.md', {
+            figmaFileKey,
+            devUrl,
+            화면: screen,
+          }),
+          { schema: CAPTURE_SCHEMA, ...SUB_LOW, label: `capture ${screen.id}`, phase: 'Capture' },
+        ).catch(() => null),
+      ),
+    )
+    batchResults.forEach((r, j) => {
+      captureResults.push(r || { id: batch[j].id, figmaNodeId: '', ok: false, error: '에이전트 응답 없음' })
+    })
+    log(`캡처 진행 ${captureResults.length}/${flow.screens.length}`)
+  }
+
+  const captureFailed = captureResults.filter((r) => !r.ok)
+  const captureOk = captureResults.filter((r) => r.ok)
+  log(`캡처 완료: 성공 ${captureOk.length}, 실패 ${captureFailed.length}`)
+  if (captureFailed.length) log(`캡처 실패 화면: ${captureFailed.map((r) => r.id).join(', ')}`)
+
+  // Connect, Report는 Task 6에서 이어서 작성
+  throw new Error('Connect/Report 미구현 (Task 6에서 추가)')
 }
 
 throw new Error(`알 수 없는 stage: ${stage}`)
